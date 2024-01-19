@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+
+class MusicScaleSelector extends StatefulWidget {
+  @override
+  _MusicScaleSelectorState createState() => _MusicScaleSelectorState();
+}
+
+class _MusicScaleSelectorState extends State<MusicScaleSelector> {
+  String? selectedScale;
+  String? selectedMode;
+  String? selectedChordType;
+
+  // Define your lists of options
+  final List<String> scales = ['Major', 'Melodic Minor', 'Harmonic Minor', 'Harmonic Major', 'Pentatonic', 'Octatonic', 'Hexatonic'];
+  final List<String> chordTypes = ['Triad', 'Seventh', 'Ninth', 'Eleventh', 'Thirteenth'];
+
+  // Logic to determine the modes based on the selected scale
+  List<String> getModesForScale(String scale) {
+    // Implement your logic here to return the list of modes for the given scale
+    return ['Mode 1', 'Mode 2']; // Placeholder list
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          DropdownButtonFormField<String>(
+            value: selectedScale,
+            onChanged: (newValue) {
+              setState(() {
+                selectedScale = newValue!;
+                selectedMode = null; // Reset mode when scale changes
+              });
+            },
+            items: scales.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            hint: Text('Select Scale'),
+          ),
+          DropdownButtonFormField<String>(
+            value: selectedMode,
+            onChanged: (newValue) {
+              setState(() {
+                selectedMode = newValue!;
+              });
+            },
+            items: selectedScale != null
+                ? getModesForScale(selectedScale!).map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList()
+                : [],
+            hint: Text('Select Mode'),
+          ),
+          DropdownButtonFormField<String>(
+            value: selectedChordType,
+            onChanged: (newValue) {
+              setState(() {
+                selectedChordType = newValue!;
+              });
+            },
+            items: chordTypes.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            hint: Text('Select Chord Type'),
+          ),
+        ],
+      ),
+    );
+  }
+}
