@@ -3,7 +3,7 @@ import 'package:scale_master_guitar/hardcoded_data/scales_data_v2.dart';
 import 'package:scale_master_guitar/models/settings_model.dart';
 
 import '../UI/layout/chord_container_colors.dart';
-import '../hardcoded_data/all_items_list.dart';
+import '../hardcoded_data/music_constants.dart';
 import '../hardcoded_data/flats_to_sharps_nomenclature.dart';
 
 class ChordModel {
@@ -46,12 +46,15 @@ class ChordModel {
 
   _setKey(int transposeValue) {
     int newIndex;
-    (notesWithFlats.indexOf(chordNameForAudio) - transposeValue < 0)
-        ? newIndex = notesWithFlats.indexOf(chordNameForAudio) +
+    (MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) -
+                transposeValue <
+            0)
+        ? newIndex = MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) +
             12 -
             transposeValue // invert interval and add
-        : newIndex = notesWithFlats.indexOf(chordNameForAudio) - transposeValue;
-    String key = notesWithFlats[newIndex];
+        : newIndex = MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) -
+            transposeValue;
+    String key = MusicConstants.notesWithFlats[newIndex];
     return key;
   }
 

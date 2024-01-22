@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/UI/scale_chart/chromatic_wheel.dart';
-import 'package:scale_master_guitar/scale_selection/scale_selection';
 
 import 'UI/fretboard/UI/fretboard_card.dart';
+import 'UI/scale_selection/scale_selection.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -14,12 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,18 +24,21 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MusicScaleSelector(),
+            ScaleSelector(),
             ChromaticWheel(),
             const FretboardCard(),
+            // const PianoWidget(),
+            const SizedBox(height: 30),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {},
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.orange[800],
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

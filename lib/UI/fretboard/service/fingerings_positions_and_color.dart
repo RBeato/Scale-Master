@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tonic/tonic.dart' as tonic;
 
 import '../../layout/chord_container_colors.dart';
-import '../../../hardcoded_data/all_items_list.dart';
+import '../../../hardcoded_data/music_constants.dart';
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
 import '../../../hardcoded_data/fretboard_notes.dart';
 import '../../../hardcoded_data/scales_data_v2.dart';
@@ -44,7 +44,7 @@ class FingeringsColorBloc {
   }
 
   settingsChanged(Settings settings) {
-    _key = notesWithFlats[settings.musicKey.toInt()];
+    _key = MusicConstants.notesWithFlats[settings.musicKey.toInt()];
     _modeOption = settings.originScale;
     _chordVoicings = settings.chordVoicingOption;
     _lowestNoteStringOption = settings.bottomNoteStringOption;

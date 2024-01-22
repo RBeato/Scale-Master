@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../hardcoded_data/fretboard_notes.dart';
 import '../../../models/chord_scale_model.dart';
-import '../provider/beat_counter_provider.dart';
 import '../provider/fingerings_provider.dart';
 
 class FretboardTableDots extends ConsumerWidget {
@@ -21,9 +20,8 @@ class FretboardTableDots extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(children: <Widget>[
       Consumer(builder: (context, watch, _) {
-        final int step = ref.watch(currentBeatProvider);
         var fingerings = ref.watch(chordModelFretboardFingeringProvider) as Map;
-        if (fingerings[step] != null) auxMap = fingerings[step];
+
         if (fingerings.isNotEmpty) {
           selectedChordsAndBass = auxMap ?? fingerings[fingerings.keys.first];
         }
@@ -53,7 +51,6 @@ class FretboardTableDots extends ConsumerWidget {
                                     buildFretboardNotesNames(
                                       fingerings as Map<int,
                                           ChordScaleFingeringsModel>,
-                                      step,
                                       i,
                                       j,
                                     ),
@@ -71,10 +68,10 @@ class FretboardTableDots extends ConsumerWidget {
   }
 
   buildFretboardNotesNames(
-      Map<int, ChordScaleFingeringsModel> fingerings, int step, int i, int j) {
+      Map<int, ChordScaleFingeringsModel> fingerings, int i, int j) {
     String noteName;
     ChordScaleFingeringsModel? noteInfo =
-        fingerings[step] ?? auxMap ?? fingerings[fingerings.keys.first];
+        auxMap ?? fingerings[fingerings.keys.first];
 
     // print("NOTE INFO:  $noteInfo");
     if (['C', 'D', 'E', 'F', 'G', 'A', 'B']

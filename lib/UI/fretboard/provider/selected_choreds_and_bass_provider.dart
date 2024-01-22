@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../hardcoded_data/all_items_list.dart';
+import '../../../hardcoded_data/music_constants.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/thrash_chord_model.dart';
 
@@ -90,28 +90,29 @@ class SelectedItems extends StateNotifier<List<SelectedItem>> {
   newChordModel(ChordModel item, String operation) {
     if (item.chords != null && item.chords!.isNotEmpty) {
       item.chords = item.chords!
-          .map((e) => notesWithFlats[createNewIndex(e, operation)])
+          .map((e) =>
+              MusicConstants.notesWithFlats[createNewIndex(e, operation)])
           .toList();
     }
-    item.chordNameForUI = notesWithFlats[
+    item.chordNameForUI = MusicConstants.notesWithFlats[
         createNewIndex(item.chordNameForAudio as String, operation)];
-    item.chordNameForAudio = notesWithFlats[
+    item.chordNameForAudio = MusicConstants.notesWithFlats[
         createNewIndex(item.chordNameForAudio as String, operation)];
-    item.originKey =
-        notesWithFlats[createNewIndex(item.originKey as String, operation)];
+    item.originKey = MusicConstants
+        .notesWithFlats[createNewIndex(item.originKey as String, operation)];
     return item;
   }
 
   createNewIndex(String noteName, String operation) {
     int newIndex;
-    int noteIndex = notesWithFlats.indexOf(noteName);
+    int noteIndex = MusicConstants.notesWithFlats.indexOf(noteName);
     if (operation == _addSemiTone) {
-      noteIndex == notesWithFlats.length - 1
+      noteIndex == MusicConstants.notesWithFlats.length - 1
           ? newIndex = 0
           : newIndex = noteIndex + 1;
     } else {
       noteIndex == 0
-          ? newIndex = notesWithFlats.length - 1
+          ? newIndex = MusicConstants.notesWithFlats.length - 1
           : newIndex = noteIndex - 1;
     }
     return newIndex;

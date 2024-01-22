@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../hardcoded_data/music_constants.dart';
 import 'provider/top_note_provider.dart';
 
 class ChromaticWheel extends ConsumerStatefulWidget {
@@ -28,32 +29,26 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
   }
 
   String getTopNote() {
-    double topPositionAngle = -math.pi / 2;
+    double topPositionAngle = math.pi / 2; // 90 degrees in radians
     double adjustedRotation =
-        (_currentRotation - topPositionAngle) % (2 * math.pi);
+        (_currentRotation + topPositionAngle) % (2 * math.pi);
     if (adjustedRotation < 0) adjustedRotation += 2 * math.pi;
 
-    int noteIndex = ((adjustedRotation / (2 * math.pi / 12)) % 12).floor();
-    return [
-      'C',
-      'C#',
-      'D',
-      'D#',
-      'E',
-      'F',
-      'F#',
-      'G',
-      'G#',
-      'A',
-      'A#',
-      'B'
-    ][noteIndex];
+    int noteIndex =
+        ((adjustedRotation / (2 * math.pi / numStops)) % numStops).floor();
+    var result = MusicConstants.notesWithFlatsAndSharps[
+        ((noteIndex + numStops / 2) % numStops).toInt()];
+
+    // ref.read(topNoteProvider.notifier).update((state) => result);
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    final topNote = ref.watch(topNoteProvider);
-    print(topNote);
+    // final topNote = ref.watch(topNoteProvider);
+    print("Top note function: ${getTopNote()}");
+    // print(topNote);
+
     return GestureDetector(
       onPanStart: (details) {
         _dragStartRotation = _currentRotation;
@@ -80,34 +75,6 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
 class WheelPainter extends CustomPainter {
   final double rotation;
-  final List<String> innerWheelNotes = [
-    'C',
-    'C#',
-    'D',
-    'D#',
-    'E',
-    'F',
-    'F#',
-    'G',
-    'G#',
-    'A',
-    'A#',
-    'B'
-  ];
-  final List<String> outerWheelValues = [
-    'I',
-    'bii',
-    'II',
-    'biii',
-    'III',
-    'IV',
-    'bv',
-    'V',
-    'bvi',
-    'VI',
-    'bvii',
-    'VII'
-  ];
 
   WheelPainter(this.rotation);
 
@@ -126,10 +93,11 @@ class WheelPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.center,
     );
-    for (int i = 0; i < outerWheelValues.length; i++) {
-      double angle = 2 * math.pi * i / outerWheelValues.length - math.pi / 2;
+    for (int i = 0; i < MusicConstants.notesDegrees.length; i++) {
+      double angle =
+          2 * math.pi * i / MusicConstants.notesDegrees.length - math.pi / 2;
       textPainter.text = TextSpan(
-        text: outerWheelValues[i],
+        text: MusicConstants.notesDegrees[i],
         style: const TextStyle(color: Colors.grey, fontSize: 16),
       );
       textPainter.layout();
@@ -150,14 +118,10 @@ class WheelPainter extends CustomPainter {
       ).createShader(Rect.fromCircle(center: center, radius: innerRadius));
     canvas.drawCircle(center, innerRadius, knobPaint);
 
-    // Markings and text on the knob
-    // TextPainter textPainter = TextPainter(
-    //   textDirection: TextDirection.ltr,
-    //   textAlign: TextAlign.center,
-    // );
-
-    for (int i = 0; i < innerWheelNotes.length; i++) {
-      double angle = 2 * math.pi * i / innerWheelNotes.length + rotation;
+    for (int i = 0; i < MusicConstants.notesWithFlatsAndSharps.length; i++) {
+      double angle =
+          2 * math.pi * i / MusicConstants.notesWithFlatsAndSharps.length +
+              rotation;
 
       // Position for the note container
       Offset containerPosition = Offset(
@@ -188,7 +152,7 @@ class WheelPainter extends CustomPainter {
       //   containerPosition.dy - 10,
       // );
       textPainter.text = TextSpan(
-        text: innerWheelNotes[i],
+        text: MusicConstants.notesWithFlatsAndSharps[i],
         style: const TextStyle(color: Colors.white, fontSize: 18),
       );
       textPainter.layout();
