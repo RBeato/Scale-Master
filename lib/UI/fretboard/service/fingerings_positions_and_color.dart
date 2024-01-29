@@ -55,8 +55,8 @@ class FingeringsColorBloc {
       ChordModel chordModel, Settings settings) {
     settingsChanged(settings);
 
-    _key = chordModel.originKey as String;
-    _modeOption = chordModel.originModeType;
+    _key = chordModel.parentScaleKey;
+    _modeOption = chordModel.mode;
     _chordName = chordModel.chordNameForAudio as String;
     _numberOfChordNotes = chordModel.organizedPitches!.length;
     return createFretboardPositions(chordModel);
@@ -86,8 +86,8 @@ class FingeringsColorBloc {
 
   setModeDegrees() {
     late String mainScale;
-    for (var element in scalesData.keys) {
-      if (scalesData[element]['modeNames'].contains(_modeOption)) {
+    for (var element in Scales.data.keys) {
+      if (Scales.data[element]['modeNames'].contains(_modeOption)) {
         mainScale = element;
       } else {
         debugPrint("Mode not found");
@@ -124,7 +124,7 @@ class FingeringsColorBloc {
 
   filterSettings() {
     int randomChoice = Random().nextInt(2);
-    //*String indexes go from 0-5, not 1-6
+
     if (_numberOfChordNotes == 3) {
       switch (_chordVoicings) {
         case 'All chord tones':
@@ -182,6 +182,8 @@ class FingeringsColorBloc {
 
   buildVoicingIntervalsList() {
     _voicingTonicIntervalList = [];
+    if (_voicingIntervalsNumbers == null)
+      return; //TODO: Review is this is needed
     for (var element in _voicingIntervalsNumbers!) {
       _voicingTonicIntervalList!.add(_modeIntervals![element - 1]);
     }

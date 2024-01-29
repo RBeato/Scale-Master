@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/UI/scale_chart/chromatic_wheel.dart';
 
+import 'UI/drawer/UI/custom_drawer.dart';
 import 'UI/fretboard/UI/fretboard_card.dart';
 import 'UI/scale_selection/scale_selection.dart';
 
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      drawer: CustomDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         tooltip: 'Increment',

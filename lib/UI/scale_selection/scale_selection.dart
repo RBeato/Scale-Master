@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ScaleSelector extends StatefulWidget {
+import 'provider/mode_dropdown_value_provider.dart';
+import 'provider/scale_dropdown_value_provider.dart';
+
+class ScaleSelector extends ConsumerStatefulWidget {
   @override
   _ScaleSelectorState createState() => _ScaleSelectorState();
 }
 
-class _ScaleSelectorState extends State<ScaleSelector> {
+class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
   String? selectedScale;
   String? selectedMode;
   String? selectedChordType;
 
   // Define your lists of options
   final List<String> scales = [
-    'Major',
+    'Diatonic Major',
     'Melodic Minor',
     'Harmonic Minor',
     'Harmonic Major',
@@ -51,6 +55,9 @@ class _ScaleSelectorState extends State<ScaleSelector> {
                 value: selectedScale,
                 onChanged: (newValue) {
                   setState(() {
+                    ref
+                        .read(scaleDropdownValueProvider.notifier)
+                        .update((state) => newValue!);
                     selectedScale = newValue!;
                     selectedMode = null; // Reset mode when scale changes
                   });
@@ -75,6 +82,9 @@ class _ScaleSelectorState extends State<ScaleSelector> {
               dropdownColor: Colors.grey[800],
               value: selectedMode,
               onChanged: (newValue) {
+                ref
+                    .read(modeDropdownValueProvider.notifier)
+                    .update((state) => newValue!);
                 setState(() {
                   selectedMode = newValue!;
                 });

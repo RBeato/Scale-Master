@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../sizing_info.dart';
-import '../service/get_fret_dot_dimentions.dart';
-import 'fretboard_table_dots.dart';
+import '../service/get_fret_dot_dimensions.dart';
 
 class FretboardTable extends StatelessWidget {
   FretboardTable(this.cardSizeInfo);
@@ -61,11 +60,33 @@ class FretboardTable extends StatelessWidget {
             ),
           ]),
         ),
-        Positioned(
-          child: FretboardTableDots(
-              dotHeight: fretDimensions['height'],
-              dotWidth: fretDimensions['width']),
-        ),
+        // Positioned(
+        //   child: SizedBox(
+        //     height: 200,
+        //     width: 500,
+        //     child: FretboardTableDotsTest(dotSize: fretDimensions['height']),
+        //     // FretboardTableDots(
+        //     //     dotHeight: fretDimensions['height'],
+        //     //     dotWidth: fretDimensions['width']),
+        //   ),
+        // ),
+        // Positioned(
+        //   child: SizedBox(
+        //     height: 200,
+        //     width: 500,
+        //     child: CustomPaint(
+        //       size: Size(
+        //         fretDimensions['width'], // Adjust the size as needed
+        //         fretDimensions['height'],
+        //       ),
+        //       painter: FretboardPainter(
+        //         0,
+        //         frets,
+        //         fretDimensions['width'],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

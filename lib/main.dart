@@ -4,7 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'home_page.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp())); //?
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    runApp(const ProviderScope(child: MyApp())); //?
+  } catch (error) {
+    print('Setup has failed');
+  }
 }
 
 class MyApp extends StatelessWidget {

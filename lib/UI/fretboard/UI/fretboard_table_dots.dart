@@ -1,81 +1,119 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scale_master_guitar/UI/fretboard/provider/fingerings_provider.dart';
 
 import '../../../hardcoded_data/fretboard_notes.dart';
 import '../../../models/chord_scale_model.dart';
-import '../provider/fingerings_provider.dart';
 
 class FretboardTableDots extends ConsumerWidget {
-  FretboardTableDots({required this.dotHeight, required this.dotWidth});
+  const FretboardTableDots({required this.dotHeight, required this.dotWidth});
   final double dotHeight;
   final double dotWidth;
 
   final int frets = 15;
   final int strings = 6;
-  static ChordScaleFingeringsModel? auxMap;
-  late ChordScaleFingeringsModel selectedChordsAndBass;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(children: <Widget>[
-      Consumer(builder: (context, watch, _) {
-        var fingerings = ref.watch(chordModelFretboardFingeringProvider) as Map;
-
-        if (fingerings.isNotEmpty) {
-          selectedChordsAndBass = auxMap ?? fingerings[fingerings.keys.first];
-        }
-        return fingerings.isEmpty
-            ? Container()
-            : Table(
-                children: [
-                  for (int i = 0; i < strings; i++)
-                    TableRow(children: [
-                      for (int j = 0; j < frets; j++)
-                        SizedBox(
-                          height: dotHeight,
-                          width: dotWidth,
-                          child: Center(
-                              child: Container(
-                                  height: 1 / frets * dotHeight * 600, //*300
-                                  width: 1 / frets * dotHeight * 600,
-                                  decoration: BoxDecoration(
-                                    color: createPositionColor(
-                                        stringNumber: i,
-                                        fretNumber: j,
-                                        positionsInfo: selectedChordsAndBass),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                      child: AutoSizeText(
-                                    buildFretboardNotesNames(
-                                      fingerings as Map<int,
-                                          ChordScaleFingeringsModel>,
-                                      i,
-                                      j,
-                                    ),
-                                    minFontSize: 10.0,
-                                    maxFontSize: 22.0,
-                                    style: const TextStyle(fontSize: 20.0),
-                                    maxLines: 1,
-                                  )))),
+    final fingerings = ref.watch(chordModelFretboardFingeringProvider);
+    return fingerings.when(
+      data: (data) => Column(
+        children: [
+          SizedBox(
+              width: 400,
+              height: 200,
+              // color: Colors.green,
+              child: ListView.builder(
+                itemCount: strings,
+                itemBuilder: (context, stringIndex) {
+                  return Row(
+                    children: List.generate(frets, (fretIndex) {
+                      return SizedBox(
+                        height: dotHeight,
+                        width: dotWidth,
+                        child: Center(
+                          child: Container(
+                            height: 1 / frets * dotHeight * 600, //*300
+                            width: 1 / frets * dotHeight * 600,
+                            decoration: BoxDecoration(
+                              color: createPositionColor(
+                                stringNumber: stringIndex,
+                                fretNumber: fretIndex,
+                                positionsInfo: data,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: AutoSizeText(
+                                buildFretboardNotesNames(
+                                  data!,
+                                  stringIndex,
+                                  fretIndex,
+                                ),
+                                minFontSize: 10.0,
+                                maxFontSize: 22.0,
+                                style: const TextStyle(fontSize: 20.0),
+                                maxLines: 1,
+                              ),
+                            ),
+                          ),
                         ),
-                    ]),
-                ],
-              );
-      })
-    ]);
+                      );
+                    }),
+                  );
+                },
+              )
+
+              // Table(
+              //   children: [
+              //     for (int i = 0; i < strings; i++)
+              //       TableRow(children: [
+              //         for (int j = 0; j < frets; j++)
+              //           SizedBox(
+              //             height: dotHeight,
+              //             width: dotWidth,
+              //             child: Center(
+              //                 child: Container(
+              //                     height: 1 / frets * dotHeight * 600, //*300
+              //                     width: 1 / frets * dotHeight * 600,
+              //                     decoration: BoxDecoration(
+              //                       color: createPositionColor(
+              //                           stringNumber: i,
+              //                           fretNumber: j,
+              //                           positionsInfo: data),
+              //                       shape: BoxShape.circle,
+              //                     ),
+              //                     child: Center(
+              //                         child: AutoSizeText(
+              //                       buildFretboardNotesNames(
+              //                         data!,
+              //                         i,
+              //                         j,
+              //                       ),
+              //                       minFontSize: 10.0,
+              //                       maxFontSize: 22.0,
+              //                       style: const TextStyle(fontSize: 20.0),
+              //                       maxLines: 1,
+              //                     )))),
+              //           ),
+              //       ]),
+              //   ],
+              // ),
+              ),
+        ],
+      ),
+      error: (error, stackTrace) => Text('Error: $error'),
+      loading: () => const CircularProgressIndicator(),
+    );
   }
 
-  buildFretboardNotesNames(
-      Map<int, ChordScaleFingeringsModel> fingerings, int i, int j) {
+  buildFretboardNotesNames(ChordScaleFingeringsModel fingerings, int i, int j) {
     String noteName;
-    ChordScaleFingeringsModel? noteInfo =
-        auxMap ?? fingerings[fingerings.keys.first];
 
     // print("NOTE INFO:  $noteInfo");
     if (['C', 'D', 'E', 'F', 'G', 'A', 'B']
-        .contains(noteInfo!.chordModel!.originKey)) {
+        .contains(fingerings.chordModel!.parentScaleKey)) {
       noteName = fretboardNotesNamesSharps[i][j];
     } else {
       noteName = fretboardNotesNamesFlats[i][j];

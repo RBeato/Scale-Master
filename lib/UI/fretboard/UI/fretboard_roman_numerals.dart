@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import '../../sizing_info.dart';
-import '../service/get_fret_dot_dimentions.dart';
+import '../service/get_fret_dot_dimensions.dart';
 
 class FretboardRomanNumerals extends StatelessWidget {
   FretboardRomanNumerals(this.cardSizeInfo);

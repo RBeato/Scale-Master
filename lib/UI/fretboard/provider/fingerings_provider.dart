@@ -1,13 +1,41 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scale_master_guitar/UI/fretboard/provider/selected_choreds_and_bass_provider.dart';
-
+import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
+import '../../../utils/music_utils.dart';
+import '../../drawer/provider/settings_state_notifier.dart';
+import '../../scale_chart/provider/top_note_provider.dart';
+import '../../scale_selection/provider/mode_dropdown_value_provider.dart';
+import '../../scale_selection/provider/scale_dropdown_value_provider.dart';
 import '../service/fingerings_positions_and_color.dart';
 
 final chordModelFretboardFingeringProvider =
-    StateNotifierProvider((ref) => ChordModelFretboardFingeringsProvider());
+    FutureProvider.autoDispose<ChordScaleFingeringsModel?>((ref) async {
+  final topNote = ref.watch(topNoteProvider);
+  final scale = ref.watch(scaleDropdownValueProvider);
+  final mode = ref.watch(modeDropdownValueProvider);
+
+  final settings = await ref.watch(settingsProvider.future);
+
+  print("settings : ${settings.musicKey}");
+
+  final chords =
+      MusicUtils.createChords(settings, flatsAndSharpsToFlats(topNote), scale);
+
+  ChordModel item = ChordModel(
+    parentScaleKey: topNote,
+    scale: 'Diatonic Major',
+    mode: mode,
+    chords: chords,
+    chordProgression: scale,
+    settings: settings,
+  );
+
+  var fingering = FingeringsColorBloc().createChordsScales(item, settings);
+
+  return fingering;
+});
 
 class ChordModelFretboardFingeringsProvider
     extends StateNotifier<Map<int, ChordScaleFingeringsModel>> {
@@ -16,10 +44,10 @@ class ChordModelFretboardFingeringsProvider
   }) : super(fingerings ?? Map<int, ChordScaleFingeringsModel>.from({}));
 
   createChordScaleFingerings(
-      List<SelectedItem> selectedChords, Settings settings) {
+      List<ChordModel> selectedChords, Settings settings) {
     for (var item in selectedChords) {
-      state[item.position] = FingeringsColorBloc()
-          .createChordsScales(item.chordModel as ChordModel, settings);
+      var fingering = FingeringsColorBloc().createChordsScales(item, settings);
+      print(fingering);
     }
   }
 

@@ -20,11 +20,8 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
   void _updateRotation(double delta) {
     _totalDeltaX += delta;
-    var newRotation = _dragStartRotation +
-        _totalDeltaX * 0.01; // Adjust the sensitivity if needed
     setState(() {
-      _currentRotation = newRotation;
-      ref.read(topNoteProvider.state).state = getTopNote();
+      _currentRotation = _dragStartRotation + _totalDeltaX * 0.01;
     });
   }
 
@@ -38,16 +35,12 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         ((adjustedRotation / (2 * math.pi / numStops)) % numStops).floor();
     var result = MusicConstants.notesWithFlatsAndSharps[
         ((noteIndex + numStops / 2) % numStops).toInt()];
-
-    // ref.read(topNoteProvider.notifier).update((state) => result);
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    // final topNote = ref.watch(topNoteProvider);
     print("Top note function: ${getTopNote()}");
-    // print(topNote);
 
     return GestureDetector(
       onPanStart: (details) {
@@ -64,6 +57,8 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         setState(() {
           _currentRotation = closestStop * _rotationPerStop;
         });
+        // Call the provider to update after the user releases their finger
+        ref.read(topNoteProvider.notifier).update((state) => getTopNote());
       },
       child: CustomPaint(
         painter: WheelPainter(_currentRotation),
