@@ -182,8 +182,9 @@ class FingeringsColorBloc {
 
   buildVoicingIntervalsList() {
     _voicingTonicIntervalList = [];
-    if (_voicingIntervalsNumbers == null)
-      return; //TODO: Review is this is needed
+    if (_voicingIntervalsNumbers == null) {
+      return;
+    } //TODO: Review if this is needed
     for (var element in _voicingIntervalsNumbers!) {
       _voicingTonicIntervalList!.add(_modeIntervals![element - 1]);
     }
@@ -215,12 +216,11 @@ class FingeringsColorBloc {
             noteNameWithoutIndex =
                 flatsOnlyNoteNomenclature(noteNameWithoutIndex);
             string = _lowerStringList![i]; //strings between 0-5
-            for (int nrpt = 0;
-                nrpt < noteRepetitionsInOneString.length;
-                nrpt++) {
-              fret = fretboardNotesNamesFlats[string - 1].indexOf(
-                  noteNameWithoutIndex, noteRepetitionsInOneString[nrpt]);
-              if (nrpt == 1 && fret == auxValue) {
+
+            for (int n = 0; n < noteRepetitionsInOneString.length; n++) {
+              fret = fretboardNotesNamesFlats[string - 1]
+                  .indexOf(noteNameWithoutIndex, noteRepetitionsInOneString[n]);
+              if (n == 1 && fret == auxValue) {
                 continue;
               }
               auxValue = fret;
@@ -318,10 +318,10 @@ class FingeringsColorBloc {
 
     var notesRepetitionsInOneString = [0, 2, 3];
     for (int string = 0; string < 6; string++) {
-      for (int note = 0; note < _modeNotes!.length; note++) {
+      for (int noteIndex = 0; noteIndex < _modeNotes!.length; noteIndex++) {
         for (int n = 0; n < notesRepetitionsInOneString.length; n++) {
           int fret = fretboardNotesNamesFlats[string].indexOf(
-            _modeNotes![note],
+            _modeNotes![noteIndex],
             notesRepetitionsInOneString[n],
           );
           bool contains = false;
@@ -331,8 +331,7 @@ class FingeringsColorBloc {
           if (contains == false) {
             _scaleNotesPositions.add([string + 1, fret]);
             _scaleColorfulMap["${string + 1},$fret"] =
-                scaleTonicColorMap[_modeIntervals![note]]!;
-            // print('_scaleColorfulMap ${_scaleColorfulMap}');
+                scaleTonicColorMap[_modeIntervals![noteIndex]]!;
           }
         }
       }
