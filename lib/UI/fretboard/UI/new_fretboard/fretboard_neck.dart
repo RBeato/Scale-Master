@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scale_master_guitar/UI/fretboard/UI/new_fretboard/scroll_widget.dart';
 
 import '../../../../hardcoded_data/fretboard_notes.dart';
 import '../../../../models/chord_scale_model.dart';
@@ -21,20 +20,24 @@ class Fretboard extends ConsumerWidget {
     // Use these properties to customize the dots or text within FretboardPainter
     return fingerings.when(
         data: (chordScaleFingeringsModel) {
-          return ScrollWidget(
-            controller: _scrollController,
-            child: CustomPaint(
-              painter: FretboardPainter(
-                stringCount: stringCount,
-                fretCount: fretCount,
-                fingeringsModel: chordScaleFingeringsModel!,
-              ),
-              child: SizedBox(
-                width: fretCount.toDouble() * 36,
-                height: stringCount.toDouble() * 24,
-              ),
-            ),
-          );
+          return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: _scrollController, // Add the controller here
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 50.0),
+                child: CustomPaint(
+                  painter: FretboardPainter(
+                    stringCount: stringCount,
+                    fretCount: fretCount,
+                    fingeringsModel: chordScaleFingeringsModel!,
+                  ),
+                  child: SizedBox(
+                    width: fretCount.toDouble() * 36,
+                    height: stringCount.toDouble() * 24,
+                  ),
+                ),
+              ));
         },
         loading: () => const CircularProgressIndicator(color: Colors.orange),
         error: (error, stackTrace) => Text('Error: $error'));
@@ -52,9 +55,12 @@ class FretboardPainter extends CustomPainter {
     required this.fingeringsModel,
   });
 
+  static TextStyle textStyle =
+      const TextStyle(fontSize: 10.0, color: Colors.white);
+
   @override
   void paint(Canvas canvas, Size size) {
-    // print("FingeringsModel : $fingeringsModel");
+    // print("FingeringsModel : ${fingeringsModel.chordModel}");
 
     var neckPaint = Paint()
       ..color = Colors.grey[700]!
@@ -95,7 +101,7 @@ class FretboardPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(
           canvas,
-          Offset(centerX - textPainter.width / 2, size.height * 0.9),
+          Offset(centerX - textPainter.width / 2, size.height * 0.95),
         );
       }
     }
@@ -106,7 +112,7 @@ class FretboardPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), neckPaint);
     }
 
-    // Draw notes names where there are no dots
+    // Draw notes names where there are NO DOTS
     for (int string = 0; string < stringCount; string++) {
       for (int fret = 0; fret < fretCount + 1; fret++) {
         // Create a TextPainter for drawing text
@@ -129,14 +135,8 @@ class FretboardPainter extends CustomPainter {
           double textY = y;
 
           String labelText = fretboardNotesNamesSharps[string][fret];
-          // print(labelText);
 
-          //(string != null) ? "$fret, $string" : "i, i";
-
-          textPainter.text = TextSpan(
-            text: labelText,
-            style: const TextStyle(fontSize: 7.0, color: Colors.white),
-          );
+          textPainter.text = TextSpan(text: labelText, style: textStyle);
           textPainter.layout();
 
           // Draw text at the calculated text position
@@ -153,6 +153,7 @@ class FretboardPainter extends CustomPainter {
     for (final position in fingeringsModel.scaleNotesPositions!) {
       int string = position[0];
       int fret = position[1];
+
       // Create a TextPainter for drawing text
       TextPainter textPainter = TextPainter(
         textDirection: TextDirection.ltr,
@@ -162,13 +163,13 @@ class FretboardPainter extends CustomPainter {
 
       // Check if the position is valid
       if (string >= 0 &&
-          string < stringCount + 1 &&
+          string < stringCount &&
           fret >= 0 && // Changed the condition to start from fret 1
           fret <= fretCount) {
         // Adjusted the condition for the last fret
         double x = (fret - 1) *
             fretWidth; // Subtract 1 from fret to place the dot one fret to the left
-        double y = (string - 1) *
+        double y = (string) *
             stringHeight; // Added 0.5 to align with the center of the horizontal line
 
         // Calculate text position
@@ -189,7 +190,7 @@ class FretboardPainter extends CustomPainter {
 
         textPainter.text = TextSpan(
           text: labelText,
-          style: const TextStyle(fontSize: 7.0, color: Colors.white),
+          style: textStyle,
         );
         textPainter.layout();
 

@@ -1,72 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../hardcoded_data/music_constants.dart';
-import '../chromatic_wheel/provider/top_note_provider.dart';
-
-class ChromaticWheel extends ConsumerStatefulWidget {
-  @override
-  _ChromaticWheelState createState() => _ChromaticWheelState();
-}
-
-class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
-  double _currentRotation = 0.0;
-  static const int numStops = 12;
-  final double _rotationPerStop = 2 * math.pi / numStops;
-  double _dragStartRotation = 0.0;
-  double _totalDeltaX = 0.0; // Added to track the total horizontal drag
-
-  void _updateRotation(double delta) {
-    _totalDeltaX += delta;
-    setState(() {
-      _currentRotation = _dragStartRotation + _totalDeltaX * 0.01;
-    });
-  }
-
-  String getTopNote() {
-    double topPositionAngle = math.pi / 2; // 90 degrees in radians
-    double adjustedRotation =
-        (_currentRotation + topPositionAngle) % (2 * math.pi);
-    if (adjustedRotation < 0) adjustedRotation += 2 * math.pi;
-
-    int noteIndex =
-        ((adjustedRotation / (2 * math.pi / numStops)) % numStops).floor();
-    var result = MusicConstants.notesWithFlatsAndSharps[
-        ((noteIndex + numStops / 2) % numStops).toInt()];
-    return result;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print("Top note function: ${getTopNote()}");
-
-    return GestureDetector(
-      onPanStart: (details) {
-        _dragStartRotation = _currentRotation;
-        _totalDeltaX = 0.0; // Reset the total drag distance
-      },
-      onPanUpdate: (details) {
-        _updateRotation(details.delta.dx);
-      },
-      onPanEnd: (details) {
-        var closestStop =
-            ((_currentRotation + _rotationPerStop / 2) / _rotationPerStop)
-                .floor(); // Adjust to snap to the nearest stop
-        setState(() {
-          _currentRotation = closestStop * _rotationPerStop;
-        });
-        // Call the provider to update after the user releases their finger
-        ref.read(topNoteProvider.notifier).update((state) => getTopNote());
-      },
-      child: CustomPaint(
-        painter: WheelPainter(_currentRotation),
-        child: const SizedBox(width: 300, height: 300),
-      ),
-    );
-  }
-}
 
 class WheelPainter extends CustomPainter {
   final double rotation;

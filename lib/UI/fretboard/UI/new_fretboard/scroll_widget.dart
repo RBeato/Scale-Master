@@ -13,7 +13,7 @@ class ScrollWidget extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       controller: controller, // Add the controller here
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 50.0),
+        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 50.0),
         child: child,
       ),
     );

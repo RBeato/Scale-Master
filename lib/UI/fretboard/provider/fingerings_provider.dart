@@ -5,7 +5,7 @@ import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
 import '../../../utils/music_utils.dart';
 import '../../drawer/provider/settings_state_notifier.dart';
-import '../../scale_chart/provider/top_note_provider.dart';
+import '../../chromatic_wheel/provider/top_note_provider.dart';
 import '../../scale_selection/provider/mode_dropdown_value_provider.dart';
 import '../../scale_selection/provider/scale_dropdown_value_provider.dart';
 import '../service/fingerings_positions_and_color.dart';
