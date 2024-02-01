@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scale_master_guitar/hardcoded_data/scales_data_v2.dart';
+import 'package:scale_master_guitar/hardcoded_data/scales/scales_data_v2.dart';
 import 'package:scale_master_guitar/models/settings_model.dart';
 
 import '../UI/layout/chord_container_colors.dart';

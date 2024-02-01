@@ -1,7 +1,7 @@
 import 'package:tonic/tonic.dart';
 
 import '../hardcoded_data/flats_only_nomenclature_converter.dart';
-import '../hardcoded_data/scales_data_v2.dart';
+import '../hardcoded_data/scales/scales_data_v2.dart';
 import '../models/settings_model.dart';
 
 class MusicUtils {

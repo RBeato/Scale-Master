@@ -1,48 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../hardcoded_data/fretboard_notes.dart';
-import '../../../../models/chord_scale_model.dart';
-import '../../provider/fingerings_provider.dart';
-
-class Fretboard extends ConsumerWidget {
-  Fretboard({Key? key}) : super(key: key);
-  // Create a ScrollController
-  final _scrollController = ScrollController();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    int stringCount = 6;
-    int fretCount = 24;
-    // Access properties from chordScaleFingeringsModel and customize the appearance
-    final fingerings = ref.watch(chordModelFretboardFingeringProvider);
-
-    // Use these properties to customize the dots or text within FretboardPainter
-    return fingerings.when(
-        data: (chordScaleFingeringsModel) {
-          return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController, // Add the controller here
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 50.0),
-                child: CustomPaint(
-                  painter: FretboardPainter(
-                    stringCount: stringCount,
-                    fretCount: fretCount,
-                    fingeringsModel: chordScaleFingeringsModel!,
-                  ),
-                  child: SizedBox(
-                    width: fretCount.toDouble() * 36,
-                    height: stringCount.toDouble() * 24,
-                  ),
-                ),
-              ));
-        },
-        loading: () => const CircularProgressIndicator(color: Colors.orange),
-        error: (error, stackTrace) => Text('Error: $error'));
-  }
-}
+import '../../../hardcoded_data/fretboard_notes.dart';
+import '../../../models/chord_scale_model.dart';
 
 class FretboardPainter extends CustomPainter {
   final int stringCount;
@@ -125,10 +84,8 @@ class FretboardPainter extends CustomPainter {
         // Check if the position is valid
         if (!fingeringsModel.scaleNotesPositions!.contains([string, fret])) {
           // Adjusted the condition for the last fret
-          double x = (fret - 1) *
-              fretWidth; // Subtract 1 from fret to place the dot one fret to the left
-          double y = (string) *
-              stringHeight; // Added 0.5 to align with the center of the horizontal line
+          double x = (fret - 1) * fretWidth;
+          double y = (string) * stringHeight;
 
           // Calculate text position
           double textX = x + fretWidth / 2;
@@ -163,14 +120,12 @@ class FretboardPainter extends CustomPainter {
 
       // Check if the position is valid
       if (string >= 0 &&
-          string < stringCount &&
+          string < stringCount + 1 &&
           fret >= 0 && // Changed the condition to start from fret 1
           fret <= fretCount) {
         // Adjusted the condition for the last fret
-        double x = (fret - 1) *
-            fretWidth; // Subtract 1 from fret to place the dot one fret to the left
-        double y = (string) *
-            stringHeight; // Added 0.5 to align with the center of the horizontal line
+        double x = (fret - 1) * fretWidth;
+        double y = (string - 1) * stringHeight;
 
         // Calculate text position
         double textX = x + fretWidth / 2;
@@ -184,7 +139,7 @@ class FretboardPainter extends CustomPainter {
         canvas.drawCircle(Offset(x + fretWidth / 2, y), dotRadius, dotColor);
         // Use x + fretWidth / 2 for centerX
 
-        String labelText = fretboardNotesNamesSharps[string][fret];
+        String labelText = fretboardNotesNamesSharps[string - 1][fret];
 
         //(string != null) ? "$fret, $string" : "i, i";
 

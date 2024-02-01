@@ -7,7 +7,7 @@ import '../../layout/chord_container_colors.dart';
 import '../../../hardcoded_data/music_constants.dart';
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
 import '../../../hardcoded_data/fretboard_notes.dart';
-import '../../../hardcoded_data/scales_data_v2.dart';
+import '../../../hardcoded_data/scales/scales_data_v2.dart';
 import '../../../hardcoded_data/tonic_harmonic_minor_aux_bug.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/chord_scale_model.dart';
@@ -316,32 +316,62 @@ class FingeringsColorBloc {
     _modeNotes = _modeNotes!.map((e) => flatsOnlyNoteNomenclature(e)).toList();
     // print('ModeNotes: ${_modeNotes}');
 
-    var notesRepetitionsInOneString = [0, 2, 3];
+    // var notesRepetitionsInOneString = [0, 2, 3];
     for (int string = 0; string < 6; string++) {
-      for (int noteIndex = 0; noteIndex < _modeNotes!.length; noteIndex++) {
-        for (int n = 0; n < notesRepetitionsInOneString.length; n++) {
+      for (int i = 0; i < _modeNotes!.length; i++) {
+        int noteIndex = 0;
+        while (noteIndex != -1) {
           int fret = fretboardNotesNamesFlats[string].indexOf(
-            _modeNotes![noteIndex],
-            notesRepetitionsInOneString[n],
+            _modeNotes![i],
+            noteIndex,
           );
-          bool contains = false;
-          for (var k in _scaleNotesPositions) {
-            if (k[0] == string + 1 && k[1] == fret) contains = true;
+
+          if (fret == -1) {
+            // Add this check to break out of the loop if note is not found
+            break; // Exit the while loop
           }
-          if (contains == false) {
-            _scaleNotesPositions.add([string + 1, fret]);
-            _scaleColorfulMap["${string + 1},$fret"] =
-                scaleTonicColorMap[_modeIntervals![noteIndex]]!;
-          }
+
+          _scaleNotesPositions.add([string + 1, fret]);
+          _scaleColorfulMap["${string + 1},$fret"] =
+              scaleTonicColorMap[_modeIntervals![i]]!;
+          print("_scaleNotesPositions $_scaleNotesPositions");
+          print("_scaleColorfulMap $_scaleColorfulMap");
+          noteIndex = fret + 1; // Prepare for the next iteration
         }
       }
     }
+
+    // var notesRepetitionsInOneString = [0, 2, 3];
+    // for (int string = 0; string < 6; string++) {
+    //   for (int i = 0; i < _modeNotes!.length; i++) {
+    //     for (int n = 0; n < notesRepetitionsInOneString.length; n++) {
+    //       print(
+    //           " _modeNotes![i], ${_modeNotes![i]} notesRepetitionsInOneString[n]${notesRepetitionsInOneString[n]}");
+    //       int fret = fretboardNotesNamesFlats[string].indexOf(
+    //         _modeNotes![i],
+    //         notesRepetitionsInOneString[n],
+    //       );
+    //       print("Fret: $fret");
+    //       bool contains = false;
+    //       for (var k in _scaleNotesPositions) {
+    //         if (k[0] == string + 1 && k[1] == fret) contains = true;
+    //       }
+    //       if (contains == false) {
+    //         _scaleNotesPositions.add([string + 1, fret]);
+    //         _scaleColorfulMap["${string + 1},$fret"] =
+    //             scaleTonicColorMap[_modeIntervals![i]]!;
+    //         print("_scaleNotesPositions $_scaleNotesPositions");
+    //         print("_scaleColorfulMap $_scaleColorfulMap");
+    //       }
+    //     }
+    //   }
+    // }
     //! IF 'scalesOnly' is selected and IF brainin colors are selected show colorful fretboard
     // print('_scaleNotesPositions $_scaleNotesPositions');
   }
 
   Map cagedVoicings = {
-    'C': {'5': 1, '4': 3, '3': 5, '2': 1, '1': 1},
+    'C': {'5': 1, '4': 3, '3': 5, '2': 1, '1': 3},
     'A': {'5': 1, '4': 5, '3': 1, '2': 3, '1': 5},
     'G': {'6': 1, '5': 3, '4': 5, '3': 1, '2': 3, '1': 1},
     'E': {'6': 1, '5': 5, '4': 1, '3': 3, '2': 5, '1': 1},

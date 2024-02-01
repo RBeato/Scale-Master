@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/chord_scale_model.dart';
-import '../../../models/settings_model.dart';
 import '../../../utils/music_utils.dart';
 import '../../drawer/provider/settings_state_notifier.dart';
 import '../../chromatic_wheel/provider/top_note_provider.dart';
@@ -43,13 +42,13 @@ class ChordModelFretboardFingeringsProvider
     fingerings,
   }) : super(fingerings ?? Map<int, ChordScaleFingeringsModel>.from({}));
 
-  createChordScaleFingerings(
-      List<ChordModel> selectedChords, Settings settings) {
-    for (var item in selectedChords) {
-      var fingering = FingeringsColorBloc().createChordsScales(item, settings);
-      print(fingering);
-    }
-  }
+  // createChordScaleFingerings(
+  //     List<ChordModel> selectedChords, Settings settings) {
+  //   for (var item in selectedChords) {
+  //     var fingering = FingeringsColorBloc().createChordsScales(item, settings);
+  //     print(fingering);
+  //   }
+  // }
 
   deleteFingering(int index) {
     state.removeWhere((key, value) => key == index);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/chromatic_wheel.dart';
 
 import 'UI/drawer/UI/custom_drawer.dart';
-import 'UI/fretboard/UI/new_fretboard/fretboard_neck.dart';
+import 'UI/fretboard/UI/fretboard_neck.dart';
 import 'UI/scale_selection/scale_selection.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +22,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.grey[800],
         title: Text(widget.title),
+        
       ),
       body: Center(
         child: Column(
