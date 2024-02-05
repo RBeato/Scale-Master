@@ -8,7 +8,6 @@ import '../../../hardcoded_data/music_constants.dart';
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
 import '../../../hardcoded_data/fretboard_notes.dart';
 import '../../../hardcoded_data/scales/scales_data_v2.dart';
-import '../../../hardcoded_data/tonic_harmonic_minor_aux_bug.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
@@ -63,7 +62,7 @@ class FingeringsColorBloc {
   }
 
   createFretboardPositions(ChordModel chordModel) {
-    setModeDegrees();
+    setModeDegrees(chordModel);
     checkLowestStringSelection();
     filterSettings();
     buildVoicingIntervalsList();
@@ -84,24 +83,9 @@ class FingeringsColorBloc {
     return _scaleChordPositions;
   }
 
-  setModeDegrees() {
-    late String mainScale;
-    for (var element in Scales.data.keys) {
-      if (Scales.data[element]['modeNames'].contains(_modeOption)) {
-        mainScale = element;
-      } else {
-        debugPrint("Mode not found");
-        continue;
-      }
-    }
-
-    if (mainScale == 'Harmonic Minor') {
-      //bug in tonic. Added aux data
-      _modeIntervals = harmonicMinorModes[_modeOption];
-    } else {
-      final scalePattern = tonic.ScalePattern.findByName(mainScale);
-      _modeIntervals = scalePattern.modes[_modeOption]!.intervals;
-    }
+  setModeDegrees(chordModel) {
+    _modeIntervals =
+        Scales.data[chordModel.scale][chordModel.mode]['scaleDegrees'];
   }
 
   checkLowestStringSelection() {

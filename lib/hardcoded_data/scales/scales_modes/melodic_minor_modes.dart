@@ -1,6 +1,6 @@
 import 'package:tonic/tonic.dart';
 
-Map melodicMinorModes = {
+Map<String, dynamic> melodicMinorModes = {
   'Jazz Minor': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', 'VI', 'VII'],
     'triad': [Interval.P1, Interval.m3, Interval.P5],

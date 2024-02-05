@@ -26,7 +26,7 @@ class ChordModel {
     print(
         "settings!.originScale: $scale, chordProgression: $chordProgression, mapKey: $mapKey, chordNameForAudio: $parentScaleKey");
 
-    var value = Scales.data[scale][mapKey]
+    var value = Scales.data[scale][mode][mapKey]
         [chords!.indexOf(flatsAndSharpsToFlats(parentScaleKey))];
 
     // var value = scalesData[chordProgression][mapKey]
@@ -42,7 +42,6 @@ class ChordModel {
     this.mode,
     this.chordNameForAudio,
     this.chords,
-    this.chordProgression,
     this.settings,
   }) {
     scale = scale ?? 'Diatonic Major';
@@ -83,7 +82,6 @@ class ChordModel {
     Nullable<String>? chordNameForAudio,
     Nullable<String>? chordNameForUI,
     Nullable<String>? function,
-    Nullable<String>? chordProgression,
     Nullable<String>? typeOfChord,
     Nullable<String>? bassNote,
     Nullable<Color>? color,
@@ -99,9 +97,6 @@ class ChordModel {
             ? this.chordNameForAudio
             : chordNameForAudio.value,
         chords: chords == null ? this.chords : chords.value,
-        chordProgression: chordProgression == null
-            ? this.chordProgression
-            : chordProgression.value,
         settings: settings == null ? this.settings : settings.value,
       );
 

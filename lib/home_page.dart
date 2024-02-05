@@ -3,6 +3,7 @@ import 'package:scale_master_guitar/UI/chromatic_wheel/chromatic_wheel.dart';
 
 import 'UI/drawer/UI/custom_drawer.dart';
 import 'UI/fretboard/UI/fretboard_neck.dart';
+import 'UI/player_page/player_page.dart';
 import 'UI/scale_selection/scale_selection.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,7 +23,6 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.grey[800],
         title: Text(widget.title),
-        
       ),
       body: Center(
         child: Column(
@@ -43,7 +43,13 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(12.0),
                   child: IconButton(
                     icon: const Icon(Icons.arrow_forward),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PlayerPage()),
+                      );
+                    },
                     tooltip: 'Play',
                     color: Colors.orange[800],
                   ),
@@ -54,12 +60,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       drawer: CustomDrawer(),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   tooltip: 'Increment',
-      //   backgroundColor: Colors.orange[800],
-      //   child: const Icon(Icons.play_arrow),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        tooltip: 'play',
+        backgroundColor: Colors.orange[800],
+        child: const Icon(Icons.play_arrow),
+      ),
     );
   }
 }

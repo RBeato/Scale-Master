@@ -19,15 +19,14 @@ final chordModelFretboardFingeringProvider =
 
   print("settings : ${settings.musicKey}");
 
-  final chords =
-      MusicUtils.createChords(settings, flatsAndSharpsToFlats(topNote), scale);
+  final chords = MusicUtils.createChords(
+      settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
   ChordModel item = ChordModel(
     parentScaleKey: topNote,
-    scale: 'Diatonic Major',
+    scale: scale.toString(),
     mode: mode,
     chords: chords,
-    chordProgression: scale,
     settings: settings,
   );
 

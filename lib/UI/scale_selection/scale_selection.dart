@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../hardcoded_data/scales/scales_data_v2.dart';
 import 'provider/mode_dropdown_value_provider.dart';
 import 'provider/scale_dropdown_value_provider.dart';
 
@@ -10,20 +11,9 @@ class ScaleSelector extends ConsumerStatefulWidget {
 }
 
 class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
-  String? selectedScale;
   String? selectedMode;
   String? selectedChordType;
 
-  // Define your lists of options
-  final List<String> scales = [
-    'Diatonic Major',
-    'Melodic Minor',
-    'Harmonic Minor',
-    'Harmonic Major',
-    'Pentatonic',
-    'Octatonic',
-    'Hexatonic'
-  ];
   final List<String> chordTypes = [
     'Triad',
     'Seventh',
@@ -32,14 +22,11 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
     'Thirteenth'
   ];
 
-  // Logic to determine the modes based on the selected scale
-  List<String> getModesForScale(String scale) {
-    // Implement your logic here to return the list of modes for the given scale
-    return ['Mode 1', 'Mode 2']; // Placeholder list
-  }
-
   @override
   Widget build(BuildContext context) {
+    final selectedScale = ref.watch(scaleDropdownValueProvider);
+    final selectedMode = ref.watch(modeDropdownValueProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Row(
@@ -54,18 +41,19 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
                 dropdownColor: Colors.grey[800],
                 value: selectedScale,
                 onChanged: (newValue) {
-                  setState(() {
-                    ref
-                        .read(scaleDropdownValueProvider.notifier)
-                        .update((state) => newValue!);
-                    selectedScale = newValue!;
-                    selectedMode = null; // Reset mode when scale changes
-                  });
+                  ref.read(scaleDropdownValueProvider.notifier).state =
+                      newValue!;
+                  ref.read(modeDropdownValueProvider.notifier).state =
+                      Scales.data[newValue].keys.first as String;
+                  print(ref.read(modeDropdownValueProvider.notifier).state);
+                  print(ref.read(scaleDropdownValueProvider.notifier).state);
                 },
-                items: scales.map<DropdownMenuItem<String>>((String value) {
+                items: Scales.data.keys
+                    .map<DropdownMenuItem<String>>((dynamic value) {
+                  String key = value as String;
                   return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value,
+                    value: key,
+                    child: Text(key,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.white70)),
                   );
@@ -85,47 +73,22 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
                 ref
                     .read(modeDropdownValueProvider.notifier)
                     .update((state) => newValue!);
-                setState(() {
-                  selectedMode = newValue!;
-                });
               },
-              items: selectedScale != null
-                  ? getModesForScale(selectedScale!)
-                      .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Colors.white70)),
-                      );
-                    }).toList()
-                  : [],
+              items: Scales.data[selectedScale].keys
+                  .map<DropdownMenuItem<String>>((dynamic value) {
+                String key = value as String;
+                return DropdownMenuItem<String>(
+                  value: key,
+                  child: Text(key,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white70)),
+                );
+              }).toList(),
               hint: const Text('Select Mode',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.white70)),
             ),
           ),
-          // Expanded(
-          //   child: DropdownButtonFormField<String>(
-          //     value: selectedChordType,
-          //     onChanged: (newValue) {
-          //       setState(() {
-          //         selectedChordType = newValue!;
-          //       });
-          //     },
-          //     items: chordTypes.map<DropdownMenuItem<String>>((String value) {
-          //       return DropdownMenuItem<String>(
-          //         value: value,
-          //         child: Text(value),
-          //       );
-          //     }).toList(),
-          //     hint: const Text(
-          //       'Select Chord Type',
-          //       overflow: TextOverflow.ellipsis,
-          //       style: TextStyle(color: Colors.white12),
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );
