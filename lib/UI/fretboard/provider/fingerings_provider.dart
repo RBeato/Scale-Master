@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
-import '../../../models/chord_model.dart';
+import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../utils/music_utils.dart';
 import '../../drawer/provider/settings_state_notifier.dart';
@@ -19,15 +19,16 @@ final chordModelFretboardFingeringProvider =
 
   print("settings : ${settings.musicKey}");
 
-  final chords = MusicUtils.createChords(
+  final List chords = MusicUtils.createChords(
       settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
-  ChordModel item = ChordModel(
+  ScaleModel item = ScaleModel(
     parentScaleKey: topNote,
     scale: scale.toString(),
     mode: mode,
     chords: chords,
     settings: settings,
+    originModeType: '',
   );
 
   var fingering = FingeringsColorBloc().createChordsScales(item, settings);

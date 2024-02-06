@@ -1,16 +1,16 @@
-import '../../../models/selected_item.dart';
+import '../../../models/chord_model.dart';
 
 class BassSounds {
-  List<SelectedItem> _bassNotesAndPositions = [];
+  List<ChordModel> _bassNotesAndPositions = [];
   final int _octave = 2;
 
-  List<SelectedItem> get bassLine => _bassNotesAndPositions;
+  List<ChordModel> get bassLine => _bassNotesAndPositions;
 
   clearBassNotes() {
     _bassNotesAndPositions = [];
   }
 
-  createSoundLists(List<SelectedItem> selectedItems) {
+  createSoundLists(List<ChordModel> selectedItems) {
     if (selectedItems.isEmpty) return;
     _bassNotesAndPositions = selectedItems;
     addOctaveIndexes();
@@ -19,10 +19,10 @@ class BassSounds {
 
   List auxHashCodes = [];
   addOctaveIndexes() {
-    for (var element in _bassNotesAndPositions) {
-      element.chordModel!.parentScaleKey = // was bass note...
+    for (var chord in _bassNotesAndPositions) {
+      chord.parentScaleKey = // was bass note...
 
-          element.chordModel!.chordNameForAudio! + _octave.toString();
+          chord.chordNameForAudio! + _octave.toString();
     }
   }
 }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'chord_model.dart';
+import 'scale_model.dart';
 
 class ChordScaleFingeringsModel {
   List? scaleNotesPositions;
   List? chordVoicingNotesPositions;
   Map<String, Color>? scaleColorfulMap;
-  ChordModel? chordModel;
+  ScaleModel? chordModel;
 
   ChordScaleFingeringsModel(
       {this.chordVoicingNotesPositions,

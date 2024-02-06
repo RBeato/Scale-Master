@@ -8,7 +8,7 @@ import '../../../hardcoded_data/music_constants.dart';
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
 import '../../../hardcoded_data/fretboard_notes.dart';
 import '../../../hardcoded_data/scales/scales_data_v2.dart';
-import '../../../models/chord_model.dart';
+import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
 
@@ -51,17 +51,16 @@ class FingeringsColorBloc {
   }
 
   ChordScaleFingeringsModel createChordsScales(
-      ChordModel chordModel, Settings settings) {
+      ScaleModel chordModel, Settings settings) {
     settingsChanged(settings);
 
     _key = chordModel.parentScaleKey;
     _modeOption = chordModel.mode;
-    _chordName = chordModel.chordNameForAudio as String;
-    _numberOfChordNotes = chordModel.organizedPitches!.length;
+
     return createFretboardPositions(chordModel);
   }
 
-  createFretboardPositions(ChordModel chordModel) {
+  createFretboardPositions(ScaleModel chordModel) {
     setModeDegrees(chordModel);
     checkLowestStringSelection();
     filterSettings();

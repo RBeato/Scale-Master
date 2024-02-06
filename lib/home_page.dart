@@ -35,33 +35,15 @@ class _HomePageState extends State<HomePage> {
                   child: Fretboard(),
                 )),
             // const PianoWidget(),
-            // const Expanded(flex: 2, child: Chords()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PlayerPage()),
-                      );
-                    },
-                    tooltip: 'Play',
-                    color: Colors.orange[800],
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
       drawer: CustomDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const PlayerPage()));
+        },
         tooltip: 'play',
         backgroundColor: Colors.orange[800],
         child: const Icon(Icons.play_arrow),

@@ -3,32 +3,33 @@ import 'package:tonic/tonic.dart' as tonic;
 
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
 import '../../../hardcoded_data/music_constants.dart';
-import '../../../models/selected_item.dart';
+import '../../../models/chord_model.dart';
 
-class ChordSounds {
-  late List<SelectedItem> _selectedChords;
+class SoundCreationService {
+  late List<ChordModel> _selectedChords;
   final Map<int, String> _chordRootPositionsAndNotes = {};
   int _octave = 3;
   bool isFirstChord = true;
 
   Map<int, String> get bassLine => _chordRootPositionsAndNotes;
-  List<SelectedItem> get chordModelAndPositions => _selectedChords;
+  List<ChordModel> get chordModelAndPositions => _selectedChords;
 
   clearChords() {
     _selectedChords = [];
   }
 
-  createSoundLists(List<SelectedItem> selectedItems) {
+  createSoundLists(List<ChordModel> selectedItems, bool addedPedalMainNote) {
     if (selectedItems.isEmpty) return;
 
-    _selectedChords =
-        selectedItems.where((item) => item.isBass == false).toList();
+    if (addedPedalMainNote) {
+      //do Something
+    }
 
     for (var item in _selectedChords) {
-      var chord = tonic.Chord.parse(
-          '${item.chordModel!.chordNameForAudio} ${item.chordModel!.typeOfChord}');
+      var chord =
+          tonic.Chord.parse('${item.chordNameForAudio} ${item.typeOfChord}');
       var chordsList = removeOctaveIndexes(chord.pitches);
-      item.chordModel!.organizedPitches = chordsList;
+      item.organizedPitches = chordsList;
       _chordRootPositionsAndNotes[item.position] = chord.root.toString();
     }
 
@@ -55,8 +56,8 @@ class ChordSounds {
   }
 
   chooseFirstChordInversionRandomly() {
-    _selectedChords.first.chordModel!.organizedPitches =
-        _reOrderNotes(_selectedChords.first.chordModel!.organizedPitches);
+    _selectedChords.first.organizedPitches =
+        _reOrderNotes(_selectedChords.first.organizedPitches);
     isFirstChord = false;
   }
 
@@ -71,20 +72,18 @@ class ChordSounds {
   }
 
   createVoiceLeading() {
-    String highestNote =
-        _selectedChords.first.chordModel!.organizedPitches!.last;
+    String highestNote = _selectedChords.first.organizedPitches!.last;
     int indexOfhighestNote = MusicConstants.notesWithFlats.indexOf(highestNote);
 
     for (var item in _selectedChords) {
       int noteCounter = 0;
-      for (var note in item.chordModel!.organizedPitches!) {
-        item.chordModel!.organizedPitches![noteCounter] =
-            flatsOnlyNoteNomenclature(note);
+      for (var note in item.organizedPitches!) {
+        item.organizedPitches![noteCounter] = flatsOnlyNoteNomenclature(note);
         noteCounter++;
       }
 
       List indexesList = [];
-      for (var note in item.chordModel!.organizedPitches!) {
+      for (var note in item.organizedPitches!) {
         indexesList.add(MusicConstants.notesWithFlats.indexOf(note));
       }
       var reorderedChordIndexes = indexesList
@@ -97,7 +96,7 @@ class ChordSounds {
       for (var index in reorderedChordIndexes) {
         reorderedChordNotes.add(MusicConstants.notesWithFlats[index]);
       }
-      item.chordModel!.organizedPitches = reorderedChordNotes;
+      item.organizedPitches = reorderedChordNotes;
       indexOfhighestNote = reorderedChordIndexes.last.toInt();
     }
   }
@@ -107,9 +106,9 @@ class ChordSounds {
     for (var item in _selectedChords) {
       int auxIndexValue = 0;
       _octave = 3;
-      List audioNamesNotes = item.chordModel!.organizedPitches as List<String>;
+      List audioNamesNotes = item.organizedPitches as List<String>;
 
-      if (!auxHashCodes.contains(item.chordModel.hashCode)) {
+      if (!auxHashCodes.contains(item.hashCode)) {
         //avoid adding indexes if chords are repeated
         if (isFundamentalStateChord(item)) {
           _octave++;
@@ -121,20 +120,19 @@ class ChordSounds {
           }
           auxIndexValue =
               MusicConstants.notesWithFlats.indexOf(audioNamesNotes[i]);
-          item.chordModel!.organizedPitches![i] =
-              audioNamesNotes[i] + _octave.toString();
+          item.organizedPitches![i] = audioNamesNotes[i] + _octave.toString();
         }
-        auxHashCodes.add(item.chordModel.hashCode);
+        auxHashCodes.add(item.hashCode);
       }
       // print('SelectedChordsNotes   ${item.chordModel.organizedPitches} ');
     }
     auxHashCodes.clear();
   }
 
-  isFundamentalStateChord(SelectedItem item) {
+  isFundamentalStateChord(ChordModel item) {
     int aux = 0;
     bool result = true;
-    for (var index in item.chordModel!.organizedPitches!) {
+    for (var index in item.organizedPitches!) {
       if (MusicConstants.notesWithFlats.indexOf(index) < aux) result = false;
       aux = MusicConstants.notesWithFlats.indexOf(index);
     }

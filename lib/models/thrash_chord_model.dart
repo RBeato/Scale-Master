@@ -1,9 +1,9 @@
-import 'package:scale_master_guitar/models/chord_model.dart';
+import 'package:scale_master_guitar/models/scale_model.dart';
 
 class TrashChordModel {
   bool isBassNote;
   int positionIndex;
-  ChordModel chordModel;
+  ScaleModel chordModel;
 
   TrashChordModel(
       {required this.isBassNote,

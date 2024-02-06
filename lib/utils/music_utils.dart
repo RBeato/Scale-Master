@@ -5,7 +5,7 @@ import '../hardcoded_data/scales/scales_data_v2.dart';
 import '../models/settings_model.dart';
 
 class MusicUtils {
-  static createChords(
+  static List createChords(
       Settings settings, String key, String scale, String mode) {
     return MusicUtils.cleanNotesIndexes(Scales.data[scale][mode]['scaleDegrees']
         .map((interval) => Pitch.parse(key) + interval)
@@ -29,7 +29,7 @@ class MusicUtils {
     return newListOfNotes;
   }
 
-  static cleanNotesIndexes(listOfNotes) {
+  static List cleanNotesIndexes(listOfNotes) {
     var testFlatsList = listOfNotes
         .map((note) => flatsOnlyNoteNomenclature(
             note.toString().substring(0, note.toString().length - 1)))

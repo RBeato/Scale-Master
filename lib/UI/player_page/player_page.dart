@@ -1,21 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_sequencer/models/instrument.dart';
 
 import 'package:flutter_sequencer/sequence.dart';
 import 'package:flutter_sequencer/track.dart';
 import 'package:flutter_sequencer/global_state.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:scale_master_guitar/UI/fretboard/UI/fretboard_neck.dart';
 
 import '../../constants.dart';
 import '../../hardcoded_data/music_constants.dart';
 import '../../models/project_state.dart';
-import '../../models/selected_item.dart';
+import '../../models/chord_model.dart';
 import '../../models/step_sequencer_state.dart';
 import '../../models/transport.dart';
+import '../chords/chords.dart';
 import '../fretboard/provider/beat_counter_provider.dart';
+import 'chords_list.dart';
 import 'drum_machine.dart';
 import 'provider/metronome_tempo_provider.dart';
 
@@ -57,7 +59,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerPageShowcase>
   void initState() {
     super.initState();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
 
     stepCount = ref.read(beatCounterProvider) as int;
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
@@ -121,11 +123,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerPageShowcase>
   }
 
   ProjectState createProject(
-      {List<SelectedItem>? pianoPart, List<SelectedItem>? bassPart}) {
+      {List<ChordModel>? pianoPart, List<ChordModel>? bassPart}) {
     ProjectState project = ProjectState.empty(stepCount);
 
     pianoPart?.forEach((chord) {
-      for (var note in chord.chordModel!.organizedPitches!) {
+      for (var note in chord.organizedPitches!) {
         project.pianoState.setVelocity(
             chord.position, MusicConstants.midiValues[note]!, 0.75);
       }
@@ -134,7 +136,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerPageShowcase>
     bassPart?.forEach((chord) {
       // String octaveIndex = '2';
       project.bassState.setVelocity(chord.position,
-          MusicConstants.midiValues[chord.chordModel!.parentScaleKey]!, 0.99);
+          MusicConstants.midiValues[chord.parentScaleKey]!, 0.99);
     });
     return project;
   }
@@ -271,79 +273,68 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerPageShowcase>
     return WillPopScope(
       onWillPop: () => popped(),
       child: Scaffold(
+        backgroundColor: Colors.grey[900],
         appBar: AppBar(
-          title: const Text(
-            "Player",
-          ),
-          centerTitle: true,
+          backgroundColor: Colors.grey[800],
+          title: const Text("Play!"),
         ),
         body: SafeArea(
-          child: Stack(children: [
-            Positioned(
-                right: 0,
-                bottom: 0.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              //FRETBOARD
+              Fretboard(),
+              //CHORDS
+              const Expanded(flex: 2, child: Chords()),
+              //SELECTED CHORD LIST
+              ChordListWidget(),
+              // SEQUENCER
+              Opacity(opacity: 0.85, child: buildColumnWithData()),
+              //CLEAR DRUMS BUTTON and TRANSPORT
+              Container(
+                // color: Colors.green,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // SEQUENCER
-                      Expanded(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                  ),
+                  child: Row(children: [
+                    //CLEAR DRUMS
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        child: InkWell(
+                          onTap: () {
+                            clearTracks();
+                          },
                           child: Opacity(
-                              opacity: 0.85, child: buildColumnWithData())),
-                      //CLEAR DRUMS BUTTON and TRANSPORT
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          // color: Colors.green,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
+                            opacity: 0.8,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black26,
+                                // Colors.orange[500].withOpacity(0.8),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
                             ),
-                            child: Row(children: [
-                              //CLEAR DRUMS
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  child: InkWell(
-                                    onTap: () {
-                                      clearTracks();
-                                    },
-                                    child: Opacity(
-                                      opacity: 0.8,
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.black26,
-                                          // Colors.orange[500].withOpacity(0.8),
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // ),
-                                ),
-                              ),
-                              //TRANSPORT
-                              Expanded(
-                                flex: 3,
-                                child: Transport(
-                                  isPlaying: isPlaying,
-                                  isLooping: isLooping,
-                                  onTogglePlayPause: handleTogglePlayPause,
-                                  onStop: handleStop,
-                                  onToggleLoop: handleToggleLoop,
-                                ),
-                              ),
-                            ]),
                           ),
                         ),
+                        // ),
                       ),
-                    ],
-                  ),
-                )),
-          ]),
+                    ),
+                    //TRANSPORT
+                    Transport(
+                      isPlaying: isPlaying,
+                      isLooping: isLooping,
+                      onTogglePlayPause: handleTogglePlayPause,
+                      onStop: handleStop,
+                      onToggleLoop: handleToggleLoop,
+                    ),
+                  ]),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -353,6 +344,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerPageShowcase>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const Text('Drum Machine',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            )),
         DrumMachineWidget(
           selectedTempo: tempo,
           handleChange: handleTempoChange,
