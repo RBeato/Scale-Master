@@ -12,14 +12,8 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
 
   List<ChordModel> get selectedItemsList => state;
 
-  void addItem(
-      {required int position,
-      required ChordModel chordModel,
-      required bool isBass}) {
-    List<ChordModel> auxList = state;
-
-    auxList.add(chordModel);
-    state = auxList;
+  void addChord(ChordModel chordModel) {
+    state = List.of(state)..add(chordModel);
   }
 
   void removeAll() {

@@ -18,7 +18,6 @@ class Transport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = 10 * 10;
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -27,15 +26,15 @@ class Transport extends StatelessWidget {
           child: Icon(
             isPlaying ? Icons.pause : Icons.play_arrow,
             color: Colors.white70, //.orange[500].withOpacity(0.8),
-            size: size,
+            size: 40,
           ),
         ),
         GestureDetector(
           onTap: onStop,
-          child: Icon(
+          child: const Icon(
             Icons.stop,
             color: Colors.white70, //Colors.orange[500].withOpacity(0.8),
-            size: size,
+            size: 40,
           ),
         ),
         GestureDetector(
@@ -45,7 +44,7 @@ class Transport extends StatelessWidget {
             color: isLooping
                 ? Colors.white70 //.orange[500].withOpacity(0.8)
                 : Colors.black54,
-            size: size,
+            size: 40,
           ),
         ),
       ],

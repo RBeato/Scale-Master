@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scale_master_guitar/UI/fretboard/provider/beat_counter_provider.dart';
+import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
 
-import '../../hardcoded_data/scales/scales_data_v2.dart';
 import '../../models/chord_model.dart';
+import '../../models/chord_scale_model.dart';
+import '../../utils/music_utils.dart';
 import '../fretboard/provider/fingerings_provider.dart';
-import '../player_page/provider/selected_chords_provider.dart';
 
 enum Taps { single, double }
 
@@ -14,17 +16,18 @@ class Chords extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Access properties from chordScaleFingeringsModel and customize the appearance
+    final alreadySelectedChords = ref.read(selectedChordsProvider);
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
-
     // Use these properties to customize the dots or text within FretboardPainter
+    // Listen to onpage extensions selection to know what type of chord to generate. What extensions to include
+
     return fingerings.when(
-        data: (chordScaleFingeringsModel) {
-          final chordList = ref.watch(selectedChordsProvider);
+        data: (ChordScaleFingeringsModel? scaleFingerings) {
           return Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: Row(
               // crossAxisAlignment: CrossAxisAlignment.start,
-              children: chordScaleFingeringsModel!.chordModel!.chords!
+              children: scaleFingerings!.scaleModel!.chords
                   .asMap()
                   .entries
                   .map((entry) {
@@ -37,10 +40,34 @@ class Chords extends ConsumerWidget {
                     height: 35, // Set a fixed height for all containers
                     child: GestureDetector(
                       onTap: () {
-                        getChordInfo(Taps.single, c, chordList, index);
+                        var chord = addChordModel(Taps.single, c,
+                            scaleFingerings, index, alreadySelectedChords);
+                        ref
+                            .read(selectedChordsProvider.notifier)
+                            .addChord(chord);
+
+                        final chordList = ref.read(selectedChordsProvider);
+
+                        int beats = calculateNumberBeats(chordList);
+
+                        ref
+                            .read(beatCounterProvider.notifier)
+                            .setBeatNumber(beats);
                       },
                       onDoubleTap: () {
-                        getChordInfo(Taps.double, c, chordList, index);
+                        var chord = addChordModel(Taps.double, c,
+                            scaleFingerings, index, alreadySelectedChords);
+                        ref
+                            .read(selectedChordsProvider.notifier)
+                            .addChord(chord);
+
+                        final chordList = ref.read(selectedChordsProvider);
+
+                        int beats = calculateNumberBeats(chordList);
+
+                        ref
+                            .read(beatCounterProvider.notifier)
+                            .setBeatNumber(beats);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -71,70 +98,38 @@ class Chords extends ConsumerWidget {
         error: (error, stackTrace) => Text('Error: $error'));
   }
 
-  getChordInfo(Taps tap, String c, chordList, int index) {
-    ChordModel? chord;
-
-//Notes for audio (must be with flats)
-//get degree from scale
-//get name
-//get function
-//get type
-//get notes indexes and pitches names into one map.
-
-    var selectedChord = chordList[index];
-
-    var type = Scales.data[selectedChord.scale][selectedChord.mode]['chordType']
-        [index];
-
-    var chordFunction =
-        Scales.data[selectedChord.scale][selectedChord.mode]['function'][index];
-    var chordIntervals =
-        Scales.data[selectedChord.scale][selectedChord.mode]['intervals'];
-
-    var auxIntervals = {
-      '1': null,
-      '3': null,
-      '5': null,
-      '7': null,
-      '9': null,
-      '11': null,
-      '13': null,
-    };
-    var auxDisplacementValue = chordIntervals[index];
-
-    for (var key in auxIntervals.keys) {
-      if (int.tryParse(key)! % 2 == 0) {
-        // Skip keys that are even
-        continue;
-      }
-
-      auxIntervals[key] = chordIntervals[key] - auxDisplacementValue;
+  calculateNumberBeats(List<ChordModel> chordList) {
+    int count = 0;
+    for (var chord in chordList) {
+      count += chord.duration;
     }
+    return count;
+  }
 
-    print("auxIntervals: $auxIntervals");
+  addChordModel(tap, c, ChordScaleFingeringsModel scaleFingerings, index,
+      List<ChordModel> alreadySelectedChords) {
+    var chordNotes = MusicUtils.getChordInfo(c, scaleFingerings, index);
 
-    // if (tap == Taps.single) {
-    //   chord = chordList[c].copyWith(
-    //     notes: ,
+    bool isPedalNote = false;
 
-    //       duration: 1,
-    //       position: chordList.isEmpty
-    //           ? 1
-    //           : chordList.last.position + chordList.last.duration + 2);
-    // } else {
-    //   chord =  ChordModel(
-    //       chordModel: c,
-    //       duration: 2,
-    //       position: chordList.isEmpty
-    //           ? 1
-    //           : chordList.last.position + chordList.last.duration + 4);
-    // }
+    var position = alreadySelectedChords.isEmpty
+        ? 0
+        : alreadySelectedChords.last.position +
+            alreadySelectedChords.last.duration +
+            4;
 
-    // chordList.addChord(ChordModel(
-    //     chordModel: c,
-    //     duration: 2,
-    //     position: chordList.isEmpty
-    //         ? 1
-    //         : chordList.last.position + chordList.last.duration + 2));
+    ChordModel? chord = ChordModel(
+      id: position,
+      bassNote: isPedalNote == false ? scaleFingerings.scaleModel!.scale : c,
+      duration: tap == Taps.single ? 2 : 4,
+      mode: scaleFingerings.scaleModel!.mode!,
+      position: position,
+      notes: chordNotes,
+      scale: scaleFingerings.scaleModel!.scale!,
+      parentScale: scaleFingerings.scaleModel!.scale!,
+      parentScaleKey: scaleFingerings.scaleModel!.scale!,
+    );
+
+    return chord;
   }
 }

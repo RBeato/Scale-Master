@@ -6,13 +6,13 @@ class ChordScaleFingeringsModel {
   List? scaleNotesPositions;
   List? chordVoicingNotesPositions;
   Map<String, Color>? scaleColorfulMap;
-  ScaleModel? chordModel;
+  ScaleModel? scaleModel;
 
   ChordScaleFingeringsModel(
       {this.chordVoicingNotesPositions,
       this.scaleNotesPositions,
       this.scaleColorfulMap,
-      this.chordModel});
+      this.scaleModel});
 
   @override
   String toString() {
@@ -20,6 +20,6 @@ class ChordScaleFingeringsModel {
         '\n$chordVoicingNotesPositions'
         '\n$scaleNotesPositions'
         '\n$scaleColorfulMap'
-        '\n$chordModel';
+        '\n$scaleModel';
   }
 }

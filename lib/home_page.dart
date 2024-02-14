@@ -4,7 +4,7 @@ import 'package:scale_master_guitar/UI/chromatic_wheel/chromatic_wheel.dart';
 import 'UI/drawer/UI/custom_drawer.dart';
 import 'UI/fretboard/UI/fretboard_neck.dart';
 import 'UI/player_page/player_page.dart';
-import 'UI/scale_selection/scale_selection.dart';
+import 'UI/scale_selection_dropdowns/scale_selection.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});

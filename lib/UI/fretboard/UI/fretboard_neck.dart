@@ -17,28 +17,31 @@ class Fretboard extends ConsumerWidget {
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
 
     // Use these properties to customize the dots or text within FretboardPainter
-    return fingerings.when(
-        data: (chordScaleFingeringsModel) {
-          return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: _scrollController, // Add the controller here
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 50.0),
-                child: CustomPaint(
-                  painter: FretboardPainter(
-                    stringCount: stringCount,
-                    fretCount: fretCount,
-                    fingeringsModel: chordScaleFingeringsModel!,
+    return SizedBox(
+      height: 200,
+      child: fingerings.when(
+          data: (chordScaleFingeringsModel) {
+            return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _scrollController, // Add the controller here
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 50.0),
+                  child: CustomPaint(
+                    painter: FretboardPainter(
+                      stringCount: stringCount,
+                      fretCount: fretCount,
+                      fingeringsModel: chordScaleFingeringsModel!,
+                    ),
+                    child: SizedBox(
+                      width: fretCount.toDouble() * 36,
+                      height: stringCount.toDouble() * 24,
+                    ),
                   ),
-                  child: SizedBox(
-                    width: fretCount.toDouble() * 36,
-                    height: stringCount.toDouble() * 24,
-                  ),
-                ),
-              ));
-        },
-        loading: () => const CircularProgressIndicator(color: Colors.orange),
-        error: (error, stackTrace) => Text('Error: $error'));
+                ));
+          },
+          loading: () => const CircularProgressIndicator(color: Colors.orange),
+          error: (error, stackTrace) => Text('Error: $error')),
+    );
   }
 }

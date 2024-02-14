@@ -4,7 +4,7 @@ class ScaleModel {
   String parentScaleKey = 'C';
   String? scale;
   String? mode;
-  List? chords; // Specify the type for chords as List<String>
+  List chords; // Specify the type for chords as List<String>
   String? originModeType;
   Settings? settings;
 

@@ -14,21 +14,13 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
   String? selectedMode;
   String? selectedChordType;
 
-  final List<String> chordTypes = [
-    'Triad',
-    'Seventh',
-    'Ninth',
-    'Eleventh',
-    'Thirteenth'
-  ];
-
   @override
   Widget build(BuildContext context) {
     final selectedScale = ref.watch(scaleDropdownValueProvider);
     final selectedMode = ref.watch(modeDropdownValueProvider);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: [
           Expanded(
@@ -66,27 +58,33 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
           ),
           const SizedBox(width: 20), // Adjust the width as needed
           Expanded(
-            child: DropdownButtonFormField<String>(
-              dropdownColor: Colors.grey[800],
-              value: selectedMode,
-              onChanged: (newValue) {
-                ref
-                    .read(modeDropdownValueProvider.notifier)
-                    .update((state) => newValue!);
-              },
-              items: Scales.data[selectedScale].keys
-                  .map<DropdownMenuItem<String>>((dynamic value) {
-                String key = value as String;
-                return DropdownMenuItem<String>(
-                  value: key,
-                  child: Text(key,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white70)),
-                );
-              }).toList(),
-              hint: const Text('Select Mode',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white70)),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width *
+                    0.3, // Adjust the max width as needed
+              ),
+              child: DropdownButtonFormField<String>(
+                dropdownColor: Colors.grey[800],
+                value: selectedMode,
+                onChanged: (newValue) {
+                  ref
+                      .read(modeDropdownValueProvider.notifier)
+                      .update((state) => newValue!);
+                },
+                items: Scales.data[selectedScale].keys
+                    .map<DropdownMenuItem<String>>((dynamic value) {
+                  String key = value as String;
+                  return DropdownMenuItem<String>(
+                    value: key,
+                    child: Text(key,
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(color: Colors.white70)),
+                  );
+                }).toList(),
+                hint: const Text('Select Mode',
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(color: Colors.white70)),
+              ),
             ),
           ),
         ],

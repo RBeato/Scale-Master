@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tonic/tonic.dart' as tonic;
 
+import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
 import '../../layout/chord_container_colors.dart';
 import '../../../hardcoded_data/music_constants.dart';
 import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
@@ -19,7 +20,7 @@ class FingeringsColorBloc {
   late String _lowestNoteStringOption;
   late bool _scaleAndChordSelection;
   late String _key;
-  late String _chordName;
+  // late String _key;
 
   List? _voicingIntervalsNumbers;
   List? _lowerStringList;
@@ -60,8 +61,10 @@ class FingeringsColorBloc {
     return createFretboardPositions(chordModel);
   }
 
-  createFretboardPositions(ScaleModel chordModel) {
-    setModeDegrees(chordModel);
+  createFretboardPositions(ScaleModel scaleModel) {
+    _key = flatsAndSharpsToFlats(scaleModel.parentScaleKey);
+    addChordsTypes(scaleModel);
+    setModeDegrees(scaleModel);
     checkLowestStringSelection();
     filterSettings();
     buildVoicingIntervalsList();
@@ -70,7 +73,7 @@ class FingeringsColorBloc {
     print(_scaleChordPositions);
 
     _scaleChordPositions = ChordScaleFingeringsModel(
-        chordModel: chordModel,
+        scaleModel: scaleModel,
         chordVoicingNotesPositions: _chordNotesPositions,
         scaleNotesPositions: _scaleNotesPositions,
         scaleColorfulMap: _scaleColorfulMap);
@@ -82,9 +85,19 @@ class FingeringsColorBloc {
     return _scaleChordPositions;
   }
 
-  setModeDegrees(chordModel) {
+  addChordsTypes(ScaleModel scaleModel) {
+    var aux = [];
+    for (int i = 0; i < scaleModel.chords.length; i++) {
+      aux.add(scaleModel.chords[i] +
+          Scales.data[scaleModel.scale][scaleModel.mode]['chordType'][i]
+              .toString());
+    }
+    scaleModel.chords = aux;
+  }
+
+  setModeDegrees(scaleModel) {
     _modeIntervals =
-        Scales.data[chordModel.scale][chordModel.mode]['scaleDegrees'];
+        Scales.data[scaleModel.scale][scaleModel.mode]['scaleDegrees'];
   }
 
   checkLowestStringSelection() {
@@ -191,9 +204,8 @@ class FingeringsColorBloc {
         List<int> noteRepetitionsInOneString = [0, 2];
         for (int i = 0; i < _lowerStringList!.length; i++) {
           for (int j = 0; j < _voicingTonicIntervalList!.length; j++) {
-            noteName =
-                (tonic.Pitch.parse(_chordName) + _voicingTonicIntervalList![j])
-                    .toString();
+            noteName = (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![j])
+                .toString();
             noteNameWithoutIndex =
                 noteName.substring(0, noteName.toString().length - 1);
             noteNameWithoutIndex =
@@ -218,9 +230,8 @@ class FingeringsColorBloc {
         //!!ADD CAGED TYPE TO 7TH CHORDS.?
         final chordType =
             tonic.ChordPattern.fromIntervals(_voicingTonicIntervalList!);
-        // print('_key $_key chordType; $chordType');
-        // print(tonic.Chord.parse('$_key $chordType'));
-        final chord = tonic.Chord.parse('$_chordName $chordType');
+
+        final chord = tonic.Chord.parse('$_key $chordType');
         final instrument = tonic.Instrument.guitar;
         final fretting = tonic.bestFrettingFor(chord, instrument).toString();
         // print('Fretting : $fretting');
@@ -250,9 +261,9 @@ class FingeringsColorBloc {
             for (int k = 0; k < notesRepetitionsInOneString.length; k++) {
               string = _lowerStringList![j] +
                   _stringDistribution![i]; //strings indexes between 0-5
-              noteName = (tonic.Pitch.parse(_chordName) +
-                      _voicingTonicIntervalList![i])
-                  .toString();
+              noteName =
+                  (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![i])
+                      .toString();
               noteNameWithoutIndex =
                   noteName.substring(0, noteName.toString().length - 1);
               noteNameWithoutIndex =
@@ -291,7 +302,7 @@ class FingeringsColorBloc {
   scalesStringFretPositions() {
     //!Add scale degree here
     _modeNotes = _modeIntervals!
-        .map((interval) => tonic.Pitch.parse(_chordName) + interval)
+        .map((interval) => tonic.Pitch.parse(_key) + interval)
         .toList();
     _modeNotes = _modeNotes!
         .map((e) => e.toString().substring(0, e.toString().length - 1))

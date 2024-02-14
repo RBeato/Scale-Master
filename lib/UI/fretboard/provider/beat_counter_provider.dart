@@ -30,6 +30,10 @@ class BeatCounter extends StateNotifier<int> {
     }
   }
 
+  void setBeatNumber(int beats) {
+    state = beats;
+  }
+
   getMaxValue() {
     late int maxValue;
     if (orientation == Orientation.landscape) maxValue = 20;

@@ -4,7 +4,7 @@ import '../UI/layout/chord_container_colors.dart';
 import '../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
 import '../hardcoded_data/flats_to_sharps_nomenclature.dart';
 import '../hardcoded_data/music_constants.dart';
-import '../hardcoded_data/scales/scales_data_v2.dart';
+import '../utils/music_utils.dart';
 
 class ChordModel {
   String? chordNameForUI;
@@ -19,10 +19,9 @@ class ChordModel {
   List<String> notes;
   String? chordNameForAudio;
   String? function;
-  String? chordProgression;
   String? typeOfChord;
   Color? color;
-  List<String>? organizedPitches = [];
+  List? organizedPitches = [];
   String? originModeType;
   Settings? settings;
 
@@ -39,7 +38,7 @@ class ChordModel {
     this.chordNameForAudio,
     this.chordNameForUI,
     this.function,
-    this.chordProgression,
+    // this.chordProgression,
     this.typeOfChord,
     this.color,
     this.organizedPitches,
@@ -47,24 +46,33 @@ class ChordModel {
     this.settings,
   }) {
     // Set other properties based on provided information
-    function = _info('function');
-    typeOfChord = _info('chordType');
+    // function = _info('function');
+    // typeOfChord = _info('chordType');
     chordNameForUI = _getChordNameForUI();
     chordNameForAudio = flatsAndSharpsToFlats(parentScaleKey);
     color = _getColorFromFunction();
+    organizedPitches = _getOrganizedPitches();
   }
 
-  _info(String mapKey) {
-    print(
-        "settings!.originScale: $scale, chordProgression: $chordProgression, mapKey: $mapKey, chordNameForAudio: $parentScaleKey");
-
-    var value = Scales.data[scale][mode][mapKey]
-        [chordProgression!.indexOf(flatsAndSharpsToFlats(parentScaleKey))];
-
-    print(value);
-
-    return value;
+  List _getOrganizedPitches() {
+    List pitches = MusicUtils.cleanNotesNames(notes);
+    // for (var i = 0; i < notes.length; i++) {
+    //   pitches.add(flatsAndSharpsToFlats(note));
+    // }
+    return pitches;
   }
+
+  // _info(String mapKey) {
+  //   print(
+  //       "settings!.originScale: $scale, chordProgression: $chordProgression, mapKey: $mapKey, chordNameForAudio: $parentScaleKey");
+
+  //   var value = Scales.data[scale][mode][mapKey]
+  //       [chordProgression!.indexOf(flatsAndSharpsToFlats(parentScaleKey))];
+
+  //   print(value);
+
+  //   return value;
+  // }
 
   String _getChordNameForUI() {
     return ['C', 'D', 'E', 'F', 'G', 'A', 'B']
@@ -74,7 +82,7 @@ class ChordModel {
   }
 
   Color? _getColorFromFunction() {
-    final functionValue = _info('function');
+    const functionValue = 'I';
     final functionKey = functionValue.toString().toUpperCase();
     return scaleColorMap[functionKey];
   }
@@ -123,6 +131,6 @@ class ChordModel {
 
   @override
   String toString() {
-    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function, chordProgression: $chordProgression, typeOfChord: $typeOfChord color: $color, organizedPitches: $organizedPitches, originModeType: $originModeType)';
+    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, organizedPitches: $organizedPitches, originModeType: $originModeType)';
   }
 }
