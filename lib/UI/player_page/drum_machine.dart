@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_sequencer/track.dart';
 import '../../models/step_sequencer_state.dart';
-import 'grid.dart';
+import 'chords_list.dart';
 
 class DrumMachineWidget extends StatefulWidget {
   const DrumMachineWidget({
@@ -64,16 +64,6 @@ class _DrumMachineWidgetState extends State<DrumMachineWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Grid(
-          columnLabels: widget.rowLabels,
-          getVelocity: getVelocity,
-          stepCount: widget.stepCount,
-          currentStep: widget.currentStep,
-          onChange: handleVelocityChange,
-          onNoteOn: handleNoteOn,
-          onNoteOff: handleNoteOff,
-        ));
+    return ChordListWidget();
   }
 }

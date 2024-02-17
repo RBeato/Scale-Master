@@ -15,11 +15,8 @@ class Chords extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Access properties from chordScaleFingeringsModel and customize the appearance
     final alreadySelectedChords = ref.read(selectedChordsProvider);
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
-    // Use these properties to customize the dots or text within FretboardPainter
-    // Listen to onpage extensions selection to know what type of chord to generate. What extensions to include
 
     return fingerings.when(
         data: (ChordScaleFingeringsModel? scaleFingerings) {

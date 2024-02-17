@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'home_page.dart';
 
+//TODO: Add intervals instead of notes to the fretboard
+//TODO: Show chord notes on the fretboard
+
 void main() {
   try {
     WidgetsFlutterBinding.ensureInitialized();

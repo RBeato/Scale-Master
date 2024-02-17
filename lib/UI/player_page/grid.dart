@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'metronome_indicator.dart';
+import 'chords_list.dart';
 
 class Grid extends StatelessWidget {
   const Grid({
@@ -25,17 +25,17 @@ class Grid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      // crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10.0),
-        MetronomeIndicator(
-          currentStep: currentStep,
-          isBass: false,
-        ),
-        //SELECTED CHORD LIST
-        // ChordListWidget(),
-        //
+        // MetronomeIndicator(
+        //   currentStep: currentStep,
+        //   isBass: false,
+        // ),
+        // // SELECTED CHORD LIST
+        ChordListWidget(),
+
         // SizedBox(
         //   height: MediaQuery.of(context).size.height *
         //       0.6, // Adjust height as needed

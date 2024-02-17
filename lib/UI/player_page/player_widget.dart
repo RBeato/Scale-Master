@@ -21,8 +21,11 @@ import 'provider/metronome_tempo_provider.dart';
 
 class PlayerWidget extends ConsumerStatefulWidget {
   const PlayerWidget({
+    required this.onBackButtonPressed,
     super.key,
   });
+
+  final VoidCallback onBackButtonPressed;
 
   @override
   PlayerPageShowcaseState createState() => PlayerPageShowcaseState();
@@ -41,6 +44,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   bool isLooping = Constants.INITIAL_IS_LOOPING;
   late Sequence sequence;
   int stepCount = 0;
+
+  void handleBackButtonPress() {
+    // Call the callback function when the back button is pressed
+    widget.onBackButtonPressed();
+  }
 
   @override
   void initState() {
@@ -230,6 +238,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     sequence.stop();
     trackStepSequencerStates[tracks[0].id] = StepSequencerState();
     syncTrack(tracks[0]);
+    ref.read(selectedChordsProvider.notifier).removeAll();
     setState(() {});
   }
 
@@ -247,13 +256,8 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     if (selectedTrack == null) {
       return const Center(
           child: Text("No chord selected!",
-              style:
-                  TextStyle(color: Colors.white)) //CircularProgressIndicator(
-          // CircularProgressIndicator()
-
-          );
+              style: TextStyle(color: Colors.white)));
     }
-
     // final isDrumTrackSelected = selectedTrack == tracks[0];
 
     return Column(

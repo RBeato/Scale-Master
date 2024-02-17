@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/player_page/player_widget.dart';
-import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
 
 import '../chords/chords.dart';
 import '../fretboard/UI/fretboard_neck.dart';
@@ -9,15 +8,22 @@ import '../fretboard/UI/fretboard_neck.dart';
 class PlayerPage extends ConsumerWidget {
   const PlayerPage({Key? key}) : super(key: key);
 
-  Future<bool> popped() {
+  Future<bool> popped(BuildContext context) {
+    // Handle back button press here if needed
     return Future.value(true);
+  }
+
+  // Callback function to handle back button press
+  void handleBackButtonPressed() {
+    // Handle back button press here
+    // For example:
+    // Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedChords = ref.watch(selectedChordsProvider);
     return WillPopScope(
-      onWillPop: () => popped(),
+      onWillPop: () => popped(context),
       child: Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
@@ -28,22 +34,13 @@ class PlayerPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              //FRETBOARD
               Fretboard(),
-              //CHORDS
               const Expanded(flex: 1, child: Chords()),
-              // //SELECTED CHORD LIST
-              // Expanded(child: ChordListWidget()),
-              //
-              // SEQUENCER
-              selectedChords.isEmpty
-                  ? const Center(
-                      child: Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: Text("No chords selected",
-                          style: TextStyle(color: Colors.white)),
-                    ))
-                  : const Expanded(flex: 4, child: PlayerWidget())
+              Expanded(
+                  flex: 4,
+                  child: PlayerWidget(
+                    onBackButtonPressed: handleBackButtonPressed,
+                  ))
             ],
           ),
         ),
