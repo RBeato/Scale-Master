@@ -8,7 +8,7 @@ class SoundPlayerUtils {
             path: Constants.soundPath['drums']!['Electronic'] as String,
             isAsset: true),
         Sf2Instrument(
-            path: Constants.soundPath['keys']!['Rhodes'] as String,
+            path: Constants.soundPath['keys']!['Piano'] as String,
             isAsset: true),
         Sf2Instrument(
             path: Constants.soundPath['bass']!['Double Bass'] as String,

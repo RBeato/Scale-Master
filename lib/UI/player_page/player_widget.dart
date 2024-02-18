@@ -18,14 +18,17 @@ import '../../models/transport.dart';
 import '../../utils/player_utils.dart';
 import '../fretboard/provider/beat_counter_provider.dart';
 import 'provider/metronome_tempo_provider.dart';
+import 'package:collection/collection.dart';
+
+Function eq = const ListEquality().equals;
+bool _listEquals(List list1, List list2) {
+  return eq(list1, list2);
+}
 
 class PlayerWidget extends ConsumerStatefulWidget {
   const PlayerWidget({
-    required this.onBackButtonPressed,
     super.key,
   });
-
-  final VoidCallback onBackButtonPressed;
 
   @override
   PlayerPageShowcaseState createState() => PlayerPageShowcaseState();
@@ -44,19 +47,9 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   bool isLooping = Constants.INITIAL_IS_LOOPING;
   late Sequence sequence;
   int stepCount = 0;
+  List<ChordModel> _lastChords = [];
 
-  void handleBackButtonPress() {
-    // Call the callback function when the back button is pressed
-    widget.onBackButtonPressed();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-
-    var selectedChords = ref.read(selectedChordsProvider);
+  initializeSequencer(List<ChordModel> selectedChords) {
     stepCount = ref.read(beatCounterProvider) as int;
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
@@ -72,9 +65,9 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
       }
 
       ProjectState project = createProject(
-        pianoPart: selectedChords, //was [] \\change this
-        bassPart: selectedChords, //was [] change this
-      );
+          pianoPart: selectedChords, //was [] \\change this
+          bassPart: [] // selectedChords, //was [] change this
+          );
 
       loadProjectState(project);
 
@@ -82,6 +75,18 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
         selectedTrack = tracks[0];
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+
+    // Initialize sequence and tracks
+    var selectedChords = ref.read(selectedChordsProvider);
+
+    initializeSequencer(selectedChords);
 
     ticker = createTicker((Duration elapsed) {
       setState(() {
@@ -115,8 +120,9 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     pianoPart?.forEach((chord) {
       for (var note in chord.organizedPitches!) {
         //{organizedPitches!) {
+        print('note: $note and position: ${chord.position}');
         project.pianoState.setVelocity(
-            chord.position, MusicConstants.midiValues[note]!, 0.75);
+            chord.position, MusicConstants.midiValues[note]!, 0.60);
       }
     });
 
@@ -249,7 +255,33 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   @override
   Widget build(BuildContext context) {
+    final selectedChords = ref.watch(selectedChordsProvider);
+
+    // Assuming you have a mechanism or a way to compare the new chords with the previously used ones,
+    // you can guard your update logic like so:
+    if (_needToUpdateSequencer(selectedChords)) {
+      // Update your sequencer with the new chords
+      _updateSequencer(selectedChords);
+    }
+
     return _getMainView();
+  }
+
+  bool _needToUpdateSequencer(List<ChordModel> newChords) {
+    // Implement comparison logic here. This could be a simple list equality check,
+    // or a more complex comparison if your data structure requires it.
+    // For simplicity, let's assume a method that checks list equality:
+    return !_listEquals(newChords, _lastChords);
+  }
+
+  Function eq = const ListEquality().equals;
+  bool _listEquals(List list1, List list2) {
+    return eq(list1, list2);
+  }
+
+  void _updateSequencer(List<ChordModel> newChords) {
+    initializeSequencer(newChords);
+    _lastChords = newChords;
   }
 
   _getMainView() {

@@ -15,7 +15,7 @@ class Chords extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final alreadySelectedChords = ref.read(selectedChordsProvider);
+    final alreadySelectedChords = ref.watch(selectedChordsProvider);
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
 
     return fingerings.when(
@@ -112,8 +112,7 @@ class Chords extends ConsumerWidget {
     var position = alreadySelectedChords.isEmpty
         ? 0
         : alreadySelectedChords.last.position +
-            alreadySelectedChords.last.duration +
-            4;
+            alreadySelectedChords.last.duration;
 
     ChordModel? chord = ChordModel(
       id: position,

@@ -36,6 +36,10 @@ class BeatCounter extends StateNotifier<int> {
     if (orientation == Orientation.portrait) maxValue = 16;
     return maxValue;
   }
+
+  setNumberOfBeats(int numberOfBeats) {
+    state = numberOfBeats;
+  }
 }
 
 final beatCounterProvider = StateNotifierProvider((ref) => BeatCounter());

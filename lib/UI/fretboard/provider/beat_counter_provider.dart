@@ -6,40 +6,23 @@ class BeatCounter extends StateNotifier<int> {
 
   Orientation orientation = Orientation.portrait;
 
-  setInitialBeatNumber(Orientation orientation) {
-    late int initialValue;
-    if (orientation == Orientation.landscape) initialValue = 10;
-    if (orientation == Orientation.portrait) initialValue = 8;
-    state = initialValue;
-  }
-
-  void increment() {
-    orientation = orientation;
-    if (state < getMaxValue()) {
-      state++;
-    } else {
-      return;
-    }
-  }
-
-  void decrement() {
-    if (state > 1) {
-      state--;
-    } else {
-      return;
-    }
-  }
+  // setInitialBeatNumber(Orientation orientation) {
+  //   late int initialValue;
+  //   if (orientation == Orientation.landscape) initialValue = 10;
+  //   if (orientation == Orientation.portrait) initialValue = 8;
+  //   state = initialValue;
+  // }
 
   void setBeatNumber(int beats) {
     state = beats;
   }
 
-  getMaxValue() {
-    late int maxValue;
-    if (orientation == Orientation.landscape) maxValue = 20;
-    if (orientation == Orientation.portrait) maxValue = 16;
-    return maxValue;
-  }
+  // getMaxValue() {
+  //   late int maxValue;
+  //   if (orientation == Orientation.landscape) maxValue = 20;
+  //   if (orientation == Orientation.portrait) maxValue = 16;
+  //   return maxValue;
+  // }
 }
 
 final beatCounterProvider = StateNotifierProvider((ref) => BeatCounter());
