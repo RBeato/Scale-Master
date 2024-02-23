@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
+import '../../../hardcoded_data/scales/scales_data_v2.dart';
 import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../utils/music_utils.dart';
@@ -19,14 +20,17 @@ final chordModelFretboardFingeringProvider =
 
   print("settings : ${settings.musicKey}");
 
-  final List chords = MusicUtils.createChords(
+  final List<String> scaleNotesNames = MusicUtils.createChords(
       settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
   ScaleModel item = ScaleModel(
     parentScaleKey: topNote,
     scale: scale.toString(),
+    scaleNotesNames: scaleNotesNames,
+    chordTypes: Scales.data[scale.toString()][mode]['chordType'],
+    degreeFunction: Scales.data[scale.toString()][mode]['function'],
     mode: mode,
-    chords: chords,
+    // chords: _scaleNotesNames,
     settings: settings,
     originModeType: '',
   );

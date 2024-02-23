@@ -1,4 +1,4 @@
-flatsOnlyNoteNomenclature(noteSubString) {
+String flatsOnlyNoteNomenclature(String noteSubString) {
   // print('Called flatsOnlyNoteNomenclature');
   switch (noteSubString) {
     case 'C♭':

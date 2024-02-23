@@ -1,11 +1,24 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scale_master_guitar/models/chord_model.dart';
+import '../../../models/chord_model.dart';
 
-import 'beat_counter_provider.dart';
+import '../../fretboard/provider/beat_counter_provider.dart';
+import 'chord_extensions_provider.dart';
 
 final selectedChordsProvider =
     StateNotifierProvider<SelectedChords, List<ChordModel>>(
-  (ref) => SelectedChords(ref),
+  (ref) {
+    // final selectedChords = SelectedChords(ref);
+
+    // // Listen to changes in chordExtensionsProvider and update selectedChords accordingly
+    // ref.listen<List<String>>(chordExtensionsProvider,
+    //     (extensions, previousExtensions) {
+    //   // Filter selected chords based on extensions
+    //   selectedChords.filterChords(extensions ?? []);
+    // });
+
+    // return selectedChords;
+    return SelectedChords(ref);
+  },
 );
 
 class SelectedChords extends StateNotifier<List<ChordModel>> {
@@ -19,13 +32,53 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
   void addChord(ChordModel chordModel) {
     state = List.of(state)..add(chordModel);
 
+    filterChords(ref.read(chordExtensionsProvider) ?? []);
+
     int sum =
         state.fold(0, (previousValue, item) => previousValue + item.duration);
 
-    ref.read(beatCounterProvider.notifier).setNumberOfBeats(sum);
+    ref.read(beatCounterProvider.notifier).update((state) => sum);
+  }
+
+  void updateSelectedChords(List<ChordModel> chords) {
+    state = chords;
+  }
+
+  void filterChords(List<String> extensions) {
+    final extensionIndexes = {
+      '7': 3,
+      '9': 4,
+      '11': 5,
+      '13': 6,
+    };
+
+    print(state.hashCode);
+    state = state.map((chord) {
+      List<String> updatedPitches =
+          chord.allChordExtensions?.take(3).toList() ?? [];
+
+      for (var ext in extensions) {
+        final index = extensionIndexes[ext];
+        if (index != null) {
+          updatedPitches.add(chord.allChordExtensions![index]);
+        }
+      }
+      return chord.copyWith(selectedChordPitches: updatedPitches);
+    }).toList();
+    print(state.hashCode);
   }
 
   void removeAll() {
     state = [];
   }
 }
+
+
+// final List<String> extensions = [
+//     "7",
+//     "9",
+//     "11",
+//     "13",
+//   ];
+
+

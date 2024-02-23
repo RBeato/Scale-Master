@@ -29,7 +29,7 @@ class SoundCreationService {
       var chord =
           tonic.Chord.parse('${item.chordNameForAudio} ${item.typeOfChord}');
       var chordsList = removeOctaveIndexes(chord.pitches);
-      item.organizedPitches = chordsList;
+      item.selectedChordPitches = chordsList;
       _chordRootPositionsAndNotes[item.position] = chord.root.toString();
     }
 
@@ -56,8 +56,8 @@ class SoundCreationService {
   }
 
   chooseFirstChordInversionRandomly() {
-    _selectedChords.first.organizedPitches =
-        _reOrderNotes(_selectedChords.first.organizedPitches);
+    _selectedChords.first.selectedChordPitches =
+        _reOrderNotes(_selectedChords.first.selectedChordPitches);
     isFirstChord = false;
   }
 
@@ -72,18 +72,19 @@ class SoundCreationService {
   }
 
   createVoiceLeading() {
-    String highestNote = _selectedChords.first.organizedPitches!.last;
+    String highestNote = _selectedChords.first.selectedChordPitches!.last;
     int indexOfhighestNote = MusicConstants.notesWithFlats.indexOf(highestNote);
 
     for (var item in _selectedChords) {
       int noteCounter = 0;
-      for (var note in item.organizedPitches!) {
-        item.organizedPitches![noteCounter] = flatsOnlyNoteNomenclature(note);
+      for (var note in item.selectedChordPitches!) {
+        item.selectedChordPitches![noteCounter] =
+            flatsOnlyNoteNomenclature(note);
         noteCounter++;
       }
 
       List indexesList = [];
-      for (var note in item.organizedPitches!) {
+      for (var note in item.selectedChordPitches!) {
         indexesList.add(MusicConstants.notesWithFlats.indexOf(note));
       }
       var reorderedChordIndexes = indexesList
@@ -96,7 +97,7 @@ class SoundCreationService {
       for (var index in reorderedChordIndexes) {
         reorderedChordNotes.add(MusicConstants.notesWithFlats[index]);
       }
-      item.organizedPitches = reorderedChordNotes;
+      item.selectedChordPitches = reorderedChordNotes;
       indexOfhighestNote = reorderedChordIndexes.last.toInt();
     }
   }
@@ -106,7 +107,7 @@ class SoundCreationService {
     for (var item in _selectedChords) {
       int auxIndexValue = 0;
       _octave = 3;
-      List audioNamesNotes = item.organizedPitches as List<String>;
+      List audioNamesNotes = item.selectedChordPitches as List<String>;
 
       if (!auxHashCodes.contains(item.hashCode)) {
         //avoid adding indexes if chords are repeated
@@ -120,7 +121,8 @@ class SoundCreationService {
           }
           auxIndexValue =
               MusicConstants.notesWithFlats.indexOf(audioNamesNotes[i]);
-          item.organizedPitches![i] = audioNamesNotes[i] + _octave.toString();
+          item.selectedChordPitches![i] =
+              audioNamesNotes[i] + _octave.toString();
         }
         auxHashCodes.add(item.hashCode);
       }
@@ -132,7 +134,7 @@ class SoundCreationService {
   isFundamentalStateChord(ChordModel item) {
     int aux = 0;
     bool result = true;
-    for (var index in item.organizedPitches!) {
+    for (var index in item.selectedChordPitches!) {
       if (MusicConstants.notesWithFlats.indexOf(index) < aux) result = false;
       aux = MusicConstants.notesWithFlats.indexOf(index);
     }

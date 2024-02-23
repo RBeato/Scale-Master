@@ -6,19 +6,25 @@ import 'package:flutter_sequencer/sequence.dart';
 import 'package:flutter_sequencer/track.dart';
 import 'package:flutter_sequencer/global_state.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:scale_master_guitar/UI/player_page/drum_machine.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
 
-import '../../constants.dart';
-import '../../hardcoded_data/music_constants.dart';
-import '../../models/project_state.dart';
-import '../../models/chord_model.dart';
-import '../../models/step_sequencer_state.dart';
-import '../../models/transport.dart';
-import '../../utils/player_utils.dart';
-import '../fretboard/provider/beat_counter_provider.dart';
-import 'provider/metronome_tempo_provider.dart';
+import '../../../constants.dart';
+import '../../../hardcoded_data/music_constants.dart';
+import '../../../models/project_state.dart';
+import '../../../models/chord_model.dart';
+import '../../../models/step_sequencer_state.dart';
+import '../../../models/transport.dart';
+import '../../../utils/player_utils.dart';
+import '../../fretboard/provider/beat_counter_provider.dart';
+import '../chords_list.dart';
+import '../metronome/metronome_display.dart';
+import '../metronome/metronome_icon.dart';
+import '../provider/chord_extensions_provider.dart';
+import '../provider/is_metronome_selected.dart';
+import '../provider/metronome_tempo_provider.dart';
 import 'package:collection/collection.dart';
+
+import '../provider/tonic_universal_note_provider.dart';
 
 Function eq = const ListEquality().equals;
 bool _listEquals(List list1, List list2) {
@@ -48,9 +54,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   late Sequence sequence;
   int stepCount = 0;
   List<ChordModel> _lastChords = [];
+  List<String> _lastExtensions = [];
 
-  initializeSequencer(List<ChordModel> selectedChords) {
-    stepCount = ref.read(beatCounterProvider) as int;
+  initializeSequencer(
+      List<ChordModel> selectedChords, List<String> extensions) {
+    stepCount = ref.read(beatCounterProvider);
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
     GlobalState().setKeepEngineRunning(true);
@@ -64,11 +72,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
         trackStepSequencerStates[track.id] = StepSequencerState();
       }
 
-      ProjectState project = createProject(
-          pianoPart: selectedChords, //was [] \\change this
-          bassPart: [] // selectedChords, //was [] change this
-          );
-
+      ProjectState project = createProject(selectedChords);
       loadProjectState(project);
 
       setState(() {
@@ -85,8 +89,9 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
     // Initialize sequence and tracks
     var selectedChords = ref.read(selectedChordsProvider);
+    var extensions = ref.read(chordExtensionsProvider);
 
-    initializeSequencer(selectedChords);
+    initializeSequencer(selectedChords, extensions);
 
     ticker = createTicker((Duration elapsed) {
       setState(() {
@@ -113,24 +118,33 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     super.dispose();
   }
 
-  ProjectState createProject(
-      {List<ChordModel>? pianoPart, List<ChordModel>? bassPart}) {
+  ProjectState createProject(List<ChordModel>? selectedChords) {
     ProjectState project = ProjectState.empty(stepCount);
 
-    pianoPart?.forEach((chord) {
-      for (var note in chord.organizedPitches!) {
-        //{organizedPitches!) {
-        print('note: $note and position: ${chord.position}');
+    bool isScaleTonicSelected =
+        ref.read(tonicUniversalNoteProvider); //TODO: check this
+
+    selectedChords?.forEach((chord) {
+      for (var note in chord.selectedChordPitches!) {
         project.pianoState.setVelocity(
             chord.position, MusicConstants.midiValues[note]!, 0.60);
       }
+
+      var note = isScaleTonicSelected
+          ? "${chord.parentScaleKey}2"
+          : chord.chordNotesWithIndexesUnclean.first;
+      var bassMidiValue = MusicConstants.midiValues[note]!;
+      project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
     });
 
-    bassPart?.forEach((chord) {
-      // String octaveIndex = '2';
-      project.bassState.setVelocity(
-          chord.position, MusicConstants.midiValues[chord.notes.first]!, 0.99);
-    });
+    if (ref.read(isMetronomeSelectedProvider)) {
+      int nBeats = ref.read(beatCounterProvider);
+      for (int i = 0; i < nBeats; i++) {
+        project.drumState
+            .setVelocity(0, MusicConstants.midiValues['C2']!, 0.99);
+      }
+    }
+
     return project;
   }
 
@@ -255,23 +269,25 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   @override
   Widget build(BuildContext context) {
+    final extensions = ref.watch(chordExtensionsProvider);
     final selectedChords = ref.watch(selectedChordsProvider);
+    ref.watch(tonicUniversalNoteProvider);
 
-    // Assuming you have a mechanism or a way to compare the new chords with the previously used ones,
-    // you can guard your update logic like so:
-    if (_needToUpdateSequencer(selectedChords)) {
-      // Update your sequencer with the new chords
-      _updateSequencer(selectedChords);
+    if (_needToUpdateSequencer(selectedChords, extensions)) {
+      handleStop();
+      _updateSequencer(selectedChords, extensions);
     }
 
     return _getMainView();
   }
 
-  bool _needToUpdateSequencer(List<ChordModel> newChords) {
+  bool _needToUpdateSequencer(
+      List<ChordModel> newChords, List<String> extensions) {
     // Implement comparison logic here. This could be a simple list equality check,
     // or a more complex comparison if your data structure requires it.
     // For simplicity, let's assume a method that checks list equality:
-    return !_listEquals(newChords, _lastChords);
+    return !_listEquals(newChords, _lastChords) ||
+        !_listEquals(extensions, _lastExtensions);
   }
 
   Function eq = const ListEquality().equals;
@@ -279,9 +295,10 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     return eq(list1, list2);
   }
 
-  void _updateSequencer(List<ChordModel> newChords) {
-    initializeSequencer(newChords);
+  void _updateSequencer(List<ChordModel> newChords, List<String> extensions) {
+    initializeSequencer(newChords, extensions);
     _lastChords = newChords;
+    _lastExtensions = extensions;
   }
 
   _getMainView() {
@@ -290,73 +307,71 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
           child: Text("No chord selected!",
               style: TextStyle(color: Colors.white)));
     }
-    // final isDrumTrackSelected = selectedTrack == tracks[0];
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         // SEQUENCER
-        Expanded(
+        const Expanded(
           flex: 2,
           child: Opacity(
             opacity: 0.85,
-            child: buildColumnWithData(),
+            child: ChordListWidget(),
           ),
         ),
         //CLEAR DRUMS BUTTON and TRANSPORT
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
             children: [
-              //CLEAR DRUMS
-              InkWell(
-                onTap: () {
-                  clearTracks();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey.withOpacity(0.8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  //CLEAR DRUMS
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        clearTracks();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          // color: Colors.grey.withOpacity(0.8),
+                        ),
+                        child: const Icon(
+                          Icons.delete_forever,
+                          size: 30,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.delete_forever,
-                    size: 40,
-                    color: Colors.grey,
+                  //TRANSPORT
+                  Expanded(
+                    flex: 3,
+                    child: Transport(
+                      isPlaying: isPlaying,
+                      isLooping: isLooping,
+                      onTogglePlayPause: handleTogglePlayPause,
+                      onStop: handleStop,
+                      onToggleLoop: handleToggleLoop,
+                    ),
                   ),
-                ),
+                  Expanded(child: MetronomeButton()),
+                  Expanded(
+                    flex: 1,
+                    child: MetronomeDisplay(
+                      selectedTempo: tempo,
+                      handleChange: handleTempoChange,
+                    ),
+                  ),
+                ],
               ),
-              //TRANSPORT
-              Transport(
-                isPlaying: isPlaying,
-                isLooping: isLooping,
-                onTogglePlayPause: handleTogglePlayPause,
-                onStop: handleStop,
-                onToggleLoop: handleToggleLoop,
-              ),
+              const SizedBox(
+                height: 20,
+              )
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildColumnWithData() {
-    return Column(
-      children: [
-        DrumMachineWidget(
-          selectedTempo: tempo,
-          handleChange: handleTempoChange,
-          track: tracks[0], //selectedTrack,
-          stepCount: stepCount,
-          currentStep: position.floor(),
-          rowLabels: Constants.ROW_LABELS_DRUMS,
-          columnPitches: Constants.ROW_PITCHES_DRUMS,
-          stepSequencerState:
-              trackStepSequencerStates[tracks[0].id] as StepSequencerState,
-          handleVolumeChange: handleVolumeChange,
-          handleVelocitiesChange: handleVelocitiesChange,
         ),
       ],
     );

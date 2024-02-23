@@ -3,10 +3,10 @@ import 'package:scale_master_guitar/models/settings_model.dart';
 import '../UI/layout/chord_container_colors.dart';
 import '../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
 import '../hardcoded_data/flats_to_sharps_nomenclature.dart';
-import '../hardcoded_data/music_constants.dart';
 import '../utils/music_utils.dart';
 
 class ChordModel {
+  String noteName;
   String? chordNameForUI;
   int id;
   int position;
@@ -14,34 +14,41 @@ class ChordModel {
   String scale = 'Diatonic Major';
   String mode = 'Ionian';
   String bassNote;
-  String parentScale;
+  String originalScaleType;
   String parentScaleKey;
-  List<String> notes;
+  List<String> chordNotesWithIndexesUnclean;
   String? chordNameForAudio;
   String? function;
   String? typeOfChord;
   Color? color;
-  List? organizedPitches = [];
+  List<String>? allChordExtensions;
+  List<String>? selectedChordPitches;
   String? originModeType;
   Settings? settings;
+  String? chordFunction;
+  String? chordDegree;
 
   ChordModel({
+    required this.noteName,
     required this.id,
     required this.position,
     required this.duration,
     required this.scale,
     required this.mode,
     required this.bassNote,
-    required this.parentScale,
+    required this.chordFunction,
+    required this.chordDegree,
+    required this.originalScaleType,
     required this.parentScaleKey,
-    required this.notes,
+    required this.chordNotesWithIndexesUnclean,
     this.chordNameForAudio,
     this.chordNameForUI,
     this.function,
     // this.chordProgression,
     this.typeOfChord,
     this.color,
-    this.organizedPitches,
+    this.allChordExtensions,
+    this.selectedChordPitches,
     this.originModeType,
     this.settings,
   }) {
@@ -51,28 +58,17 @@ class ChordModel {
     chordNameForUI = _getChordNameForUI();
     chordNameForAudio = flatsAndSharpsToFlats(parentScaleKey);
     color = _getColorFromFunction();
-    organizedPitches = _getOrganizedPitches();
+    allChordExtensions = _getOrganizedPitches();
   }
 
-  List _getOrganizedPitches() {
-    List pitches = MusicUtils.cleanNotesNames(notes);
+  List<String> _getOrganizedPitches() {
+    List<String> pitches =
+        MusicUtils.cleanNotesNames(chordNotesWithIndexesUnclean);
     // for (var i = 0; i < notes.length; i++) {
     //   pitches.add(flatsAndSharpsToFlats(note));
     // }
     return pitches;
   }
-
-  // _info(String mapKey) {
-  //   print(
-  //       "settings!.originScale: $scale, chordProgression: $chordProgression, mapKey: $mapKey, chordNameForAudio: $parentScaleKey");
-
-  //   var value = Scales.data[scale][mode][mapKey]
-  //       [chordProgression!.indexOf(flatsAndSharpsToFlats(parentScaleKey))];
-
-  //   print(value);
-
-  //   return value;
-  // }
 
   String _getChordNameForUI() {
     return ['C', 'D', 'E', 'F', 'G', 'A', 'B']
@@ -82,55 +78,62 @@ class ChordModel {
   }
 
   Color? _getColorFromFunction() {
-    const functionValue = 'I';
-    final functionKey = functionValue.toString().toUpperCase();
+    final functionKey = chordDegree.toString().toUpperCase();
     return scaleColorMap[functionKey];
   }
 
-  String _setKey(int transposeValue) {
-    int newIndex;
-    (MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) -
-                transposeValue <
-            0)
-        ? newIndex = MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) +
-            12 -
-            transposeValue
-        : newIndex = MusicConstants.notesWithFlats.indexOf(chordNameForAudio!) -
-            transposeValue;
-    String key = MusicConstants.notesWithFlats[newIndex];
-    return key;
+  ChordModel copyWith({
+    String? noteName,
+    String? chordNameForUI,
+    int? id,
+    int? position,
+    int? duration,
+    String? scale,
+    String? mode,
+    String? bassNote,
+    String? originalScaleType,
+    String? parentScaleKey,
+    List<String>? chordNotesWithIndexesUnclean,
+    String? chordNameForAudio,
+    String? function,
+    String? typeOfChord,
+    Color? color,
+    List<String>? allChordExtensions,
+    List<String>? selectedChordPitches,
+    String? originModeType,
+    Settings? settings,
+    String? chordFunction,
+    String? chordDegree,
+  }) {
+    return ChordModel(
+      noteName: noteName ?? this.noteName,
+      chordNameForUI: chordNameForUI ?? this.chordNameForUI,
+      id: id ?? this.id,
+      position: position ?? this.position,
+      duration: duration ?? this.duration,
+      scale: scale ?? this.scale,
+      mode: mode ?? this.mode,
+      bassNote: bassNote ?? this.bassNote,
+      originalScaleType: originalScaleType ?? this.originalScaleType,
+      parentScaleKey: parentScaleKey ?? this.parentScaleKey,
+      chordNotesWithIndexesUnclean:
+          chordNotesWithIndexesUnclean ?? this.chordNotesWithIndexesUnclean,
+      chordNameForAudio: chordNameForAudio ?? this.chordNameForAudio,
+      function: function ?? this.function,
+      typeOfChord: typeOfChord ?? this.typeOfChord,
+      color: color ?? this.color,
+      allChordExtensions:
+          allChordExtensions ?? selectedChordPitches, // Update organizedPitches
+      selectedChordPitches: selectedChordPitches ?? this.selectedChordPitches,
+      originModeType: originModeType ?? this.originModeType,
+      settings: settings ?? this.settings,
+      chordFunction: chordFunction ?? this.chordFunction,
+      chordDegree: chordDegree ?? this.chordDegree,
+    );
   }
-
-  // ScaleModel copyWith({
-  //   Nullable<String>? parentScaleKey,
-  //   Nullable<String>? scale,
-  //   Nullable<String>? mode,
-  //   Nullable<Settings>? settings,
-  //   Nullable<String>? originKey,
-  //   Nullable<List>? chords,
-  //   Nullable<String>? chordNameForAudio,
-  //   Nullable<String>? chordNameForUI,
-  //   Nullable<String>? function,
-  //   Nullable<String>? typeOfChord,
-  //   Nullable<String>? bassNote,
-  //   Nullable<Color>? color,
-  //   Nullable<List<String>>? organizedPitches,
-  //   Nullable<String>? originModeType,
-  // }) =>
-  //     ScaleModel(
-  //       parentScaleKey:
-  //           parentScaleKey == null ? this.parentScaleKey : parentScaleKey.value,
-  //       scale: scale == null ? this.scale : scale.value,
-  //       mode: mode == null ? this.mode : mode.value,
-  //       chordNameForAudio: chordNameForAudio == null
-  //           ? this.chordNameForAudio
-  //           : chordNameForAudio.value,
-  //       chords: chords == null ? this.chords : chords.value,
-  //       settings: settings == null ? this.settings : settings.value,
-  //     );
 
   @override
   String toString() {
-    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, organizedPitches: $organizedPitches, originModeType: $originModeType)';
+    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, selectedChordPitches: $selectedChordPitches,allChordExtension $allChordExtensions, originModeType: $originModeType)';
   }
 }

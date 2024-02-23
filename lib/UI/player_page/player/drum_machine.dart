@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_sequencer/track.dart';
-import '../../models/step_sequencer_state.dart';
-import 'chords_list.dart';
+import '../../../models/step_sequencer_state.dart';
+import '../chords_list.dart';
 
 class DrumMachineWidget extends StatefulWidget {
   const DrumMachineWidget({

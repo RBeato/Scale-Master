@@ -4,7 +4,10 @@ class ScaleModel {
   String parentScaleKey = 'C';
   String? scale;
   String? mode;
-  List chords; // Specify the type for chords as List<String>
+  // List chords; // Specify the type for chords as List<String>
+  List<String> scaleNotesNames = [];
+  List<String> chordTypes = [];
+  List<String> degreeFunction = [];
   String? originModeType;
   Settings? settings;
 
@@ -13,14 +16,17 @@ class ScaleModel {
     this.parentScaleKey = 'C',
     required this.scale,
     required this.mode,
-    required this.chords,
+    // required this.chords,
+    required this.scaleNotesNames,
+    required this.chordTypes,
+    required this.degreeFunction,
     required this.originModeType,
     this.settings,
   });
 
   @override
   String toString() {
-    return 'ScaleModel(parentScaleKey: $parentScaleKey, scale: $scale, mode: $mode, chords: $chords, originModeType: $originModeType)';
+    return 'ScaleModel(parentScaleKey: $parentScaleKey, scale: $scale, mode: $mode, originModeType: $originModeType)';
   }
 }
 

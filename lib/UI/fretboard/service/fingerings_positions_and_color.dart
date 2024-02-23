@@ -86,13 +86,13 @@ class FingeringsColorBloc {
   }
 
   addChordsTypes(ScaleModel scaleModel) {
-    var aux = [];
-    for (int i = 0; i < scaleModel.chords.length; i++) {
-      aux.add(scaleModel.chords[i] +
+    List<String> aux = [];
+    for (int i = 0; i < scaleModel.scaleNotesNames.length; i++) {
+      aux.add(scaleModel.scaleNotesNames[i] +
           Scales.data[scaleModel.scale][scaleModel.mode]['chordType'][i]
               .toString());
     }
-    scaleModel.chords = aux;
+    scaleModel.scaleNotesNames = aux;
   }
 
   setModeDegrees(scaleModel) {

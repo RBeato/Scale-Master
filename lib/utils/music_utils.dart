@@ -6,7 +6,7 @@ import '../models/chord_scale_model.dart';
 import '../models/settings_model.dart';
 
 class MusicUtils {
-  static List createChords(
+  static List<String> createChords(
       Settings settings, String key, String scale, String mode) {
     return MusicUtils.cleanNotesIndexes(Scales.data[scale][mode]['scaleDegrees']
         .map((interval) => Pitch.parse(key) + interval)
@@ -120,9 +120,9 @@ class MusicUtils {
     return notes;
   }
 
-  static cleanNotesNames(listOfNotes) {
+  static List<String> cleanNotesNames(List<String> listOfNotes) {
     //conversion from Pitch to String with octave manipulation 'F#5' ->'Gb'+'5'
-    List octaveValueList = listOfNotes
+    List<String> octaveValueList = listOfNotes
         .map((n) => n
             .toString()
             .substring(n.toString().length - 1, n.toString().length))
@@ -132,16 +132,22 @@ class MusicUtils {
             note.toString().substring(0, note.toString().length - 1)))
         .toList();
     int i = 0;
-    var newListOfNotes =
-        testFlatsList.map((n) => n + octaveValueList[i++]).toList();
+    List<String> newListOfNotes = testFlatsList
+        .map((n) => (n + octaveValueList[i++]).toString())
+        .toList();
     return newListOfNotes;
   }
 
-  static List cleanNotesIndexes(listOfNotes) {
-    var testFlatsList = listOfNotes
-        .map((note) => flatsOnlyNoteNomenclature(
-            note.toString().substring(0, note.toString().length - 1)))
-        .toList();
+  static List<String> cleanNotesIndexes(List<dynamic> listOfNotes) {
+    List<String> testFlatsList = listOfNotes
+        .map((note) {
+          String noteAsString = note.toString();
+          String processedNote = flatsOnlyNoteNomenclature(
+              noteAsString.substring(0, noteAsString.length - 1));
+          return processedNote;
+        })
+        .cast<String>()
+        .toList(); // This cast is safe only if we're sure about the transformation result
     return testFlatsList;
   }
 
