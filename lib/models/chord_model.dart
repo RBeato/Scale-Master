@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/models/settings_model.dart';
-import '../UI/layout/chord_container_colors.dart';
-import '../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
-import '../hardcoded_data/flats_to_sharps_nomenclature.dart';
+import '../constants/color_constants.dart';
+import '../constants/flats_and_sharps_to_flats_converter.dart';
+import '../constants/flats_to_sharps_nomenclature.dart';
 import '../utils/music_utils.dart';
 
 class ChordModel {
@@ -13,10 +13,9 @@ class ChordModel {
   int duration;
   String scale = 'Diatonic Major';
   String mode = 'Ionian';
-  String bassNote;
   String originalScaleType;
   String parentScaleKey;
-  List<String> chordNotesWithIndexesUnclean;
+  List<String> chordNotesWithIndexesRaw;
   String? chordNameForAudio;
   String? function;
   String? typeOfChord;
@@ -35,12 +34,11 @@ class ChordModel {
     required this.duration,
     required this.scale,
     required this.mode,
-    required this.bassNote,
     required this.chordFunction,
     required this.chordDegree,
     required this.originalScaleType,
     required this.parentScaleKey,
-    required this.chordNotesWithIndexesUnclean,
+    required this.chordNotesWithIndexesRaw,
     this.chordNameForAudio,
     this.chordNameForUI,
     this.function,
@@ -62,8 +60,7 @@ class ChordModel {
   }
 
   List<String> _getOrganizedPitches() {
-    List<String> pitches =
-        MusicUtils.cleanNotesNames(chordNotesWithIndexesUnclean);
+    List<String> pitches = MusicUtils.cleanNotesNames(chordNotesWithIndexesRaw);
     // for (var i = 0; i < notes.length; i++) {
     //   pitches.add(flatsAndSharpsToFlats(note));
     // }
@@ -79,7 +76,7 @@ class ChordModel {
 
   Color? _getColorFromFunction() {
     final functionKey = chordDegree.toString().toUpperCase();
-    return scaleColorMap[functionKey];
+    return ConstantColors.scaleColorMap[functionKey];
   }
 
   ChordModel copyWith({
@@ -113,11 +110,10 @@ class ChordModel {
       duration: duration ?? this.duration,
       scale: scale ?? this.scale,
       mode: mode ?? this.mode,
-      bassNote: bassNote ?? this.bassNote,
       originalScaleType: originalScaleType ?? this.originalScaleType,
       parentScaleKey: parentScaleKey ?? this.parentScaleKey,
-      chordNotesWithIndexesUnclean:
-          chordNotesWithIndexesUnclean ?? this.chordNotesWithIndexesUnclean,
+      chordNotesWithIndexesRaw:
+          chordNotesWithIndexesUnclean ?? chordNotesWithIndexesRaw,
       chordNameForAudio: chordNameForAudio ?? this.chordNameForAudio,
       function: function ?? this.function,
       typeOfChord: typeOfChord ?? this.typeOfChord,

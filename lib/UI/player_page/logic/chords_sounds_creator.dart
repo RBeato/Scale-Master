@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:tonic/tonic.dart' as tonic;
 
-import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
-import '../../../hardcoded_data/music_constants.dart';
+import '../../../constants/flats_only_nomenclature_converter.dart';
+import '../../../constants/music_constants.dart';
 import '../../../models/chord_model.dart';
 
 class SoundCreationService {

@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/wheel_painter.dart';
 
-import '../../hardcoded_data/music_constants.dart';
+import '../../constants/music_constants.dart';
 import 'provider/top_note_provider.dart';
 
 class ChromaticWheel extends ConsumerStatefulWidget {
@@ -71,7 +71,6 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         });
         String topNote = getTopNote();
         ref.read(topNoteProvider.notifier).update((state) => topNote);
-        print("Top note after drag ends: $topNote");
       },
       child: CustomPaint(
         painter: WheelPainter(_currentRotation),

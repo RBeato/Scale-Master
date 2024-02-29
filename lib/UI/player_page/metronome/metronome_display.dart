@@ -8,7 +8,7 @@ class MetronomeDisplay extends StatelessWidget {
   });
 
   final double selectedTempo;
-  final Function(double nextTempo) handleChange;
+  final Function(int nextTempo) handleChange;
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +19,17 @@ class MetronomeDisplay extends StatelessWidget {
         // border: Border.all(color: Colors.orange.withOpacity(0.32)),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: SizedBox(
-        height: 40,
-        width: 40,
-        child: MaterialButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => showDialog(
-              context: context,
-              builder: (_) => BPMSelector(
-                  selectedTempo: selectedTempo, handleChange: handleChange)),
-          child: Text(
-            selectedTempo.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 13,
-            ),
+      child: MaterialButton(
+        padding: EdgeInsets.zero,
+        onPressed: () => showDialog(
+            context: context,
+            builder: (_) => BPMSelector(
+                selectedTempo: selectedTempo, handleChange: handleChange)),
+        child: Text(
+          selectedTempo.toString(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
           ),
         ),
       ),
@@ -48,7 +44,7 @@ class BPMSelector extends StatelessWidget {
   });
 
   final double selectedTempo;
-  final Function(double nextTempo) handleChange;
+  final Function(int nextTempo) handleChange;
 
   final ScrollController _controller = ScrollController();
 
@@ -72,7 +68,7 @@ class BPMSelector extends StatelessWidget {
             itemCount: 161, //change metronome values
             itemBuilder: (context, i) => InkWell(
               onTap: () {
-                handleChange((i + 40).toDouble());
+                handleChange((i + 40));
                 Navigator.pop(context);
               },
               child: SizedBox(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../hardcoded_data/fretboard_notes.dart';
+import '../../../constants/fretboard_notes.dart';
 import '../../../models/chord_scale_model.dart';
 
 class FretboardPainter extends CustomPainter {

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import '../../layout/styles.dart';
+import '../../../constants/styles.dart';
 import '../provider/settings_state_notifier.dart';
 import 'chord_options_cards.dart';
 

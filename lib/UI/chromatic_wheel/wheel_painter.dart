@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import '../../hardcoded_data/music_constants.dart';
+import '../../constants/music_constants.dart';
 
 class WheelPainter extends CustomPainter {
   final double rotation;

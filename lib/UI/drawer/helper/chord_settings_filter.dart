@@ -1,4 +1,4 @@
-import '../../../hardcoded_data/guitar_chord_voicings.dart';
+import '../../../constants/guitar_chord_voicings.dart';
 
 List<String> createBottomStringList(String chordVoicing) {
   late List<String> bottomStringOptions;

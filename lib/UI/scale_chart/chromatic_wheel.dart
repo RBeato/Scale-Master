@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../hardcoded_data/music_constants.dart';
+import '../../constants/music_constants.dart';
 import '../chromatic_wheel/provider/top_note_provider.dart';
 
 class ChromaticWheel extends ConsumerStatefulWidget {

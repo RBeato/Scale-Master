@@ -9,22 +9,20 @@ import 'package:flutter/scheduler.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
 
 import '../../../constants.dart';
-import '../../../hardcoded_data/music_constants.dart';
+import '../../../constants/music_constants.dart';
 import '../../../models/project_state.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/step_sequencer_state.dart';
-import '../../../models/transport.dart';
 import '../../../utils/player_utils.dart';
 import '../../fretboard/provider/beat_counter_provider.dart';
-import '../chords_list.dart';
-import '../metronome/metronome_display.dart';
-import '../metronome/metronome_icon.dart';
 import '../provider/chord_extensions_provider.dart';
 import '../provider/is_metronome_selected.dart';
 import '../provider/metronome_tempo_provider.dart';
 import 'package:collection/collection.dart';
 
+import '../provider/stop_sequencer_provider.dart';
 import '../provider/tonic_universal_note_provider.dart';
+import 'chord_player_bar.dart';
 
 Function eq = const ListEquality().equals;
 bool _listEquals(List list1, List list2) {
@@ -56,8 +54,18 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   List<ChordModel> _lastChords = [];
   List<String> _lastExtensions = [];
 
+  bool isLoading = false; // Add a boolean flag to track loading state
+
   initializeSequencer(
       List<ChordModel> selectedChords, List<String> extensions) {
+    if (isPlaying) {
+      handleStop();
+    }
+
+    setState(() {
+      isLoading = true; // Set loading flag to true when initialization starts
+    });
+
     stepCount = ref.read(beatCounterProvider);
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
@@ -77,6 +85,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
       setState(() {
         selectedTrack = tracks[0];
+        isLoading = false;
       });
     });
   }
@@ -87,16 +96,13 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
     // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
 
-    // Initialize sequence and tracks
     var selectedChords = ref.read(selectedChordsProvider);
     var extensions = ref.read(chordExtensionsProvider);
-
     initializeSequencer(selectedChords, extensions);
 
     ticker = createTicker((Duration elapsed) {
       setState(() {
         tempo = sequence.getTempo();
-        //context.read(metronomeTempoProvider.state);
         position = sequence.getBeat();
         isPlaying = sequence.getIsPlaying();
 
@@ -107,6 +113,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
         for (var track in tracks) {
           trackVolumes[track.id] = track.getVolume();
         }
+        // isLoading = false;
       });
     });
     ticker.start();
@@ -132,7 +139,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
       var note = isScaleTonicSelected
           ? "${chord.parentScaleKey}2"
-          : chord.chordNotesWithIndexesUnclean.first;
+          : chord.chordNotesWithIndexesRaw.first;
       var bassMidiValue = MusicConstants.midiValues[note]!;
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
     });
@@ -144,7 +151,6 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
             .setVelocity(0, MusicConstants.midiValues['C2']!, 0.99);
       }
     }
-
     return project;
   }
 
@@ -152,6 +158,10 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     if (isPlaying) {
       sequence.pause();
     } else {
+      if (_needToUpdateSequencer()) {
+        _updateSequencer();
+      }
+      ref.read(isSequencerStoppedProvider.notifier).update((state) => false);
       sequence.play();
     }
   }
@@ -197,7 +207,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     });
   }
 
-  handleTempoChange(double nextTempo) {
+  handleTempoChange(nextTempo) {
     if (nextTempo <= 0) return;
     sequence.setTempo(nextTempo);
     ref.read(metronomeTempoProvider.notifier).changeTempo(nextTempo);
@@ -269,23 +279,39 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   @override
   Widget build(BuildContext context) {
-    final extensions = ref.watch(chordExtensionsProvider);
-    final selectedChords = ref.watch(selectedChordsProvider);
-    ref.watch(tonicUniversalNoteProvider);
-
-    if (_needToUpdateSequencer(selectedChords, extensions)) {
+    var isStopped = ref.watch(isSequencerStoppedProvider);
+    if (!isStopped) {
       handleStop();
-      _updateSequencer(selectedChords, extensions);
     }
+    // final extensions = ref.watch(chordExtensionsProvider);
+    // final selectedChords = ref.watch(selectedChordsProvider);
+    // ref.watch(tonicUniversalNoteProvider);
 
-    return _getMainView();
+    // if (_needToUpdateSequencer(selectedChords, extensions)) {
+    //   handleStop();
+    //   _updateSequencer(selectedChords, extensions);
+    // }
+
+    return ChordPlayerBar(
+      selectedTrack: selectedTrack,
+      isLoading: isLoading,
+      isPlaying: isPlaying,
+      tempo: tempo,
+      isLooping: isLooping,
+      onTogglePlayPause: handleTogglePlayPause,
+      onStop: handleStop,
+      onToggleLoop: handleToggleLoop,
+      clearTracks: clearTracks,
+      handleTogglePlayPause: handleTogglePlayPause,
+      handleStop: handleStop,
+      handleToggleLoop: handleToggleLoop,
+      handleTempoChange: () => handleTempoChange(tempo),
+    );
   }
 
-  bool _needToUpdateSequencer(
-      List<ChordModel> newChords, List<String> extensions) {
-    // Implement comparison logic here. This could be a simple list equality check,
-    // or a more complex comparison if your data structure requires it.
-    // For simplicity, let's assume a method that checks list equality:
+  bool _needToUpdateSequencer() {
+    final newChords = ref.read(selectedChordsProvider);
+    final extensions = ref.read(chordExtensionsProvider);
     return !_listEquals(newChords, _lastChords) ||
         !_listEquals(extensions, _lastExtensions);
   }
@@ -295,85 +321,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     return eq(list1, list2);
   }
 
-  void _updateSequencer(List<ChordModel> newChords, List<String> extensions) {
+  void _updateSequencer() {
+    final newChords = ref.read(selectedChordsProvider);
+    final extensions = ref.read(chordExtensionsProvider);
     initializeSequencer(newChords, extensions);
     _lastChords = newChords;
     _lastExtensions = extensions;
-  }
-
-  _getMainView() {
-    if (selectedTrack == null) {
-      return const Center(
-          child: Text("No chord selected!",
-              style: TextStyle(color: Colors.white)));
-    }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        // SEQUENCER
-        const Expanded(
-          flex: 2,
-          child: Opacity(
-            opacity: 0.85,
-            child: ChordListWidget(),
-          ),
-        ),
-        //CLEAR DRUMS BUTTON and TRANSPORT
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //CLEAR DRUMS
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        clearTracks();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          // color: Colors.grey.withOpacity(0.8),
-                        ),
-                        child: const Icon(
-                          Icons.delete_forever,
-                          size: 30,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ),
-                  ),
-                  //TRANSPORT
-                  Expanded(
-                    flex: 3,
-                    child: Transport(
-                      isPlaying: isPlaying,
-                      isLooping: isLooping,
-                      onTogglePlayPause: handleTogglePlayPause,
-                      onStop: handleStop,
-                      onToggleLoop: handleToggleLoop,
-                    ),
-                  ),
-                  Expanded(child: MetronomeButton()),
-                  Expanded(
-                    flex: 1,
-                    child: MetronomeDisplay(
-                      selectedTempo: tempo,
-                      handleChange: handleTempoChange,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              )
-            ],
-          ),
-        ),
-      ],
-    );
   }
 }

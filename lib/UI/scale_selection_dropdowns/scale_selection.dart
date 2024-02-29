@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../hardcoded_data/scales/scales_data_v2.dart';
+import '../../constants/scales/scales_data_v2.dart';
 import 'provider/mode_dropdown_value_provider.dart';
 import 'provider/scale_dropdown_value_provider.dart';
 

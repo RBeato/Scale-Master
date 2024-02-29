@@ -31,8 +31,9 @@ class PlayerPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Fretboard(),
-                  const Expanded(flex: 1, child: Chords()),
+                  const Expanded(flex: 2, child: Chords()),
                   const Expanded(flex: 4, child: PlayerWidget()),
+                  Expanded(flex: 1, child: Container()),
                 ],
               ),
               Positioned(

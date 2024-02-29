@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../layout/styles.dart';
+import '../../../constants/styles.dart';
 
 import 'drawer_page.dart';
 

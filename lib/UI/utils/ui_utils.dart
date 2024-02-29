@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../layout/device_screen_enum.dart';
+import '../../constants/device_screen_enum.dart';
 
 DeviceScreenType getDeviceType(MediaQueryData mediaQuery) {
   var orientation = mediaQuery.orientation;

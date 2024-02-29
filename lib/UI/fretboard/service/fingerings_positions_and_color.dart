@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tonic/tonic.dart' as tonic;
 
-import '../../../hardcoded_data/flats_and_sharps_to_flats_converter.dart';
-import '../../layout/chord_container_colors.dart';
-import '../../../hardcoded_data/music_constants.dart';
-import '../../../hardcoded_data/flats_only_nomenclature_converter.dart';
-import '../../../hardcoded_data/fretboard_notes.dart';
-import '../../../hardcoded_data/scales/scales_data_v2.dart';
+import '../../../constants/color_constants.dart';
+import '../../../constants/flats_and_sharps_to_flats_converter.dart';
+import '../../../constants/music_constants.dart';
+import '../../../constants/flats_only_nomenclature_converter.dart';
+import '../../../constants/fretboard_notes.dart';
+import '../../../constants/scales/scales_data_v2.dart';
 import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
@@ -70,7 +70,7 @@ class FingeringsColorBloc {
     buildVoicingIntervalsList();
     chordsStringFretPositions();
     scalesStringFretPositions();
-    print(_scaleChordPositions);
+    // print(_scaleChordPositions);
 
     _scaleChordPositions = ChordScaleFingeringsModel(
         scaleModel: scaleModel,
@@ -327,9 +327,9 @@ class FingeringsColorBloc {
 
           _scaleNotesPositions.add([string + 1, fret]);
           _scaleColorfulMap["${string + 1},$fret"] =
-              scaleTonicColorMap[_modeIntervals![i]]!;
-          print("_scaleNotesPositions $_scaleNotesPositions");
-          print("_scaleColorfulMap $_scaleColorfulMap");
+              ConstantColors.scaleTonicColorMap[_modeIntervals![i]]!;
+          // print("_scaleNotesPositions $_scaleNotesPositions");
+          // print("_scaleColorfulMap $_scaleColorfulMap");
           noteIndex = fret + 1; // Prepare for the next iteration
         }
       }

@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../hardcoded_data/guitar_chord_voicings.dart';
+import '../../../constants/guitar_chord_voicings.dart';
 import '../../../models/settings_model.dart';
 import '../helper/chord_settings_filter.dart';
 

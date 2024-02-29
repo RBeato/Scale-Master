@@ -20,38 +20,23 @@ class Transport extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          GestureDetector(
-            onTap: onTogglePlayPause,
-            child: Icon(
-              isPlaying ? Icons.pause : Icons.play_arrow,
-              color: Colors.white70, //.orange[500].withOpacity(0.8),
-              size: 40,
+      child: !isPlaying
+          ? GestureDetector(
+              onTap: onTogglePlayPause,
+              child: Icon(
+                isPlaying ? Icons.pause : Icons.play_arrow,
+                color: Colors.white70, //.orange[500].withOpacity(0.8),
+                size: 40,
+              ),
+            )
+          : GestureDetector(
+              onTap: onStop,
+              child: const Icon(
+                Icons.stop,
+                color: Colors.white70, //Colors.orange[500].withOpacity(0.8),
+                size: 40,
+              ),
             ),
-          ),
-          const SizedBox(width: 20),
-          GestureDetector(
-            onTap: onStop,
-            child: const Icon(
-              Icons.stop,
-              color: Colors.white70, //Colors.orange[500].withOpacity(0.8),
-              size: 40,
-            ),
-          ),
-          // GestureDetector(
-          //   onTap: onToggleLoop,
-          //   child: Icon(
-          //     Icons.loop,
-          //     color: isLooping
-          //         ? Colors.white70 //.orange[500].withOpacity(0.8)
-          //         : Colors.black54,
-          //     size: 40,
-          //   ),
-          // ),
-        ],
-      ),
     );
   }
 }

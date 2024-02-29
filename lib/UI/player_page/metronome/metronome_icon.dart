@@ -30,7 +30,7 @@ class _MetronomeButtonState extends State<MetronomeButton> {
         size: 32.0,
       ),
       // Set the icon color based on the metronome state
-      color: _isOn ? Colors.greenAccent : Colors.grey,
+      color: _isOn ? Colors.greenAccent : Colors.white70,
       onPressed: _toggleMetronome,
     );
   }

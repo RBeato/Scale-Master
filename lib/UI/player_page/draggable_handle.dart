@@ -11,15 +11,9 @@ class DraggableHandle extends StatelessWidget {
         // Show bottom sheet when tapped
         showBottomSheet(context);
       },
-      child: Container(
-        height: 20,
-        decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: const Center(
-          child: Icon(Icons.keyboard_arrow_up),
-        ),
+      child: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Icon(Icons.keyboard_arrow_up, size: 30, color: Colors.orange),
       ),
     );
   }

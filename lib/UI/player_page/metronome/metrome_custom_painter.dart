@@ -8,7 +8,7 @@ class MetronomePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = isOn ? Colors.greenAccent : Colors.grey
+      ..color = isOn ? Colors.greenAccent : Colors.white70
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 

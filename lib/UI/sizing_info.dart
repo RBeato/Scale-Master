@@ -1,6 +1,7 @@
-import 'package:scale_master_guitar/UI/layout/device_screen_enum.dart';
 import 'package:scale_master_guitar/UI/utils/device_values/device_values.dart';
 import 'package:flutter/material.dart';
+
+import '../constants/device_screen_enum.dart';
 
 class SizingInformation {
   final Orientation orientation;

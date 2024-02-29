@@ -42,7 +42,7 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
     ],
     'function': ['I', '♭ii', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['°', 'm', '°', 'm', '°', '°', '°'],
+    'chordType': ['+', 'm', '7', 'M', '°', 'm', '°'],
   },
   'Ionian Augmented': {
     'scaleStepsRoman': ['I', 'II', 'III', '♯IV', '♯V', '♯VI', 'VII'],
@@ -59,7 +59,15 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.M7,
     ],
     'function': ['I', 'II', 'III', '♯IV', '♯V', '♯VI', 'VII'],
-    'chordType': ['aug', '+', '+', '+', '+', '+', '+'],
+    'chordType': [
+      '+',
+      'm',
+      '7',
+      'M',
+      '°',
+      'm',
+      '°',
+    ],
   },
   'Romanian': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', 'VI', '♯VII'],
@@ -76,7 +84,7 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.M7,
     ],
     'function': ['I', 'II', '♭III', 'IV', 'V', 'VI', '♯VII'],
-    'chordType': ['M', 'm', 'm', '+', '+', 'm', '+'],
+    'chordType': ['m', '7', 'M', '°', 'm', '°', '+'],
   },
   'Phrygian Dominant': {
     'scaleStepsRoman': ['I', '♭II', 'III', 'IV', 'V', '♭VI', '♭VII'],
@@ -93,7 +101,15 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
     ],
     'function': ['I', '♭II', 'III', 'IV', 'V', '♭VI', '♭VII'],
-    'chordType': ['M', 'm', '+', 'M', 'm', 'm', '°'],
+    'chordType': [
+      '7',
+      'M',
+      '°',
+      'm',
+      '°',
+      '+',
+      'm',
+    ],
   },
   'Lydian ♯2': {
     'scaleStepsRoman': ['I', 'II', '♯II', 'IV', 'V', '♭VI', 'VII'],
@@ -110,7 +126,7 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.M7,
     ],
     'function': ['I', 'II', '♯II', 'IV', 'V', '♭VI', 'VII'],
-    'chordType': ['M', '+', 'm', 'M', 'M', 'm', '°'],
+    'chordType': ['M', '°', 'm', '°', '+', 'm', '7'],
   },
   'Ultralocrian': {
     'scaleStepsRoman': ['I', '♭II', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
@@ -127,6 +143,6 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
     ],
     'function': ['I', '♭ii', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['°', 'm', '°', 'm', '°', '°', '°'],
+    'chordType': ['°', 'm', '°', '+', 'm', '7', 'M'],
   },
 };
