@@ -20,7 +20,8 @@ dependencies:
   shared_preferences: ^2.0.5
   tonic: ^0.2.3
   flutter_virtual_piano: ^0.0.9
-  flutter_midi: ^1.1.0
+  # flutter_midi: ^1.1.0
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

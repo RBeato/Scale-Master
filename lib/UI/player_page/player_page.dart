@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/player_page/player/player_widget.dart';
+import 'package:scale_master_guitar/UI/player_page/provider/player_page_title.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
+import 'package:scale_master_guitar/UI/scale_selection_dropdowns/provider/mode_dropdown_value_provider.dart';
 
 import '../chords/chords.dart';
 import '../fretboard/UI/fretboard_neck.dart';
+import '../scale_selection_dropdowns/provider/scale_dropdown_value_provider.dart';
 import 'draggable_handle.dart';
 
 class PlayerPage extends ConsumerWidget {
@@ -12,7 +15,6 @@ class PlayerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final chordList = ref.watch(selectedChordsProvider)
     return WillPopScope(
       onWillPop: () {
         ref.read(selectedChordsProvider.notifier).removeAll();
@@ -22,7 +24,7 @@ class PlayerPage extends ConsumerWidget {
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
           backgroundColor: Colors.grey[800],
-          title: const Text("Play!"),
+          title: const PlayerPageTitle(),
         ),
         body: SafeArea(
           child: Stack(
