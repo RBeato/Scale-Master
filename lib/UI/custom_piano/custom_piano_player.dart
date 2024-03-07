@@ -1,34 +1,33 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:flutter/material.dart';
-
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sequencer/sequence.dart';
 import 'package:flutter_sequencer/track.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:scale_master_guitar/UI/player_page/logic/sequencer_manager.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
+import 'package:scale_master_guitar/constants.dart';
 
-import '../../../constants.dart';
-import '../../../models/step_sequencer_state.dart';
-import '../../fretboard/provider/beat_counter_provider.dart';
-import '../provider/chord_extensions_provider.dart';
+import '../../models/scale_model.dart';
+import '../../models/step_sequencer_state.dart';
+import '../fretboard/provider/beat_counter_provider.dart';
+import '../player_page/logic/sequencer_manager.dart';
+import '../player_page/provider/chord_extensions_provider.dart';
+import '../player_page/provider/is_metronome_selected.dart';
+import '../player_page/provider/is_playing_provider.dart';
+import '../player_page/provider/metronome_tempo_provider.dart';
+import '../player_page/provider/tonic_universal_note_provider.dart';
+import 'custom_piano.dart';
 
-import '../provider/is_metronome_selected.dart';
-import '../provider/metronome_tempo_provider.dart';
-import '../provider/is_playing_provider.dart';
-import '../provider/tonic_universal_note_provider.dart';
-import 'chord_player_bar.dart';
+class CustomPianoSoundController extends ConsumerStatefulWidget {
+  final ScaleModel? scaleInfo;
 
-class PlayerWidget extends ConsumerStatefulWidget {
-  const PlayerWidget({
-    super.key,
-  });
+  const CustomPianoSoundController(this.scaleInfo, {Key? key})
+      : super(key: key);
 
   @override
-  PlayerPageShowcaseState createState() => PlayerPageShowcaseState();
+  CustomPianoState createState() => CustomPianoState();
 }
 
-class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
+class CustomPianoState extends ConsumerState<CustomPianoSoundController>
     with SingleTickerProviderStateMixin {
   Map<int, StepSequencerState> trackStepSequencerStates = {};
   List<Track> tracks = [];
@@ -39,11 +38,9 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   double tempo = Constants.INITIAL_TEMPO;
   double position = 0.0;
   late bool isPlaying;
-  bool isLooping = Constants.INITIAL_IS_LOOPING;
   late Sequence sequence;
   Map<String, dynamic> sequencer = {};
-
-  bool isLoading = false; // Add a boolean flag to track loading state
+  late bool isLoading;
 
   @override
   void initState() {
@@ -51,12 +48,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     initializeSequencer();
   }
 
-  void initializeSequencer() async {
+  Future<void> initializeSequencer() async {
     setState(() {
       isLoading = true;
     });
 
-    // Initialize sequencer manager
     isPlaying = ref.read(isSequencerPlayingProvider);
     sequencerManager = ref.read(sequencerManagerProvider);
 
@@ -104,46 +100,16 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   }
 
   @override
-  void dispose() {
-    ticker.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    isPlaying = ref.watch(isSequencerPlayingProvider);
-    if (!isPlaying) {
-      sequencerManager.handleStop();
-    }
-    final extensions = ref.watch(chordExtensionsProvider);
-    final selectedChords = ref.watch(selectedChordsProvider);
-    ref.watch(tonicUniversalNoteProvider);
-
-    updateSequencer(selectedChords, extensions);
-
-    return ChordPlayerBar(
-      selectedTrack: selectedTrack,
-      isLoading: isLoading,
-      isPlaying: isPlaying,
-      tempo: ref.read(metronomeTempoProvider) as double,
-      isLooping: isLooping,
-      clearTracks: () => sequencerManager.clearTracks(ref),
-      handleTogglePlayStop: () => sequencerManager.handleTogglePlayStop(ref),
-      handleTempoChange: () => sequencerManager.handleTempoChange(tempo),
+    return CustomPiano(
+      widget.scaleInfo,
+      onKeyPressed: sequencerManager.playPianoNote,
     );
   }
 
-  updateSequencer(selectedChords, extensions) {
-    if (sequencerManager.needToUpdateSequencer(selectedChords, extensions)) {
-      setState(() {
-        isLoading = true; // Set loading flag to true when initialization starts
-      });
-
-      getSequencer();
-      setState(() {
-        selectedTrack = tracks[0];
-        isLoading = false;
-      });
-    }
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
   }
 }

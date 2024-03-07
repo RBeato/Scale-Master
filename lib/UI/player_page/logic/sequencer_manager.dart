@@ -8,6 +8,7 @@ import 'package:scale_master_guitar/models/project_state.dart';
 import '../../../constants/music_constants.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/step_sequencer_state.dart';
+import '../../../utils/music_utils.dart';
 import '../../../utils/player_utils.dart';
 import '../provider/is_playing_provider.dart';
 import '../provider/selected_chords_provider.dart';
@@ -25,7 +26,7 @@ class SequencerManager {
   double tempo = Constants.INITIAL_TEMPO;
   double position = 0.0;
   bool isPlaying = false;
-  bool isLooping = Constants.INITIAL_IS_LOOPING;
+  bool isTrackLooping = true;
   late Sequence sequence;
   int stepCount = 0;
   bool isLoading = false;
@@ -109,6 +110,18 @@ class SequencerManager {
     return project;
   }
 
+  playPianoNote(String note) {
+    sequence.loopState = LoopState.Off;
+    sequence.tempo = 200;
+    note = MusicUtils.filterNoteNameWithSlash(note);
+    int midiValue = MusicConstants.midiValues[note]!;
+    tracks[1].events.clear();
+    trackStepSequencerStates[tracks[1].id]!.clear();
+    trackStepSequencerStates[tracks[1].id]!.setVelocity(0, midiValue, 0.60);
+    syncTrack(tracks[1]);
+    sequence.play();
+  }
+
   handleTogglePlayStop(WidgetRef ref) {
     ref.read(isSequencerPlayingProvider.notifier).update((state) => !state);
     bool isPlaying = ref.read(isSequencerPlayingProvider);
@@ -133,7 +146,7 @@ class SequencerManager {
     }
 
     // setState(() {
-    //   isLooping = nextIsLooping;
+    isTrackLooping = nextIsLooping;
     // });
   }
 
@@ -148,7 +161,7 @@ class SequencerManager {
 
     sequence.setEndBeat(nextStepCount.toDouble());
 
-    if (isLooping) {
+    if (isTrackLooping) {
       final nextLoopEndBeat = nextStepCount.toDouble();
 
       sequence.setLoop(0.toDouble(), nextLoopEndBeat);

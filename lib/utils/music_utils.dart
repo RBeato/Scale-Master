@@ -93,6 +93,20 @@ class MusicUtils {
     return reorderedChordIntervals;
   }
 
+  static String filterNoteNameWithSlash(String note) {
+    // Check if the note contains sharps and a slash
+    if (note.contains('♯') && note.contains('/')) {
+      // Split the note string by the '/' character
+      List<String> parts = note.split('/');
+
+      // Keep the second part of the split, which contains the flat name and index
+      return parts.length > 1 ? parts[1] : note;
+    } else {
+      // If the note doesn't contain sharps and a slash, return the original string
+      return note;
+    }
+  }
+
   // Map<String, int> auxIntervals = {
   //   '1': 0,
   //   '3': 0,

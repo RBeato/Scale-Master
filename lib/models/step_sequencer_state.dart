@@ -1,6 +1,10 @@
 class StepSequencerState {
   late Map<int, Map<int, double>> stepNoteNumberVelocityMap = {};
 
+  void clear() {
+    stepNoteNumberVelocityMap = {};
+  }
+
   void setVelocity(int step, int noteNumber, double velocity) {
     var noteNumberVelocityMap = stepNoteNumberVelocityMap[step];
 

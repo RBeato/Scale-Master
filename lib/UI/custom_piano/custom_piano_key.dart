@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CustomPianoKey extends StatefulWidget {
   final bool isBlack;
   final String note;
+  final Function(String) onKeyPressed;
 
   const CustomPianoKey({
     Key? key,
     required this.isBlack,
     required this.note,
+    required this.onKeyPressed,
   }) : super(key: key);
 
   @override
@@ -21,12 +23,14 @@ class _CustomPianoKeyState extends State<CustomPianoKey> {
     setState(() {
       _isPressed = true;
     });
+    widget.onKeyPressed(widget.note);
   }
 
   void _onKeyTapUp(TapUpDetails details) {
     setState(() {
       _isPressed = false;
     });
+    // widget.onKeyPressed(widget.note);
   }
 
   @override
