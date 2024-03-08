@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import '../../../constants/styles.dart';
-import '../provider/settings_state_notifier.dart';
+import 'package:scale_master_guitar/UI/drawer/UI/drawer/sounds_dropdown_column.dart';
+import 'package:scale_master_guitar/UI/drawer/provider/settings_state_notifier.dart';
+import 'package:scale_master_guitar/constants/styles.dart';
 import 'chord_options_cards.dart';
 
 class DrawerPage extends ConsumerStatefulWidget {
@@ -17,8 +18,9 @@ class _DrawerPageState extends ConsumerState<DrawerPage> {
       child: Column(
         children: [
           Column(
-            children: const <Widget>[
-              ChordsOptions(),
+            children: <Widget>[
+              const ChordsOptions(),
+              SoundsDropdownColumn(),
             ],
           ),
           InkWell(

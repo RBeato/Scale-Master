@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../constants/styles.dart';
 
+import '../../../../constants/styles.dart';
 import 'drawer_page.dart';
 
 class CustomDrawer extends StatelessWidget {

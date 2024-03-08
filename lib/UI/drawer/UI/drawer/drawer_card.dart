@@ -1,19 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-import '../provider/settings_state_notifier.dart';
+import 'package:scale_master_guitar/UI/drawer/UI/drawer/settings_enum.dart';
+import 'package:scale_master_guitar/UI/drawer/provider/settings_state_notifier.dart';
 
 class DrawerCard extends ConsumerWidget {
   String title;
   String subtitle;
   String savedValue;
   List dropdownList;
+  SettingsSelection settingsSelection;
 
   DrawerCard(
       {required this.title,
       required this.subtitle,
       required this.dropdownList,
-      required this.savedValue});
+      required this.savedValue,
+      required this.settingsSelection});
 
   late String _selection;
 
@@ -26,10 +28,7 @@ class DrawerCard extends ConsumerWidget {
           title,
           style: const TextStyle(color: Colors.white),
         ),
-
-        // subtitle: Text(subtitle, style: const TextStyle(fontSize: 11.0)),
         trailing: DropdownButton<String>(
-            // dropdownColor: drawerDropdownColor,
             value: _selection = savedValue,
             style: const TextStyle(fontSize: 14.0),
             icon: const Icon(Icons.arrow_downward),
@@ -71,38 +70,5 @@ class DrawerCard extends ConsumerWidget {
         ],
       ),
     );
-
-    // Card(
-    //   // color: drawerSetsColor,
-    //   child: ListTile(
-    //     title: Text(
-    //       title,
-    //     ),
-    //     subtitle: Text(subtitle, style: const TextStyle(fontSize: 11.0)),
-    //     trailing: DropdownButton<String>(
-    //         dropdownColor: drawerDropdownColor,
-    //         value: _selection = savedValue,
-    //         style: const TextStyle(fontSize: 14.0),
-    //         icon: const Icon(Icons.arrow_downward),
-    //         iconSize: 15,
-    //         elevation: 10,
-    //         disabledHint: const Text('Disabled'),
-    //         underline:
-    //             Container(height: 2, color: Colors.white.withOpacity(0.5)),
-    //         onChanged: (String? newValue) {
-    //           _selection = newValue as String;
-    //           ref
-    //               .read(settingsStateNotifierProvider.notifier)
-    //               .changeValue(title, _selection);
-    //         },
-    //         items: dropdownList.map((item) {
-    //           return DropdownMenuItem(
-    //             value: item.toString(),
-    //             child: Text(item),
-    //           );
-    //         }).toList() // ?? [],
-    //         ),
-    //   ),
-    // );
   }
 }

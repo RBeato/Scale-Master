@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-
-import '../../../models/settings_model.dart';
-import '../provider/settings_state_notifier.dart';
+import 'package:scale_master_guitar/UI/drawer/UI/drawer/settings_enum.dart';
+import 'package:scale_master_guitar/UI/drawer/provider/settings_state_notifier.dart';
+import 'package:scale_master_guitar/models/settings_model.dart';
 
 class DrawerGeneralSwitch extends ConsumerWidget {
   const DrawerGeneralSwitch({
@@ -10,11 +10,13 @@ class DrawerGeneralSwitch extends ConsumerWidget {
     required this.title,
     required this.subtitle,
     required this.settings,
+    required this.settingSelection,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
   final Settings settings;
+  final SettingsSelection settingSelection;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,9 +35,6 @@ class DrawerGeneralSwitch extends ConsumerWidget {
             ref
                 .read(settingsStateNotifierProvider.notifier)
                 .changeValue(title, isSwitched);
-            // if (title == "Harmonic Minor Harmony") {
-            //   context.read(chordSuggestionProvider).cancelAnimation();
-            // }
           },
           activeTrackColor: Colors.lightGreenAccent,
           activeColor: Colors.green,
@@ -63,7 +62,7 @@ class DrawerGeneralSwitch extends ConsumerWidget {
   getBool(String title, Settings settings) {
     switch (title) {
       case 'Scales + Chords':
-        return settings.scaleAndChordsOption;
+        return true;
 
       default:
         return false;

@@ -17,8 +17,7 @@ class FingeringsColorBloc {
   String? _modeOption;
   int? _numberOfChordNotes;
   String? _chordVoicings;
-  late String _lowestNoteStringOption;
-  late bool _scaleAndChordSelection;
+
   late String _key;
   // late String _key;
 
@@ -45,10 +44,6 @@ class FingeringsColorBloc {
 
   settingsChanged(Settings settings) {
     _key = MusicConstants.notesWithFlats[settings.musicKey.toInt()];
-    _modeOption = settings.originScale;
-    _chordVoicings = settings.chordVoicingOption;
-    _lowestNoteStringOption = settings.bottomNoteStringOption;
-    _scaleAndChordSelection = settings.scaleAndChordsOption;
   }
 
   ChordScaleFingeringsModel createChordsScales(
@@ -65,7 +60,6 @@ class FingeringsColorBloc {
     _key = flatsAndSharpsToFlats(scaleModel.parentScaleKey);
     addChordsTypes(scaleModel);
     setModeDegrees(scaleModel);
-    checkLowestStringSelection();
     filterSettings();
     buildVoicingIntervalsList();
     chordsStringFretPositions();
@@ -98,24 +92,6 @@ class FingeringsColorBloc {
   setModeDegrees(scaleModel) {
     _modeIntervals =
         Scales.data[scaleModel.scale][scaleModel.mode]['scaleDegrees'];
-  }
-
-  checkLowestStringSelection() {
-    try {
-      if (_lowestNoteStringOption.contains('all 3')) {
-        _lowerStringList = [6, 5, 4];
-      }
-      if (_lowestNoteStringOption.contains('both')) {
-        _lowerStringList = [6, 5];
-      }
-      if (_lowestNoteStringOption.contains('none')) {
-        _lowerStringList = [6, 5, 4, 3, 2, 1];
-      } else {
-        _lowerStringList = [int.parse(_lowestNoteStringOption)];
-      }
-    } catch (e) {
-      // print('Check lowest string selection function: $e');
-    }
   }
 
   filterSettings() {
@@ -188,112 +164,105 @@ class FingeringsColorBloc {
   }
 
   chordsStringFretPositions() {
-//!! Inserir passo intermédio que permite
-//!! dar cores diferentes a posições diferentes
-    if (_scaleAndChordSelection == false) {
-      _chordNotesPositions = [];
-    } else if (_scaleAndChordSelection == true) {
-      _chordNotesPositions = [];
-      late int auxValue;
-      int string;
-      String noteName;
-      String noteNameWithoutIndex;
-      int fret;
-      //CHORD VOICINGS == 'ALL CHORD TONES'
-      if (_chordVoicings == 'All chord tones') {
-        List<int> noteRepetitionsInOneString = [0, 2];
-        for (int i = 0; i < _lowerStringList!.length; i++) {
-          for (int j = 0; j < _voicingTonicIntervalList!.length; j++) {
-            noteName = (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![j])
+    _chordNotesPositions = [];
+    late int auxValue;
+    int string;
+    String noteName;
+    String noteNameWithoutIndex;
+    int fret;
+    //CHORD VOICINGS == 'ALL CHORD TONES'
+    if (_chordVoicings == 'All chord tones') {
+      List<int> noteRepetitionsInOneString = [0, 2];
+      for (int i = 0; i < _lowerStringList!.length; i++) {
+        for (int j = 0; j < _voicingTonicIntervalList!.length; j++) {
+          noteName = (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![j])
+              .toString();
+          noteNameWithoutIndex =
+              noteName.substring(0, noteName.toString().length - 1);
+          noteNameWithoutIndex =
+              flatsOnlyNoteNomenclature(noteNameWithoutIndex);
+          string = _lowerStringList![i]; //strings between 0-5
+
+          for (int n = 0; n < noteRepetitionsInOneString.length; n++) {
+            fret = fretboardNotesNamesFlats[string - 1]
+                .indexOf(noteNameWithoutIndex, noteRepetitionsInOneString[n]);
+            if (n == 1 && fret == auxValue) {
+              continue;
+            }
+            auxValue = fret;
+            _chordNotesPositions.add([string, fret]);
+          }
+        }
+      }
+      // print('\"All chord tones\" chordNotesPositions: $_chordNotesPositions');
+    }
+    if (_chordVoicings == 'CAGED') {
+      //CAGED NOTES POSITIONS
+      //!!ADD CAGED TYPE TO 7TH CHORDS.?
+      final chordType =
+          tonic.ChordPattern.fromIntervals(_voicingTonicIntervalList!);
+
+      final chord = tonic.Chord.parse('$_key $chordType');
+      final instrument = tonic.Instrument.guitar;
+      final fretting = tonic.bestFrettingFor(chord, instrument).toString();
+      // print('Fretting : $fretting');
+      try {
+        int stringNumber = 6;
+        for (int i = 0; i < 6; i++) {
+          var fret = fretting.substring(i, i + 1);
+          if (fret != 'x') {
+            _chordNotesPositions.add([stringNumber, int.parse(fret)]);
+            stringNumber--;
+          } else {
+            stringNumber--;
+          }
+        }
+        // print('_chordNotesPositions $_chordNotesPositions');
+      } catch (e) {
+        print('Parsing error: $e');
+      }
+    }
+    //CHORD VOICINGS == 'drop2' || ChordVoicings == 'drop3'|| ChordVoicings == 'close voicing'
+    if (_chordVoicings == 'Close voicings' || _chordVoicings == 'Drop') {
+      List<int> proximityList = [];
+      List<int> notesRepetitionsInOneString = [0, 2];
+
+      for (int i = 0; i < _voicingTonicIntervalList!.length; i++) {
+        for (int j = 0; j < _lowerStringList!.length; j++) {
+          for (int k = 0; k < notesRepetitionsInOneString.length; k++) {
+            string = _lowerStringList![j] +
+                _stringDistribution![i]; //strings indexes between 0-5
+            noteName = (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![i])
                 .toString();
             noteNameWithoutIndex =
                 noteName.substring(0, noteName.toString().length - 1);
             noteNameWithoutIndex =
                 flatsOnlyNoteNomenclature(noteNameWithoutIndex);
-            string = _lowerStringList![i]; //strings between 0-5
-
-            for (int n = 0; n < noteRepetitionsInOneString.length; n++) {
-              fret = fretboardNotesNamesFlats[string - 1]
-                  .indexOf(noteNameWithoutIndex, noteRepetitionsInOneString[n]);
-              if (n == 1 && fret == auxValue) {
-                continue;
-              }
-              auxValue = fret;
-              _chordNotesPositions.add([string, fret]);
+            if (string == 0) {
+              print("STRING == 0");
             }
+            fret = fretboardNotesNamesFlats[string - 1]
+                .indexOf(noteNameWithoutIndex, notesRepetitionsInOneString[k]);
+            if (k > 0 && fret == auxValue) {
+              continue;
+            }
+            auxValue = fret;
+            proximityList.add(fret);
+            _chordNotesPositions.add([string, fret]);
+            // print('_proximityList : $_proximityList');
+            // print('_chordNotesPositions: $_chordNotesPositions');
           }
         }
-        // print('\"All chord tones\" chordNotesPositions: $_chordNotesPositions');
-      }
-      if (_chordVoicings == 'CAGED') {
-        //CAGED NOTES POSITIONS
-        //!!ADD CAGED TYPE TO 7TH CHORDS.?
-        final chordType =
-            tonic.ChordPattern.fromIntervals(_voicingTonicIntervalList!);
+        //Calculate the average value fret for the chord and correct the position
+        var averageFretPosition =
+            proximityList.map((m) => m).reduce((a, b) => a + b) /
+                proximityList.length;
+        print('Average result: $averageFretPosition');
 
-        final chord = tonic.Chord.parse('$_key $chordType');
-        final instrument = tonic.Instrument.guitar;
-        final fretting = tonic.bestFrettingFor(chord, instrument).toString();
-        // print('Fretting : $fretting');
-        try {
-          int stringNumber = 6;
-          for (int i = 0; i < 6; i++) {
-            var fret = fretting.substring(i, i + 1);
-            if (fret != 'x') {
-              _chordNotesPositions.add([stringNumber, int.parse(fret)]);
-              stringNumber--;
-            } else {
-              stringNumber--;
-            }
-          }
-          // print('_chordNotesPositions $_chordNotesPositions');
-        } catch (e) {
-          print('Parsing error: $e');
-        }
-      }
-      //CHORD VOICINGS == 'drop2' || ChordVoicings == 'drop3'|| ChordVoicings == 'close voicing'
-      if (_chordVoicings == 'Close voicings' || _chordVoicings == 'Drop') {
-        List<int> proximityList = [];
-        List<int> notesRepetitionsInOneString = [0, 2];
-
-        for (int i = 0; i < _voicingTonicIntervalList!.length; i++) {
-          for (int j = 0; j < _lowerStringList!.length; j++) {
-            for (int k = 0; k < notesRepetitionsInOneString.length; k++) {
-              string = _lowerStringList![j] +
-                  _stringDistribution![i]; //strings indexes between 0-5
-              noteName =
-                  (tonic.Pitch.parse(_key) + _voicingTonicIntervalList![i])
-                      .toString();
-              noteNameWithoutIndex =
-                  noteName.substring(0, noteName.toString().length - 1);
-              noteNameWithoutIndex =
-                  flatsOnlyNoteNomenclature(noteNameWithoutIndex);
-              if (string == 0) {
-                print("STRING == 0");
-              }
-              fret = fretboardNotesNamesFlats[string - 1].indexOf(
-                  noteNameWithoutIndex, notesRepetitionsInOneString[k]);
-              if (k > 0 && fret == auxValue) {
-                continue;
-              }
-              auxValue = fret;
-              proximityList.add(fret);
-              _chordNotesPositions.add([string, fret]);
-              // print('_proximityList : $_proximityList');
-              // print('_chordNotesPositions: $_chordNotesPositions');
-            }
-          }
-          //Calculate the average value fret for the chord and correct the position
-          var averageFretPosition =
-              proximityList.map((m) => m).reduce((a, b) => a + b) /
-                  proximityList.length;
-          print('Average result: $averageFretPosition');
-
-          for (int frt = 0; frt < _chordNotesPositions.length; frt++) {
-            _chordNotesPositions.removeWhere((item) =>
-                item[1] < averageFretPosition - 6.5 ||
-                item[1] > averageFretPosition + 6.5);
-          }
+        for (int frt = 0; frt < _chordNotesPositions.length; frt++) {
+          _chordNotesPositions.removeWhere((item) =>
+              item[1] < averageFretPosition - 6.5 ||
+              item[1] > averageFretPosition + 6.5);
         }
       }
     }

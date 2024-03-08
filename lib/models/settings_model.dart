@@ -6,42 +6,31 @@ abstract class JsonTo {
 
 class Settings extends Equatable {
   double musicKey;
-  bool scaleAndChordsOption;
-  String originScale;
-  String chordVoicingOption;
-  List chordVoicings;
-  String bottomNoteStringOption;
-  List bottomNoteStringList;
+  String keyboardSound;
+  String bassSound;
+  String drumsSound;
 
   Settings({
-    required this.scaleAndChordsOption,
-    required this.bottomNoteStringList,
-    required this.bottomNoteStringOption,
-    required this.chordVoicingOption,
-    required this.chordVoicings,
     required this.musicKey,
-    required this.originScale,
+    this.keyboardSound = 'Piano',
+    this.bassSound = 'Double Bass',
+    this.drumsSound = 'Acoustic',
   });
 
   @override
   List<Object> get props => [
-        bottomNoteStringList,
-        bottomNoteStringOption,
-        chordVoicings,
-        chordVoicingOption,
         musicKey,
-        originScale,
+        keyboardSound,
+        drumsSound,
+        bassSound,
       ];
 
   @override
   String toString() {
     return 'Settings: '
         '\n $musicKey'
-        '\n $scaleAndChordsOption'
-        '\n $originScale'
-        '\n $chordVoicingOption'
-        '\n $chordVoicings'
-        '\n $bottomNoteStringOption'
-        '\n $bottomNoteStringList';
+        '\n $keyboardSound'
+        '\n $drumsSound'
+        '\n $bassSound';
   }
 }

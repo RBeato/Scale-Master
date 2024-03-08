@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/chromatic_wheel.dart';
+import 'package:scale_master_guitar/UI/drawer/UI/drawer/custom_drawer.dart';
 
-import 'UI/drawer/UI/custom_drawer.dart';
 import 'UI/piano/piano_widget.dart';
 import 'UI/player_page/player_page.dart';
 import 'UI/scale_selection_dropdowns/scale_selection.dart';

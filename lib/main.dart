@@ -7,8 +7,6 @@ import 'home_page.dart';
 //TODO: Show chord notes on the fretboard
 //TODO: Add voice leading to chord progressions
 //TODO: Set maximum number of chords to be played
-//TODO: trash button to chords bar
-//TODO: all buttons to chords bar
 //TODO: Fix harmony for 5,6,8 notes scales. Perhaps review all harmony logic
 //TODO: add colors to home screen and make degrees appear and disappear according to the scale
 
