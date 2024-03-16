@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import '../../constants/color_constants.dart';
 import '../../constants/music_constants.dart';
 
 class WheelPainter extends CustomPainter {
   final double rotation;
+  List<String> scaleDegrees;
 
-  WheelPainter(this.rotation);
+  WheelPainter(this.rotation, this.scaleDegrees);
 
   @override
   void paint(Canvas canvas, Size size) {
     Offset center = Offset(size.width / 2, size.height / 2);
+    var degrees = scaleDegrees.map((e) => e.toLowerCase());
 
     double innerRadius = size.width / 3; // Radius for the knob
 
@@ -23,12 +26,23 @@ class WheelPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.center,
     );
+
+    Color getDegreeColor(String degree) {
+      return degrees.contains(degree.toLowerCase())
+          ? ConstantColors.scaleColorMap[degree]
+          : Colors.grey.withOpacity(0.3);
+    }
+
     for (int i = 0; i < MusicConstants.notesDegrees.length; i++) {
       double angle =
           2 * math.pi * i / MusicConstants.notesDegrees.length - math.pi / 2;
       textPainter.text = TextSpan(
         text: MusicConstants.notesDegrees[i],
-        style: const TextStyle(color: Colors.grey, fontSize: 16),
+        style: TextStyle(
+          color: getDegreeColor(MusicConstants.notesDegrees[i]), // Colors.grey,
+
+          fontSize: 16,
+        ),
       );
       textPainter.layout();
       Size textSize = textPainter.size;
@@ -83,7 +97,8 @@ class WheelPainter extends CustomPainter {
       // );
       textPainter.text = TextSpan(
         text: MusicConstants.notesWithFlatsAndSharps[i],
-        style: const TextStyle(color: Colors.white, fontSize: 18),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 18), //Color of inside notes
       );
       textPainter.layout();
       Size textSize = textPainter.size;

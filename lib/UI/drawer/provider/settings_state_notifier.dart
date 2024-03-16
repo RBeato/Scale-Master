@@ -2,7 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/drawer/models/settings_state.dart';
 
 import '../../../models/settings_model.dart';
+import '../UI/drawer/settings_enum.dart';
 import '../storage/localstorage_service.dart';
+
+//create provider 'settingsImediateProvider'
+final settingsDataProvider = StateProvider<Settings>((ref) => Settings());
 
 final settingsProvider = FutureProvider<Settings>((ref) async {
   return await ref.watch(settingsStateNotifierProvider.notifier).settings;
@@ -33,18 +37,19 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
     }
   }
 
-  Future<void> changeValue(title, value) async {
+  Future<void> changeValue(SettingsSelection settingSelection, value) async {
     try {
-      final settings = await localStorageProvider.changeSettings(title, value);
+      final settings =
+          await localStorageProvider.changeSettings(settingSelection, value);
       state = SettingsLoaded(settings);
     } catch (e) {
       state = SettingsError("Couldn't CHANGE the settings!");
     }
   }
 
-  Future getFilteredValue(title) async {
+  Future getFilteredValue(SettingsSelection settingSelection) async {
     try {
-      final settings = await localStorageProvider.getFiltered(title);
+      final settings = await localStorageProvider.getFiltered(settingSelection);
       return settings;
     } catch (e) {
       // print("Didn't get filtered Value");

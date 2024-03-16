@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sequencer/global_state.dart';
+import 'package:flutter_sequencer/models/instrument.dart';
 import 'package:flutter_sequencer/sequence.dart';
 import 'package:flutter_sequencer/track.dart';
 import 'package:scale_master_guitar/constants/general_audio_constants.dart';
@@ -9,7 +10,6 @@ import '../../../constants/music_constants.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/step_sequencer_state.dart';
 import '../../../utils/music_utils.dart';
-import '../../../utils/player_utils.dart';
 import '../provider/is_playing_provider.dart';
 import '../provider/selected_chords_provider.dart';
 import 'package:collection/collection.dart';
@@ -30,8 +30,10 @@ class SequencerManager {
   late Sequence sequence;
   int stepCount = 0;
   bool isLoading = false;
+  bool playAllInstruments = true;
 
   Future<Map<String, dynamic>> initialize({
+    playAllInstruments,
     isPlaying,
     stepCount,
     trackVolumes,
@@ -44,16 +46,21 @@ class SequencerManager {
     beatCounter,
     tempo,
     extensions,
+    required List<Instrument> instruments,
   }) async {
     if (isPlaying) {
       handleStop();
     }
 
+    this.playAllInstruments = playAllInstruments;
+
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
     GlobalState().setKeepEngineRunning(true);
 
-    final instruments = SoundPlayerUtils.instruments;
+    // if (!playAllInstruments) {
+    //   instruments = [instruments[1]];
+    // }
 
     return sequence.createTracks(instruments).then((createdTracks) async {
       tracks = createdTracks;
@@ -97,6 +104,8 @@ class SequencerManager {
       var note = isScaleTonicSelected
           ? "${chord.parentScaleKey}2"
           : chord.chordNotesWithIndexesRaw.first;
+      print('bass note $note');
+      note = MusicUtils.filterNoteNameWithSlash(note);
       var bassMidiValue = MusicConstants.midiValues[note]!;
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
     });

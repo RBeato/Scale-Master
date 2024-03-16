@@ -47,18 +47,22 @@ class Chords extends ConsumerWidget {
                         height: 45, // Set a fixed height for all containers
                         child: GestureDetector(
                           onTap: () {
-                            var chord = addChordModel(Taps.single, c,
-                                scaleFingerings, index, alreadySelectedChords);
-                            ref
-                                .read(selectedChordsProvider.notifier)
-                                .addChord(chord);
+                            _addChord(
+                                Taps.single,
+                                ref.read(selectedChordsProvider.notifier),
+                                c,
+                                scaleFingerings,
+                                index,
+                                alreadySelectedChords);
                           },
                           onDoubleTap: () {
-                            var chord = addChordModel(Taps.double, c,
-                                scaleFingerings, index, alreadySelectedChords);
-                            ref
-                                .read(selectedChordsProvider.notifier)
-                                .addChord(chord);
+                            _addChord(
+                                Taps.double,
+                                ref.read(selectedChordsProvider.notifier),
+                                c,
+                                scaleFingerings,
+                                index,
+                                alreadySelectedChords);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -101,6 +105,20 @@ class Chords extends ConsumerWidget {
       count += chord.duration;
     }
     return count;
+  }
+
+  _addChord(
+    Taps tap,
+    provider,
+    c,
+    scaleFingerings,
+    index,
+    alreadySelectedChords,
+  ) {
+    var chord =
+        addChordModel(tap, c, scaleFingerings, index, alreadySelectedChords);
+
+    provider.addChord(chord);
   }
 
   addChordModel(

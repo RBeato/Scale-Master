@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../constants/color_constants.dart';
 import '../../models/scale_model.dart';
 import '../../utils/music_utils.dart';
 import 'custom_piano_key.dart';
@@ -58,12 +57,12 @@ class _CustomPianoState extends State<CustomPiano> {
         var t = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
         String? degree;
-        Color? color;
+        Color? color = Colors.blue;
         if (notesList.contains(t)) {
-          print('Note is in scale');
-          int index = notesList.indexOf(t);
-          degree = widget.scaleInfo!.degreeFunction[index];
-          color = ConstantColors.scaleColorMap[degree];
+          // print('Note is in scale');
+          // int index = notesList.indexOf(t);
+          // degree = widget.scaleInfo!.degreeFunction[index];
+          // color = ConstantColors.scaleColorMap[degree];
         }
         whiteKeys.add(CustomPianoKey(
           isBlack: false,
@@ -96,12 +95,12 @@ class _CustomPianoState extends State<CustomPiano> {
         var t = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
         String? degree;
-        Color? color;
+        Color? color = Colors.blue;
         if (notesList.contains(t)) {
-          print('Note is in scale');
-          int index = notesList.indexOf(t);
-          degree = widget.scaleInfo!.degreeFunction[index];
-          color = ConstantColors.scaleColorMap[degree];
+          // print('Note is in scale');
+          // int index = notesList.indexOf(t);
+          // degree = widget.scaleInfo!.degreeFunction[index];
+          // color = ConstantColors.scaleColorMap[degree];
         }
 
         double leftOffset = octave * 7 * whiteKeyWidth + blackKeyOffsets[i];

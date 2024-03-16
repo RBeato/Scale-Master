@@ -3,21 +3,12 @@ import 'package:scale_master_guitar/UI/player_page/provider/is_playing_provider.
 import '../../../models/chord_model.dart';
 
 import '../../fretboard/provider/beat_counter_provider.dart';
+import '../../fretboard/service/chord_progression_voice_leading_creator.dart';
 import 'chord_extensions_provider.dart';
 
 final selectedChordsProvider =
     StateNotifierProvider<SelectedChords, List<ChordModel>>(
   (ref) {
-    // final selectedChords = SelectedChords(ref);
-
-    // // Listen to changes in chordExtensionsProvider and update selectedChords accordingly
-    // ref.listen<List<String>>(chordExtensionsProvider,
-    //     (extensions, previousExtensions) {
-    //   // Filter selected chords based on extensions
-    //   selectedChords.filterChords(extensions ?? []);
-    // });
-
-    // return selectedChords;
     return SelectedChords(ref);
   },
 );
@@ -32,10 +23,25 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
 
   void addChord(ChordModel chordModel) {
     ref.read(isSequencerPlayingProvider.notifier).update((state) => true);
+    updateChords(chordModel);
+  }
 
-    state = List.of(state)..add(chordModel);
+  void updateProgression(List<ChordModel>? chords) {
+    state = VoiceLeadingCreator.buildProgression(chords ?? state);
+  }
 
-    filterChords(ref.read(chordExtensionsProvider) ?? []);
+  updateChords([ChordModel? chordModel]) {
+    var chordExtensions = ref.read(chordExtensionsProvider) ?? [];
+    List<ChordModel> chords = [];
+
+    if (chordModel != null) {
+      var temp = [...state];
+      temp.add(chordModel);
+
+      chords = filterChords(chordExtensions, temp);
+    }
+
+    updateProgression(chords);
 
     int sum =
         state.fold(0, (previousValue, item) => previousValue + item.duration);
@@ -43,11 +49,8 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
     ref.read(beatCounterProvider.notifier).update((state) => sum);
   }
 
-  void updateSelectedChords(List<ChordModel> chords) {
-    state = chords;
-  }
-
-  void filterChords(List<String> extensions) {
+  List<ChordModel> filterChords(
+      List<String> extensions, List<ChordModel> chords) {
     final extensionIndexes = {
       '7': 3,
       '9': 4,
@@ -55,8 +58,7 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
       '13': 6,
     };
 
-    print(state.hashCode);
-    state = state.map((chord) {
+    var c = chords.map((chord) {
       List<String> updatedPitches =
           chord.allChordExtensions?.take(3).toList() ?? [];
 
@@ -66,22 +68,12 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
           updatedPitches.add(chord.allChordExtensions![index]);
         }
       }
-      return chord.copyWith(selectedChordPitches: updatedPitches);
+      return chord.copyWith(pitches: updatedPitches);
     }).toList();
-    print(state.hashCode);
+    return c;
   }
 
   void removeAll() {
     state = [];
   }
 }
-
-
-// final List<String> extensions = [
-//     "7",
-//     "9",
-//     "11",
-//     "13",
-//   ];
-
-

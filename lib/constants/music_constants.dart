@@ -18,16 +18,16 @@ class MusicConstants {
 
   static const List<String> notesDegrees = [
     'I',
-    'bii',
+    '♭ii',
     'II',
-    'biii',
+    '♭iii',
     'III',
     'IV',
-    'bv',
+    '♭v',
     'V',
     'bvi',
     'VI',
-    'bvii',
+    '♭vii',
     'VII'
   ];
 

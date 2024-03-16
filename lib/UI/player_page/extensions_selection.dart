@@ -62,9 +62,7 @@ class ExtensionButton extends ConsumerWidget {
         if (!isSelected) {
           ref.read(chordExtensionsProvider.notifier).removeExtension(text);
         }
-        ref
-            .read(selectedChordsProvider.notifier)
-            .filterChords(ref.read(chordExtensionsProvider) ?? []);
+        ref.read(selectedChordsProvider.notifier).updateChords();
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),

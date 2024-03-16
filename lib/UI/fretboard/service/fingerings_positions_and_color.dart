@@ -5,7 +5,6 @@ import 'package:tonic/tonic.dart' as tonic;
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/flats_and_sharps_to_flats_converter.dart';
-import '../../../constants/music_constants.dart';
 import '../../../constants/flats_only_nomenclature_converter.dart';
 import '../../../constants/fretboard_notes.dart';
 import '../../../constants/scales/scales_data_v2.dart';
@@ -42,13 +41,13 @@ class FingeringsColorBloc {
     _scaleChordPositions = ChordScaleFingeringsModel();
   }
 
-  settingsChanged(Settings settings) {
-    _key = MusicConstants.notesWithFlats[settings.musicKey.toInt()];
-  }
+  // settingsChanged(Settings settings) {
+  //   _key = MusicConstants.notesWithFlats[settings.musicKey.toInt()];
+  // }
 
   ChordScaleFingeringsModel createChordsScales(
       ScaleModel chordModel, Settings settings) {
-    settingsChanged(settings);
+    // settingsChanged(settings);
 
     _key = chordModel.parentScaleKey;
     _modeOption = chordModel.mode;
@@ -160,7 +159,6 @@ class FingeringsColorBloc {
     for (var element in _voicingIntervalsNumbers!) {
       _voicingTonicIntervalList!.add(_modeIntervals![element - 1]);
     }
-    // print('VoicingNotesList: $_voicingTonicIntervalList');
   }
 
   chordsStringFretPositions() {

@@ -19,7 +19,7 @@ class _DrawerPageState extends ConsumerState<DrawerPage> {
         children: [
           Column(
             children: <Widget>[
-              const ChordsOptions(),
+              const GeneralOptions(),
               SoundsDropdownColumn(),
             ],
           ),

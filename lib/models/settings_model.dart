@@ -1,25 +1,48 @@
 import 'package:equatable/equatable.dart';
 
+import '../UI/drawer/UI/drawer/settings_enum.dart';
+
 abstract class JsonTo {
   Map<String, dynamic> toJson();
 }
 
 class Settings extends Equatable {
-  double musicKey;
+  bool showScaleDegrees;
+  bool isSingleColor;
   String keyboardSound;
   String bassSound;
   String drumsSound;
 
   Settings({
-    required this.musicKey,
+    this.showScaleDegrees = false,
+    this.isSingleColor = false,
     this.keyboardSound = 'Piano',
     this.bassSound = 'Double Bass',
     this.drumsSound = 'Acoustic',
   });
 
+  dynamic get(SettingsSelection settingsSelection) {
+    if (settingsSelection == SettingsSelection.bassSound) {
+      return bassSound;
+    }
+    if (settingsSelection == SettingsSelection.drumsSound) {
+      return drumsSound;
+    }
+    if (settingsSelection == SettingsSelection.keyboardSound) {
+      return keyboardSound;
+    }
+    if (settingsSelection == SettingsSelection.scaleDegrees) {
+      return showScaleDegrees;
+    }
+    if (settingsSelection == SettingsSelection.singleColor) {
+      return isSingleColor;
+    }
+  }
+
   @override
   List<Object> get props => [
-        musicKey,
+        showScaleDegrees,
+        isSingleColor,
         keyboardSound,
         drumsSound,
         bassSound,
@@ -28,7 +51,8 @@ class Settings extends Equatable {
   @override
   String toString() {
     return 'Settings: '
-        '\n $musicKey'
+        '\n $showScaleDegrees'
+        '\n $isSingleColor'
         '\n $keyboardSound'
         '\n $drumsSound'
         '\n $bassSound';

@@ -7,8 +7,8 @@ import 'package:scale_master_guitar/UI/drawer/provider/settings_state_notifier.d
 import 'package:scale_master_guitar/models/settings_model.dart';
 import 'drawer_switch_general.dart';
 
-class ChordsOptions extends ConsumerWidget {
-  const ChordsOptions({
+class GeneralOptions extends ConsumerWidget {
+  const GeneralOptions({
     Key? key,
   }) : super(key: key);
 
@@ -19,24 +19,24 @@ class ChordsOptions extends ConsumerWidget {
         final state = ref.watch(settingsStateNotifierProvider);
 
         if (state is SettingsInitial) {
-          return const Text("Didn't load chord Options!");
+          return const Text("Didn't load options!");
           // buildInitialSettingsInput(context);
         } else if (state is SettingsLoading) {
           return buildLoadingSettings();
         } else if (state is SettingsLoaded) {
-          return ChordsOptionsCards(state.settings);
+          return GeneralOptionsCards(state.settings);
         } else if (state is SettingsError) {
-          return const Text("Error loading chord Options!");
+          return const Text("Error loading options!");
           // buildInitialSettingsInput(context);
         }
-        return const Text("Didn't load chord Options!");
+        return const Text("Didn't load options!");
       },
     );
   }
 }
 
-class ChordsOptionsCards extends StatelessWidget {
-  ChordsOptionsCards(this.settings);
+class GeneralOptionsCards extends StatelessWidget {
+  GeneralOptionsCards(this.settings);
   Settings settings;
 
   @override

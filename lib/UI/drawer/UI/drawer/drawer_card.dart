@@ -24,11 +24,13 @@ class DrawerCard extends ConsumerWidget {
     return Card(
       color: Colors.black12,
       child: ExpansionTile(
+        backgroundColor: Colors.black87,
         title: Text(
           title,
           style: const TextStyle(color: Colors.white),
         ),
         trailing: DropdownButton<String>(
+            dropdownColor: Colors.grey[900],
             value: _selection = savedValue,
             style: const TextStyle(fontSize: 14.0),
             icon: const Icon(Icons.arrow_downward),
@@ -36,12 +38,12 @@ class DrawerCard extends ConsumerWidget {
             elevation: 10,
             disabledHint: const Text('Disabled'),
             underline:
-                Container(height: 2, color: Colors.white.withOpacity(0.5)),
+                Container(height: 2, color: Colors.black.withOpacity(0.5)),
             onChanged: (String? newValue) {
               _selection = newValue as String;
               ref
                   .read(settingsStateNotifierProvider.notifier)
-                  .changeValue(title, _selection);
+                  .changeValue(settingsSelection, _selection);
             },
             items: dropdownList.map((item) {
               return DropdownMenuItem(

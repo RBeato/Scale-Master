@@ -36,8 +36,10 @@ class _BuildFloatingButtonState extends ConsumerState<BuildFloatingButton> {
           elevation: 15.0,
           splashColor: Colors.orange[500],
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const PlayerPage()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PlayerPage(widget.settings)));
           },
           backgroundColor: Colors.orangeAccent,
           child: const Icon(

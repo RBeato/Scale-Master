@@ -1,46 +1,73 @@
+import 'package:scale_master_guitar/UI/drawer/UI/drawer/settings_enum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/settings_model.dart';
 
 class LocalStorageService {
-  late double musicKey;
-  late bool scaleAndChordsOption;
-  late String keyboardSound;
-  late String bassSound;
-  late bool bassIsSelected;
-  late String drumsSound;
-  late bool drumsIsSelected;
-
   late Settings settings;
 
-  final String _musicKeyKey = 'musicKey';
-
-  final String _originScaleTypeKey = 'scaleChosen';
+  LocalStorageService() {
+    fetchSettings();
+  }
 
   Future<Settings> fetchSettings() async {
-    musicKey = await _getFromDisk(_musicKeyKey) ?? 0.0;
-
     settings = Settings(
-      musicKey: musicKey,
+      showScaleDegrees:
+          await _getFromDisk(SettingsSelection.scaleDegrees.toString()) ??
+              false,
+      isSingleColor:
+          await _getFromDisk(SettingsSelection.singleColor.toString()) ?? false,
+      keyboardSound:
+          await _getFromDisk(SettingsSelection.keyboardSound.toString()) ??
+              'Piano',
+      bassSound: await _getFromDisk(SettingsSelection.bassSound.toString()) ??
+          'Electric',
+      drumsSound: await _getFromDisk(SettingsSelection.drumsSound.toString()) ??
+          'Acoustic',
     );
     return settings;
   }
 
-  Future<Settings> changeSettings(title, value) async {
+  Future<Settings> changeSettings(settingsSelection, value) async {
     late String key;
-    if (title == 'Music Key') {
-      settings.musicKey = value;
-      key = _musicKeyKey;
+
+    if (settingsSelection == SettingsSelection.scaleDegrees) {
+      settings.showScaleDegrees = value;
+    }
+    if (settingsSelection == SettingsSelection.singleColor) {
+      settings.isSingleColor = value;
+    }
+    if (settingsSelection == SettingsSelection.keyboardSound) {
+      settings.keyboardSound = value;
+    }
+    if (settingsSelection == SettingsSelection.bassSound) {
+      settings.bassSound = value;
+    }
+    if (settingsSelection == SettingsSelection.drumsSound) {
+      settings.drumsSound = value;
     }
 
+    key = settingsSelection.toString();
     _saveToDisk(key, value);
-    // print('Local Storage changeSettings() $settings');
     return settings;
   }
 
-  Future<Settings> getFiltered(title) {
+  Future<Settings> getFiltered(settingsSelection) {
     Object? value;
-    if (title == 'Music Key') {
-      value = settings.musicKey;
+
+    if (settingsSelection == SettingsSelection.bassSound) {
+      value = settings.bassSound;
+    }
+    if (settingsSelection == SettingsSelection.drumsSound) {
+      value = settings.drumsSound;
+    }
+    if (settingsSelection == SettingsSelection.keyboardSound) {
+      value = settings.keyboardSound;
+    }
+    if (settingsSelection == SettingsSelection.scaleDegrees) {
+      value = settings.showScaleDegrees;
+    }
+    if (settingsSelection == SettingsSelection.singleColor) {
+      value = settings.isSingleColor;
     }
 
     print('LocalStorageService getFiltered() $settings');
@@ -76,11 +103,17 @@ class LocalStorageService {
 
   clearPreferences() async {
     settings = Settings(
-      musicKey: 0.0,
+      showScaleDegrees: false,
+      isSingleColor: false,
+      keyboardSound: 'Piano',
+      bassSound: 'Double Bass',
+      drumsSound: 'Acoustic',
     );
-    _saveToDisk(_musicKeyKey, 0.0);
-
-    _saveToDisk(_originScaleTypeKey, "Diatonic Major");
+    _saveToDisk(SettingsSelection.scaleDegrees.toString(), false);
+    _saveToDisk(SettingsSelection.singleColor.toString(), false);
+    _saveToDisk(SettingsSelection.keyboardSound.toString(), 'Piano');
+    _saveToDisk(SettingsSelection.bassSound.toString(), 'Double Bass');
+    _saveToDisk(SettingsSelection.drumsSound.toString(), 'Acoustic');
 
     return settings;
   }

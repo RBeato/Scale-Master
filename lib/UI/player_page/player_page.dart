@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/player_page/player/player_widget.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/player_page_title.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
-import 'package:scale_master_guitar/UI/scale_selection_dropdowns/provider/mode_dropdown_value_provider.dart';
 
+import '../../models/settings_model.dart';
 import '../chords/chords.dart';
 import '../fretboard/UI/fretboard_neck.dart';
-import '../scale_selection_dropdowns/provider/scale_dropdown_value_provider.dart';
 import 'draggable_handle.dart';
 
 class PlayerPage extends ConsumerWidget {
-  const PlayerPage({Key? key}) : super(key: key);
+  const PlayerPage(this.settings, {Key? key}) : super(key: key);
+  final Settings settings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +34,7 @@ class PlayerPage extends ConsumerWidget {
                 children: [
                   Fretboard(),
                   const Expanded(flex: 2, child: Chords()),
-                  const Expanded(flex: 4, child: PlayerWidget()),
+                  Expanded(flex: 4, child: PlayerWidget(settings)),
                   Expanded(flex: 1, child: Container()),
                 ],
               ),

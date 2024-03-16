@@ -5,9 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/wheel_painter.dart';
 
 import '../../constants/music_constants.dart';
+import '../scale_selection_dropdowns/provider/mode_dropdown_value_provider.dart';
+import '../scale_selection_dropdowns/provider/scale_dropdown_value_provider.dart';
 import 'provider/top_note_provider.dart';
 
 class ChromaticWheel extends ConsumerStatefulWidget {
+  const ChromaticWheel(this.scaleDegrees, {Key? key}) : super(key: key);
+
+  final List<String> scaleDegrees;
+
   @override
   _ChromaticWheelState createState() => _ChromaticWheelState();
 }
@@ -45,6 +51,8 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(scaleDropdownValueProvider);
+    ref.watch(modeDropdownValueProvider);
     return GestureDetector(
       onPanStart: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -73,7 +81,7 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         ref.read(topNoteProvider.notifier).update((state) => topNote);
       },
       child: CustomPaint(
-        painter: WheelPainter(_currentRotation),
+        painter: WheelPainter(_currentRotation, widget.scaleDegrees),
         child: const SizedBox(width: 300, height: 300),
       ),
     );

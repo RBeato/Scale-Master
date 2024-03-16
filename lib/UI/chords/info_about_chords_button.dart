@@ -16,15 +16,24 @@ class _InfoAboutChordsIconState extends State<InfoAboutChordsIcon> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
+              backgroundColor: Colors.black87,
               title: const Text('Chord Selection'),
               content: const Text(
-                  'Tap once to select a chord with the duration of 2 beats, tap twice to select a chord with the duration of 4 beats.'),
+                'Tap once to select a chord with the duration of 2 beats, tap twice to select a chord with the duration of 4 beats.',
+                textAlign: TextAlign.justify,
+                style: TextStyle(color: Colors.white),
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Close'),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.orange,
+                    ),
+                  ),
                 ),
               ],
             );

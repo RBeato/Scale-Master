@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:tonic/tonic.dart';
 
 import '../constants/flats_only_nomenclature_converter.dart';
+import '../constants/music_constants.dart';
 import '../constants/scales/scales_data_v2.dart';
 import '../models/chord_scale_model.dart';
 import '../models/settings_model.dart';
@@ -94,15 +97,10 @@ class MusicUtils {
   }
 
   static String filterNoteNameWithSlash(String note) {
-    // Check if the note contains sharps and a slash
     if (note.contains('♯') && note.contains('/')) {
-      // Split the note string by the '/' character
       List<String> parts = note.split('/');
-
-      // Keep the second part of the split, which contains the flat name and index
       return parts.length > 1 ? parts[1] : note;
     } else {
-      // If the note doesn't contain sharps and a slash, return the original string
       return note;
     }
   }
@@ -205,6 +203,21 @@ class MusicUtils {
     return matches.isNotEmpty ? matches.first.group(0)! : chordType;
   }
 
+  static int getHighestNoteIndex(List<String> notes) {
+    int highestIndex = 0;
+    for (String note in notes) {
+      int noteIndex = MusicConstants.notesWithFlats.indexOf(note);
+      if (noteIndex > highestIndex) {
+        highestIndex = noteIndex;
+      }
+    }
+    return highestIndex;
+  }
+
+  static int getNoteIndex(String note) {
+    return MusicConstants.notesWithFlats.indexOf(note);
+  }
+
   static String _mapIntervalToChordTone(Interval interval) {
     if (interval == Interval.P1 || interval == Interval.A1) {
       return '1';
@@ -236,6 +249,13 @@ class MusicUtils {
     } else {
       throw ArgumentError('Invalid interval: $interval');
     }
+  }
+
+  static int selectRandomItem(List itemList) {
+    final Random random = Random();
+
+    int index = random.nextInt(itemList.length);
+    return index;
   }
 
   // static String _mapIntervalToChordTone(Interval interval) {

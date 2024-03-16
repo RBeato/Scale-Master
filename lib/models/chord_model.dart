@@ -96,7 +96,7 @@ class ChordModel {
     String? typeOfChord,
     Color? color,
     List<String>? allChordExtensions,
-    List<String>? selectedChordPitches,
+    List<String>? pitches,
     String? originModeType,
     Settings? settings,
     String? chordFunction,
@@ -119,8 +119,8 @@ class ChordModel {
       typeOfChord: typeOfChord ?? this.typeOfChord,
       color: color ?? this.color,
       allChordExtensions:
-          allChordExtensions ?? selectedChordPitches, // Update organizedPitches
-      selectedChordPitches: selectedChordPitches ?? this.selectedChordPitches,
+          allChordExtensions ?? pitches, // Update organizedPitches
+      selectedChordPitches: pitches ?? selectedChordPitches,
       originModeType: originModeType ?? this.originModeType,
       settings: settings ?? this.settings,
       chordFunction: chordFunction ?? this.chordFunction,

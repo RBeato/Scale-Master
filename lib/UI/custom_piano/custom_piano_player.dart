@@ -7,7 +7,9 @@ import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_prov
 import 'package:scale_master_guitar/constants.dart';
 
 import '../../models/scale_model.dart';
+import '../../models/settings_model.dart';
 import '../../models/step_sequencer_state.dart';
+import '../../utils/player_utils.dart';
 import '../fretboard/provider/beat_counter_provider.dart';
 import '../player_page/logic/sequencer_manager.dart';
 import '../player_page/provider/chord_extensions_provider.dart';
@@ -18,10 +20,11 @@ import '../player_page/provider/tonic_universal_note_provider.dart';
 import 'custom_piano.dart';
 
 class CustomPianoSoundController extends ConsumerStatefulWidget {
-  final ScaleModel? scaleInfo;
-
-  const CustomPianoSoundController(this.scaleInfo, {Key? key})
+  const CustomPianoSoundController(this.settings, this.scaleInfo, {Key? key})
       : super(key: key);
+
+  final ScaleModel? scaleInfo;
+  final Settings settings;
 
   @override
   CustomPianoState createState() => CustomPianoState();
@@ -41,6 +44,7 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
   late Sequence sequence;
   Map<String, dynamic> sequencer = {};
   late bool isLoading;
+  late Settings settings;
 
   @override
   void initState() {
@@ -56,7 +60,6 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
     isPlaying = ref.read(isSequencerPlayingProvider);
     sequencerManager = ref.read(sequencerManagerProvider);
 
-    // Initialize sequencer and tracks
     await getSequencer();
 
     // Start ticker
@@ -83,6 +86,9 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
 
   Future<void> getSequencer() async {
     sequencer = await sequencerManager.initialize(
+        playAllInstruments: false,
+        instruments:
+            SoundPlayerUtils.getInstruments(widget.settings, onlyKeys: true),
         isPlaying: ref.read(isSequencerPlayingProvider),
         stepCount: ref.read(beatCounterProvider),
         trackVolumes: trackVolumes,

@@ -7,8 +7,10 @@ import 'package:flutter_sequencer/track.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:scale_master_guitar/UI/player_page/logic/sequencer_manager.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
+import 'package:scale_master_guitar/utils/player_utils.dart';
 
 import '../../../constants.dart';
+import '../../../models/settings_model.dart';
 import '../../../models/step_sequencer_state.dart';
 import '../../fretboard/provider/beat_counter_provider.dart';
 import '../provider/chord_extensions_provider.dart';
@@ -20,9 +22,12 @@ import '../provider/tonic_universal_note_provider.dart';
 import 'chord_player_bar.dart';
 
 class PlayerWidget extends ConsumerStatefulWidget {
-  const PlayerWidget({
+  const PlayerWidget(
+    this.settings, {
     super.key,
   });
+
+  final Settings settings;
 
   @override
   PlayerPageShowcaseState createState() => PlayerPageShowcaseState();
@@ -42,12 +47,12 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   bool isLooping = Constants.INITIAL_IS_LOOPING;
   late Sequence sequence;
   Map<String, dynamic> sequencer = {};
-
-  bool isLoading = false; // Add a boolean flag to track loading state
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+
     initializeSequencer();
   }
 
@@ -87,6 +92,8 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   Future<void> getSequencer() async {
     sequencer = await sequencerManager.initialize(
+        playAllInstruments: true,
+        instruments: SoundPlayerUtils.getInstruments(widget.settings),
         isPlaying: ref.read(isSequencerPlayingProvider),
         stepCount: ref.read(beatCounterProvider),
         trackVolumes: trackVolumes,
@@ -139,6 +146,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
         isLoading = true; // Set loading flag to true when initialization starts
       });
 
+      //add new chords to sequence.
       getSequencer();
       setState(() {
         selectedTrack = tracks[0];
