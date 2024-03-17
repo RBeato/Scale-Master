@@ -6,21 +6,19 @@ import '../provider/fingerings_provider.dart';
 
 class Fretboard extends ConsumerWidget {
   Fretboard({Key? key}) : super(key: key);
-  // Create a ScrollController
+
   final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int stringCount = 6;
     int fretCount = 24;
-    // Access properties from chordScaleFingeringsModel and customize the appearance
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
 
-    // Use these properties to customize the dots or text within FretboardPainter
     return SizedBox(
       height: 200,
       child: fingerings.when(
-          data: (chordScaleFingeringsModel) {
+          data: (data) {
             return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 controller: _scrollController, // Add the controller here
@@ -31,7 +29,7 @@ class Fretboard extends ConsumerWidget {
                     painter: FretboardPainter(
                       stringCount: stringCount,
                       fretCount: fretCount,
-                      fingeringsModel: chordScaleFingeringsModel!,
+                      fingeringsModel: data!,
                     ),
                     child: SizedBox(
                       width: fretCount.toDouble() * 36,

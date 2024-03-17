@@ -20,11 +20,10 @@ import '../player_page/provider/tonic_universal_note_provider.dart';
 import 'custom_piano.dart';
 
 class CustomPianoSoundController extends ConsumerStatefulWidget {
-  const CustomPianoSoundController(this.settings, this.scaleInfo, {Key? key})
+  const CustomPianoSoundController(this.scaleInfo, {Key? key})
       : super(key: key);
 
   final ScaleModel? scaleInfo;
-  final Settings settings;
 
   @override
   CustomPianoState createState() => CustomPianoState();
@@ -87,8 +86,9 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
   Future<void> getSequencer() async {
     sequencer = await sequencerManager.initialize(
         playAllInstruments: false,
-        instruments:
-            SoundPlayerUtils.getInstruments(widget.settings, onlyKeys: true),
+        instruments: SoundPlayerUtils.getInstruments(
+            widget.scaleInfo!.settings!,
+            onlyKeys: true),
         isPlaying: ref.read(isSequencerPlayingProvider),
         stepCount: ref.read(beatCounterProvider),
         trackVolumes: trackVolumes,

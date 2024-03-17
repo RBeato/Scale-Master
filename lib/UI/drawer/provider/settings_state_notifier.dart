@@ -5,9 +5,6 @@ import '../../../models/settings_model.dart';
 import '../UI/drawer/settings_enum.dart';
 import '../storage/localstorage_service.dart';
 
-//create provider 'settingsImediateProvider'
-final settingsDataProvider = StateProvider<Settings>((ref) => Settings());
-
 final settingsProvider = FutureProvider<Settings>((ref) async {
   return await ref.watch(settingsStateNotifierProvider.notifier).settings;
 });

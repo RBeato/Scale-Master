@@ -91,7 +91,10 @@ class FretboardPainter extends CustomPainter {
           double textX = x + fretWidth / 2;
           double textY = y;
 
-          String labelText = fretboardNotesNamesSharps[string][fret];
+          String labelText =
+              fingeringsModel.scaleModel!.settings!.showScaleDegrees == false
+                  ? ''
+                  : fretboardNotesNamesSharps[string][fret];
 
           textPainter.text = TextSpan(text: labelText, style: textStyle);
           textPainter.layout();
@@ -139,9 +142,10 @@ class FretboardPainter extends CustomPainter {
         canvas.drawCircle(Offset(x + fretWidth / 2, y), dotRadius, dotColor);
         // Use x + fretWidth / 2 for centerX
 
-        String labelText = fretboardNotesNamesSharps[string - 1][fret];
-
-        //(string != null) ? "$fret, $string" : "i, i";
+        String labelText =
+            fingeringsModel.scaleModel!.settings!.showScaleDegrees == false
+                ? fingeringsModel.scaleDegreesPositionsMap!["$string,$fret"]!
+                : fretboardNotesNamesSharps[string - 1][fret];
 
         textPainter.text = TextSpan(
           text: labelText,

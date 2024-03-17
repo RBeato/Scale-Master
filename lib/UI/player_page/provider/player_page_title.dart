@@ -11,8 +11,26 @@ class PlayerPageTitle extends ConsumerWidget {
 
     return fingerings.when(
         data: (data) {
-          return Text(
-              "${data!.scaleModel!.parentScaleKey} ${data.scaleModel!.mode} - ${data.scaleModel!.scale}");
+          return RichText(
+            text: TextSpan(
+              // Default text style that parent TextSpans will inherit
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                    text:
+                        "${data!.scaleModel!.parentScaleKey} ${data.scaleModel!.mode}  ",
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange)),
+                TextSpan(
+                  text: "${data.scaleModel!.scale}",
+                  style: const TextStyle(
+                      fontSize: 12), // Smaller font size for this part
+                ),
+              ],
+            ),
+          );
         },
         loading: () => const CircularProgressIndicator(),
         error: (error, stack) => Text('Error: $error'));

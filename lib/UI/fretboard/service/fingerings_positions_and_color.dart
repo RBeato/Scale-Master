@@ -12,7 +12,7 @@ import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
 
-class FingeringsColorBloc {
+class FingeringsCreator {
   String? _modeOption;
   int? _numberOfChordNotes;
   String? _chordVoicings;
@@ -30,6 +30,7 @@ class FingeringsColorBloc {
   List _chordNotesPositions = [];
   List _scaleNotesPositions = [];
   Map<String, Color> _scaleColorfulMap = {};
+  Map<String, String> _scaleDegreesPositionsMap = {};
 
   int scaleDegree = 0;
 
@@ -66,14 +67,17 @@ class FingeringsColorBloc {
     // print(_scaleChordPositions);
 
     _scaleChordPositions = ChordScaleFingeringsModel(
-        scaleModel: scaleModel,
-        chordVoicingNotesPositions: _chordNotesPositions,
-        scaleNotesPositions: _scaleNotesPositions,
-        scaleColorfulMap: _scaleColorfulMap);
+      scaleModel: scaleModel,
+      chordVoicingNotesPositions: _chordNotesPositions,
+      scaleNotesPositions: _scaleNotesPositions,
+      scaleColorfulMap: _scaleColorfulMap,
+      scaleDegreesPositionsMap: _scaleDegreesPositionsMap,
+    );
 
     _chordNotesPositions = [];
     _scaleNotesPositions = [];
     _scaleColorfulMap = {};
+    _scaleDegreesPositionsMap = {};
 
     return _scaleChordPositions;
   }
@@ -295,8 +299,9 @@ class FingeringsColorBloc {
           _scaleNotesPositions.add([string + 1, fret]);
           _scaleColorfulMap["${string + 1},$fret"] =
               ConstantColors.scaleTonicColorMap[_modeIntervals![i]]!;
-          // print("_scaleNotesPositions $_scaleNotesPositions");
-          // print("_scaleColorfulMap $_scaleColorfulMap");
+          _scaleDegreesPositionsMap["${string + 1},$fret"] =
+              _modeIntervals![i].toString();
+
           noteIndex = fret + 1; // Prepare for the next iteration
         }
       }

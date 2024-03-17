@@ -3,16 +3,15 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/wheel_painter.dart';
+import 'package:scale_master_guitar/models/scale_model.dart';
 
 import '../../constants/music_constants.dart';
-import '../scale_selection_dropdowns/provider/mode_dropdown_value_provider.dart';
-import '../scale_selection_dropdowns/provider/scale_dropdown_value_provider.dart';
+import '../../constants/scales/scales_data_v2.dart';
 import 'provider/top_note_provider.dart';
 
 class ChromaticWheel extends ConsumerStatefulWidget {
-  const ChromaticWheel(this.scaleDegrees, {Key? key}) : super(key: key);
-
-  final List<String> scaleDegrees;
+  const ChromaticWheel(this.scaleModel, {Key? key}) : super(key: key);
+  final ScaleModel scaleModel;
 
   @override
   _ChromaticWheelState createState() => _ChromaticWheelState();
@@ -23,11 +22,40 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
   static const int numStops = 12;
   final double _rotationPerStop = 2 * math.pi / numStops;
   double _initialAngle = 0.0;
+  late List scaleIntervals;
+  late List chromaticNotes;
 
   @override
   void initState() {
     super.initState();
-    // Initialize your state if needed
+    scaleIntervals = Scales.data[widget.scaleModel.scale]
+        [widget.scaleModel.mode]['interpolatedScaleDegrees']!;
+    chromaticNotes = getChromaticNotes();
+  }
+
+  List getChromaticNotes() {
+    var chromaticIntervals = MusicConstants.tonicNotesDegrees;
+    if (scaleIntervals.length != chromaticIntervals.length) {
+      debugPrint(
+          "Scale Intervals length is not correct for ${widget.scaleModel.mode} from ${widget.scaleModel.scale}!",
+          wrapWidth: 1024);
+    }
+
+    List temp = [];
+
+    var scaleDegrees = List<String>.from(widget.scaleModel.degreeFunction);
+    print("Degrees : $scaleDegrees");
+
+    for (int i = 0; i < scaleIntervals.length; i++) {
+      if (scaleIntervals[i] != null) {
+        temp.add(scaleDegrees.first.toString());
+        scaleDegrees.removeAt(0);
+      } else {
+        temp.add(MusicConstants.notesDegrees[i].toString());
+      }
+    }
+
+    return temp;
   }
 
   void _updateRotation(double delta) {
@@ -51,8 +79,7 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(scaleDropdownValueProvider);
-    ref.watch(modeDropdownValueProvider);
+    print('scale Model: ${widget.scaleModel}');
     return GestureDetector(
       onPanStart: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -81,7 +108,7 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         ref.read(topNoteProvider.notifier).update((state) => topNote);
       },
       child: CustomPaint(
-        painter: WheelPainter(_currentRotation, widget.scaleDegrees),
+        painter: WheelPainter(_currentRotation, chromaticNotes, scaleIntervals),
         child: const SizedBox(width: 300, height: 300),
       ),
     );

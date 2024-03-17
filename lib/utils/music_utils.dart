@@ -22,12 +22,12 @@ class MusicUtils {
         [fingeringsModel.scaleModel!.mode];
 
     var scaleIntervals = mode['intervals'];
-    print("chordsIntervals: $scaleIntervals");
+    // print("chordsIntervals: $scaleIntervals");
 
     List<int>? newIntervals;
     if (index != 0) {
       newIntervals = calculateIntervalsForChord(index, scaleIntervals);
-      print("newIntervals: $newIntervals");
+      // print("newIntervals: $newIntervals");
     }
 
     scaleIntervals = newIntervals ?? scaleIntervals;
@@ -39,7 +39,7 @@ class MusicUtils {
 
     var chordNotes =
         createNoteList(baseNote, chordIntervals.values.toList(), 4);
-    print("Chord Notes: $chordNotes");
+    // print("Chord Notes: $chordNotes");
 
     // var getchordNotes(auxIntervals, auxDisplacementValue, selectedChord);
 

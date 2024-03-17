@@ -11,9 +11,9 @@ class SelectedChordExtensions extends StateNotifier<List<String>> {
   List<String> get selectedItemsList => state;
 
   void addExtension(String text) {
-    print(state);
+    // print(state);
     state = List.of(state)..add(text);
-    print(state);
+    // print(state);
   }
 
   void removeExtension(String text) {

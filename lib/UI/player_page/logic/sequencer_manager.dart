@@ -104,7 +104,7 @@ class SequencerManager {
       var note = isScaleTonicSelected
           ? "${chord.parentScaleKey}2"
           : chord.chordNotesWithIndexesRaw.first;
-      print('bass note $note');
+      // print('bass note $note');
       note = MusicUtils.filterNoteNameWithSlash(note);
       var bassMidiValue = MusicConstants.midiValues[note]!;
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
@@ -192,7 +192,7 @@ class SequencerManager {
   handleTempoChange(nextTempo) {
     if (nextTempo <= 0) return;
     sequence.setTempo(nextTempo);
-    //! ref.read(metronomeTempoProvider.notifier).changeTempo(nextTempo);
+    // ref.read(metronomeTempoProvider.notifier).changeTempo(nextTempo);
   }
 
   handleTrackChange(Track nextTrack) {

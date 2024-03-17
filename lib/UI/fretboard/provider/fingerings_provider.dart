@@ -28,12 +28,12 @@ final chordModelFretboardFingeringProvider =
     chordTypes: Scales.data[scale.toString()][mode]['chordType'],
     degreeFunction: Scales.data[scale.toString()][mode]['function'],
     mode: mode,
-    // chords: _scaleNotesNames,
     settings: settings,
     originModeType: '',
   );
 
-  var fingering = FingeringsColorBloc().createChordsScales(item, settings);
+  ChordScaleFingeringsModel fingering =
+      FingeringsCreator().createChordsScales(item, settings);
 
   return fingering;
 });

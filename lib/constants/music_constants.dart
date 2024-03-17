@@ -1,5 +1,22 @@
+import 'package:tonic/tonic.dart';
+
 class MusicConstants {
   get initialListOfScales => completeListOfScales[0]['modeNames'];
+
+  static List<Interval> tonicNotesDegrees = [
+    Interval.P1,
+    Interval.m2,
+    Interval.M2,
+    Interval.m3,
+    Interval.M3,
+    Interval.P4,
+    Interval.TT,
+    Interval.P5,
+    Interval.m6,
+    Interval.M6,
+    Interval.m7,
+    Interval.M7,
+  ];
 
   static const List<String> notesWithFlats = [
     'C',
@@ -18,16 +35,16 @@ class MusicConstants {
 
   static const List<String> notesDegrees = [
     'I',
-    '♭ii',
+    '♭II',
     'II',
-    '♭iii',
+    '♯II/♭III',
     'III',
     'IV',
-    '♭v',
+    '♯IV/♭V',
     'V',
-    'bvi',
-    'VI',
-    '♭vii',
+    '♯V/bVI',
+    'VI/♭♭VII',
+    '♭VII',
     'VII'
   ];
 

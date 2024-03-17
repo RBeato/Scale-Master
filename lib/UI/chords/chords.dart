@@ -7,6 +7,7 @@ import '../../constants/scales/scales_data_v2.dart';
 import '../../models/chord_model.dart';
 import '../../models/chord_scale_model.dart';
 import '../../utils/music_utils.dart';
+import '../fretboard/provider/beat_counter_provider.dart';
 import '../fretboard/provider/fingerings_provider.dart';
 import 'info_about_chords_button.dart';
 
@@ -47,6 +48,13 @@ class Chords extends ConsumerWidget {
                         height: 45, // Set a fixed height for all containers
                         child: GestureDetector(
                           onTap: () {
+                            int beats = ref.read(beatCounterProvider);
+                            if (beats > 40) {
+                              showPopup(
+                                  context, "You can't add more than 40 beats");
+
+                              return;
+                            }
                             _addChord(
                                 Taps.single,
                                 ref.read(selectedChordsProvider.notifier),
@@ -56,6 +64,12 @@ class Chords extends ConsumerWidget {
                                 alreadySelectedChords);
                           },
                           onDoubleTap: () {
+                            if (ref.read(beatCounterProvider) > 40) {
+                              showPopup(
+                                  context, "You can't add more than 40 beats");
+
+                              return;
+                            }
                             _addChord(
                                 Taps.double,
                                 ref.read(selectedChordsProvider.notifier),
@@ -150,5 +164,27 @@ class Chords extends ConsumerWidget {
     );
 
     return chord;
+  }
+
+  showPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[900],
+          title: const Text("Too many beats!",
+              style: TextStyle(color: Colors.orange)),
+          content: Text(message, style: const TextStyle(color: Colors.white)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
