@@ -1,13 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/drawer/models/settings_state.dart';
 
-import '../../../models/settings_model.dart';
 import '../UI/drawer/settings_enum.dart';
 import '../storage/localstorage_service.dart';
 
-final settingsProvider = FutureProvider<Settings>((ref) async {
-  return await ref.watch(settingsStateNotifierProvider.notifier).settings;
-});
+// final settingsProvider = FutureProvider<Settings>((ref) async {
+//   return await ref.watch(settingsStateNotifierProvider.notifier).settings;
+// });
 
 final settingsStateNotifierProvider =
     StateNotifierProvider<SettingsStateNotifier, SettingsState>((ref) {
@@ -15,7 +14,7 @@ final settingsStateNotifierProvider =
 });
 
 class SettingsStateNotifier extends StateNotifier<SettingsState> {
-  SettingsStateNotifier() : super(SettingsInitial()) {
+  SettingsStateNotifier() : super(const SettingsInitial()) {
     getSettings();
   }
 
@@ -24,13 +23,13 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
   get settings => localStorageProvider.fetchSettings();
 
   Future getSettings() async {
-    state = SettingsLoading();
+    state = const SettingsLoading();
     try {
       final settings = await localStorageProvider.fetchSettings();
       state = SettingsLoaded(settings);
       return state;
     } catch (e) {
-      state = SettingsError("Couldn't FETCH settings!");
+      state = const SettingsError("Couldn't FETCH settings!");
     }
   }
 
@@ -40,7 +39,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
           await localStorageProvider.changeSettings(settingSelection, value);
       state = SettingsLoaded(settings);
     } catch (e) {
-      state = SettingsError("Couldn't CHANGE the settings!");
+      state = const SettingsError("Couldn't CHANGE the settings!");
     }
   }
 
@@ -58,7 +57,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
       final settings = await localStorageProvider.clearPreferences();
       state = SettingsLoaded(settings);
     } catch (e) {
-      state = SettingsError("Couldn't RESET the settings!");
+      state = const SettingsError("Couldn't RESET the settings!");
     }
   }
 }

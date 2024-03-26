@@ -123,10 +123,14 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
       sequencerManager.handleStop();
     }
     final extensions = ref.watch(chordExtensionsProvider);
+    // final tonicAsUniversalBassNote = ref.watch(tonicUniversalNoteProvider);
     final selectedChords = ref.watch(selectedChordsProvider);
-    ref.watch(tonicUniversalNoteProvider);
 
-    updateSequencer(selectedChords, extensions);
+    updateSequencer(
+      selectedChords,
+      extensions,
+      // tonicAsUniversalBassNote,
+    );
 
     return ChordPlayerBar(
       selectedTrack: selectedTrack,
@@ -140,8 +144,14 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     );
   }
 
-  updateSequencer(selectedChords, extensions) {
-    if (sequencerManager.needToUpdateSequencer(selectedChords, extensions)) {
+  updateSequencer(
+    List selectedChords,
+    List extensions,
+    // bool tonicAsUniversalBassNote,
+  ) {
+    if (sequencerManager.needToUpdateSequencer(selectedChords, extensions
+        // tonicAsUniversalBassNote,
+        )) {
       setState(() {
         isLoading = true; // Set loading flag to true when initialization starts
       });

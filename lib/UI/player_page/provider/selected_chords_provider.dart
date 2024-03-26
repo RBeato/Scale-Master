@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scale_master_guitar/UI/player_page/provider/is_playing_provider.dart';
 import '../../../models/chord_model.dart';
 
 import '../../fretboard/provider/beat_counter_provider.dart';
@@ -22,7 +21,6 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
   List<ChordModel> get selectedItemsList => state;
 
   void addChord(ChordModel chordModel) {
-    ref.read(isSequencerPlayingProvider.notifier).update((state) => true);
     updateChords(chordModel);
   }
 
@@ -33,13 +31,13 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
   updateChords([ChordModel? chordModel]) {
     var chordExtensions = ref.read(chordExtensionsProvider) ?? [];
     List<ChordModel> chords = [];
+    List<ChordModel> temp = [...state];
 
     if (chordModel != null) {
-      var temp = [...state];
       temp.add(chordModel);
-
-      chords = filterChords(chordExtensions, temp);
     }
+
+    chords = filterChords(chordExtensions, temp);
 
     updateProgression(chords);
 

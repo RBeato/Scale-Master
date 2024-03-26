@@ -16,7 +16,9 @@ final chordModelFretboardFingeringProvider =
   final scale = ref.watch(scaleDropdownValueProvider);
   final mode = ref.watch(modeDropdownValueProvider);
 
-  final settings = await ref.watch(settingsProvider.future);
+  // final settings = await ref.watch(settingsProvider.future);
+  final settings =
+      await ref.watch(settingsStateNotifierProvider.notifier).settings;
 
   final List<String> scaleNotesNames = MusicUtils.createChords(
       settings, flatsAndSharpsToFlats(topNote), scale, mode);

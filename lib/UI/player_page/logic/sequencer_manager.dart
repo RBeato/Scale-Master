@@ -21,6 +21,7 @@ class SequencerManager {
   List<Track> tracks = [];
   List _lastChords = [];
   List _lastExtensions = [];
+  final bool _lastTonicAsUniversalBassNote = true;
   Map<int, double> trackVolumes = {};
   Track? selectedTrack;
   double tempo = Constants.INITIAL_TEMPO;
@@ -256,10 +257,18 @@ class SequencerManager {
     }
   }
 
-  bool needToUpdateSequencer(selectedChords, extensions) {
+  bool needToUpdateSequencer(
+    selectedChords,
+    extensions,
+    // tonicAsUniversalBassNote,
+  ) {
     if (!_listEquals(selectedChords, _lastChords) ||
-        !_listEquals(extensions, _lastExtensions)) {
+            !_listEquals(extensions, _lastExtensions)
+        // ||
+        // tonicAsUniversalBassNote == _lastTonicAsUniversalBassNote
+        ) {
       handleStop();
+      // _lastTonicAsUniversalBassNote = tonicAsUniversalBassNote;
       _lastChords = selectedChords;
       _lastExtensions = extensions;
       return true;

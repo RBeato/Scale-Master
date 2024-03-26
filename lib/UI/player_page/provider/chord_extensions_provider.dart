@@ -13,7 +13,6 @@ class SelectedChordExtensions extends StateNotifier<List<String>> {
   void addExtension(String text) {
     // print(state);
     state = List.of(state)..add(text);
-    // print(state);
   }
 
   void removeExtension(String text) {

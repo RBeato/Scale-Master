@@ -32,7 +32,7 @@ class ChordPlayerBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedChords = ref.watch(selectedChordsProvider);
-    if (selectedTrack == null && selectedChords.isEmpty) {
+    if (selectedTrack == null || selectedChords.isEmpty) {
       return const Center(
           child: Text("No chord selected!",
               style: TextStyle(color: Colors.white)));
@@ -41,7 +41,6 @@ class ChordPlayerBar extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
     return Container(
-      //container must have rounded corners
       decoration: const BoxDecoration(
         color: Colors.black,
         borderRadius: BorderRadius.only(

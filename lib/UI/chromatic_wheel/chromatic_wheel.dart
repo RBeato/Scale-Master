@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scale_master_guitar/UI/chromatic_wheel/provider/wheel_rotation_provider.dart';
 import 'package:scale_master_guitar/UI/chromatic_wheel/wheel_painter.dart';
 import 'package:scale_master_guitar/models/scale_model.dart';
 
@@ -28,6 +29,8 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
   @override
   void initState() {
     super.initState();
+    _currentRotation = ref.read(wheelRotationProvider);
+
     scaleIntervals = Scales.data[widget.scaleModel.scale]
         [widget.scaleModel.mode]['interpolatedScaleDegrees']!;
     chromaticNotes = getChromaticNotes();
@@ -61,6 +64,9 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
   void _updateRotation(double delta) {
     setState(() {
       _currentRotation += delta;
+      ref
+          .read(wheelRotationProvider.notifier)
+          .update((state) => _currentRotation);
     });
   }
 
@@ -79,7 +85,6 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
   @override
   Widget build(BuildContext context) {
-    print('scale Model: ${widget.scaleModel}');
     return GestureDetector(
       onPanStart: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;

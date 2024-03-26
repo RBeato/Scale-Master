@@ -46,14 +46,14 @@ class GeneralOptionsCards extends StatelessWidget {
         DrawerGeneralSwitch(
           title: 'Show scale degrees on fretboard',
           subtitle: 'If unselected will show notes names on fretboard',
-          settings: settings,
           settingSelection: SettingsSelection.scaleDegrees,
+          switchValue: settings.showScaleDegrees,
         ),
         DrawerGeneralSwitch(
           title: 'Single Color',
           subtitle: 'If unselected will show scale tones with different colors',
-          settings: settings,
           settingSelection: SettingsSelection.singleColor,
+          switchValue: settings.isSingleColor,
         ),
       ],
     );
