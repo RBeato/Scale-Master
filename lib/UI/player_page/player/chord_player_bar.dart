@@ -17,7 +17,7 @@ class ChordPlayerBar extends ConsumerWidget {
     required this.isLooping,
     required this.handleTogglePlayStop,
     required this.clearTracks,
-    required this.handleTempoChange,
+    // required this.handleTempoChange,
   }) : super(key: key);
 
   final bool isPlaying;
@@ -27,11 +27,12 @@ class ChordPlayerBar extends ConsumerWidget {
   final double tempo;
   final Function() clearTracks;
   final Function() handleTogglePlayStop;
-  final Function() handleTempoChange;
+  // final Function() handleTempoChange;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedChords = ref.watch(selectedChordsProvider);
+
     if (selectedTrack == null || selectedChords.isEmpty) {
       return const Center(
           child: Text("No chord selected!",
@@ -97,7 +98,7 @@ class ChordPlayerBar extends ConsumerWidget {
                 height: 30.0,
                 child: MetronomeDisplay(
                   selectedTempo: tempo,
-                  handleChange: (int value) => handleTempoChange(),
+                  // handleChange: (int value) => handleTempoChange(),
                 ),
               ),
             ),

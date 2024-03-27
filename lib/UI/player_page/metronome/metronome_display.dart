@@ -1,14 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../provider/metronome_tempo_provider.dart';
 
 class MetronomeDisplay extends StatelessWidget {
   const MetronomeDisplay({
     required this.selectedTempo,
-    required this.handleChange,
+    // required this.handleChange,
   });
 
   final double selectedTempo;
-  final Function(int nextTempo) handleChange;
+  // final Function(int nextTempo) handleChange;
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +26,7 @@ class MetronomeDisplay extends StatelessWidget {
         padding: EdgeInsets.zero,
         onPressed: () => showDialog(
             context: context,
-            builder: (_) => BPMSelector(
-                selectedTempo: selectedTempo, handleChange: handleChange)),
+            builder: (_) => BPMSelector(selectedTempo: selectedTempo)),
         child: Text(
           selectedTempo.toString(),
           style: const TextStyle(
@@ -37,19 +39,19 @@ class MetronomeDisplay extends StatelessWidget {
   }
 }
 
-class BPMSelector extends StatelessWidget {
+class BPMSelector extends ConsumerWidget {
   BPMSelector({
     required this.selectedTempo,
-    required this.handleChange,
+    // required this.handleChange,
   });
 
   final double selectedTempo;
-  final Function(int nextTempo) handleChange;
+  // final Function(int nextTempo) handleChange;
 
   final ScrollController _controller = ScrollController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     int itemHeight = ((selectedTempo / 2.55) - 10)
         .round(); //empirical value for 'remembering' bpm value when opening dialog
     double listHeight = 256.toDouble() * itemHeight;
@@ -68,7 +70,10 @@ class BPMSelector extends StatelessWidget {
             itemCount: 161, //change metronome values
             itemBuilder: (context, i) => InkWell(
               onTap: () {
-                handleChange((i + 40));
+                ref
+                    .read(metronomeTempoProvider.notifier)
+                    .update((state) => (i + 40).toDouble());
+                // handleChange((i + 40));
                 Navigator.pop(context);
               },
               child: SizedBox(

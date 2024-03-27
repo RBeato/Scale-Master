@@ -71,7 +71,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     // Start ticker
     ticker = createTicker((Duration elapsed) {
       setState(() {
-        tempo = sequence.getTempo();
+        tempo = ref.read(metronomeTempoProvider); //sequence.getTempo();
         position = sequence.getBeat();
         isPlaying = sequence.getIsPlaying();
 
@@ -103,7 +103,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
         isLoading: isLoading,
         isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
         isScaleTonicSelected: ref.read(tonicUniversalNoteProvider),
-        tempo: ref.read(metronomeTempoProvider) as double,
+        tempo: ref.read(metronomeTempoProvider),
         extensions: ref.read(chordExtensionsProvider));
 
     sequence = sequencer['sequence'];
@@ -125,6 +125,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     final extensions = ref.watch(chordExtensionsProvider);
     // final tonicAsUniversalBassNote = ref.watch(tonicUniversalNoteProvider);
     final selectedChords = ref.watch(selectedChordsProvider);
+    ref.watch(metronomeTempoProvider);
 
     updateSequencer(
       selectedChords,
@@ -136,11 +137,11 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
       selectedTrack: selectedTrack,
       isLoading: isLoading,
       isPlaying: isPlaying,
-      tempo: ref.read(metronomeTempoProvider) as double,
+      tempo: ref.read(metronomeTempoProvider),
       isLooping: isLooping,
       clearTracks: () => sequencerManager.clearTracks(ref),
       handleTogglePlayStop: () => sequencerManager.handleTogglePlayStop(ref),
-      handleTempoChange: () => sequencerManager.handleTempoChange(tempo),
+      // handleTempoChange: () => sequencerManager.handleTempoChange(tempo, ref),
     );
   }
 
@@ -149,9 +150,10 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     List extensions,
     // bool tonicAsUniversalBassNote,
   ) {
-    if (sequencerManager.needToUpdateSequencer(selectedChords, extensions
-        // tonicAsUniversalBassNote,
-        )) {
+    if (sequencerManager.needToUpdateSequencer(
+      selectedChords, extensions, tempo,
+      // tonicAsUniversalBassNote,
+    )) {
       setState(() {
         isLoading = true; // Set loading flag to true when initialization starts
       });

@@ -24,6 +24,7 @@ class SequencerManager {
   final bool _lastTonicAsUniversalBassNote = true;
   Map<int, double> trackVolumes = {};
   Track? selectedTrack;
+  double _lastTempo = Constants.INITIAL_TEMPO;
   double tempo = Constants.INITIAL_TEMPO;
   double position = 0.0;
   bool isPlaying = false;
@@ -54,6 +55,8 @@ class SequencerManager {
     }
 
     this.playAllInstruments = playAllInstruments;
+    this.tempo = tempo;
+    print(this.tempo);
 
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
@@ -128,7 +131,7 @@ class SequencerManager {
     tracks[1].events.clear();
     trackStepSequencerStates[tracks[1].id]!.clear();
     trackStepSequencerStates[tracks[1].id]!.setVelocity(0, midiValue, 0.60);
-    syncTrack(tracks[1]);
+    _syncTrack(tracks[1]);
     sequence.play();
   }
 
@@ -148,7 +151,7 @@ class SequencerManager {
     sequence.stop();
   }
 
-  handleSetLoop(bool nextIsLooping) {
+  _handleSetLoop(bool nextIsLooping) {
     if (nextIsLooping) {
       sequence.setLoop(0, stepCount.toDouble());
     } else {
@@ -163,10 +166,10 @@ class SequencerManager {
   handleToggleLoop(isLooping) {
     final nextIsLooping = !isLooping;
 
-    handleSetLoop(nextIsLooping);
+    _handleSetLoop(nextIsLooping);
   }
 
-  handleStepCountChange(int nextStepCount) {
+  _handleStepCountChange(int nextStepCount) {
     if (nextStepCount < 1) return;
 
     sequence.setEndBeat(nextStepCount.toDouble());
@@ -179,7 +182,7 @@ class SequencerManager {
 
     stepCount = nextStepCount;
     for (var track in tracks) {
-      syncTrack(track);
+      _syncTrack(track);
     }
 
     // setState(() {
@@ -190,10 +193,9 @@ class SequencerManager {
     // });
   }
 
-  handleTempoChange(nextTempo) {
+  _handleTempoChange(nextTempo) {
     if (nextTempo <= 0) return;
     sequence.setTempo(nextTempo);
-    // ref.read(metronomeTempoProvider.notifier).changeTempo(nextTempo);
   }
 
   handleTrackChange(Track nextTrack) {
@@ -213,10 +215,10 @@ class SequencerManager {
 
     trackStepSequencerStates[trackId]!.setVelocity(step, noteNumber, velocity);
 
-    syncTrack(track);
+    _syncTrack(track);
   }
 
-  syncTrack(track) {
+  _syncTrack(track) {
     track.clearEvents();
     trackStepSequencerStates[track.id]!
         .iterateEvents((step, noteNumber, velocity) {
@@ -238,32 +240,30 @@ class SequencerManager {
     trackStepSequencerStates[tracks[1].id] = projectState.pianoState;
     trackStepSequencerStates[tracks[2].id] = projectState.bassState;
 
-    //TODO: double check tempo;
-    handleStepCountChange(projectState.stepCount);
-    handleTempoChange(tempo);
-    handleSetLoop(projectState.isLooping);
+    _handleStepCountChange(projectState.stepCount);
+    _handleTempoChange(tempo);
+    _handleSetLoop(projectState.isLooping);
 
-    syncTrack(tracks[0]);
-    syncTrack(tracks[1]);
-    syncTrack(tracks[2]);
+    _syncTrack(tracks[0]);
+    _syncTrack(tracks[1]);
+    _syncTrack(tracks[2]);
   }
 
   clearTracks(ref) {
     sequence.stop();
     if (tracks.isNotEmpty) {
       trackStepSequencerStates[tracks[0].id] = StepSequencerState();
-      syncTrack(tracks[0]);
+      _syncTrack(tracks[0]);
       ref.read(selectedChordsProvider.notifier).removeAll();
     }
   }
 
-  bool needToUpdateSequencer(
-    selectedChords,
-    extensions,
-    // tonicAsUniversalBassNote,
-  ) {
+  bool needToUpdateSequencer(selectedChords, extensions, tempo
+      // tonicAsUniversalBassNote,
+      ) {
     if (!_listEquals(selectedChords, _lastChords) ||
-            !_listEquals(extensions, _lastExtensions)
+            !_listEquals(extensions, _lastExtensions) ||
+            tempo != _lastTempo
         // ||
         // tonicAsUniversalBassNote == _lastTonicAsUniversalBassNote
         ) {
@@ -271,6 +271,7 @@ class SequencerManager {
       // _lastTonicAsUniversalBassNote = tonicAsUniversalBassNote;
       _lastChords = selectedChords;
       _lastExtensions = extensions;
+      _lastTempo = tempo;
       return true;
     }
     return false;
