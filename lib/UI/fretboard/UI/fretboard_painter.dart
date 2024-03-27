@@ -92,7 +92,7 @@ class FretboardPainter extends CustomPainter {
           double textY = y;
 
           String labelText =
-              fingeringsModel.scaleModel!.settings!.showScaleDegrees == false
+              fingeringsModel.scaleModel!.settings!.showScaleDegrees == true
                   ? ''
                   : fretboardNotesNamesSharps[string][fret];
 
@@ -135,7 +135,9 @@ class FretboardPainter extends CustomPainter {
         double textY = y;
 
         var dotColor = Paint()
-          ..color = fingeringsModel.scaleColorfulMap!["$string,$fret"]!
+          ..color = fingeringsModel.scaleModel!.settings!.isSingleColor == true
+              ? Colors.blueGrey
+              : fingeringsModel.scaleColorfulMap!["$string,$fret"]!
           ..style = PaintingStyle.fill;
 
         // Draw a dot at the calculated center
@@ -143,7 +145,7 @@ class FretboardPainter extends CustomPainter {
         // Use x + fretWidth / 2 for centerX
 
         String labelText =
-            fingeringsModel.scaleModel!.settings!.showScaleDegrees == false
+            fingeringsModel.scaleModel!.settings!.showScaleDegrees == true
                 ? fingeringsModel.scaleDegreesPositionsMap!["$string,$fret"]!
                 : fretboardNotesNamesSharps[string - 1][fret];
 

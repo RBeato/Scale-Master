@@ -10,7 +10,9 @@ import 'home_page.dart';
 //TODO: Change 'scaleDegrees': from all scale maps.
 //TODO: Listen to all settings changes
 //TODO: Create a specific voicing for specific extensions on first chord and see if voice leading works as is
-//TODO: Fix metronome tempo change
+//TODO: Add metronome sound (add sound to every beat in the grid)
+//TODO: Add delay to image when playing to sync metronome indicator and sound
+//TODO: Remove excess piano notes at tops
 
 void main() {
   try {

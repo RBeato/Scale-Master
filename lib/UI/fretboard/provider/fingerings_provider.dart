@@ -15,6 +15,7 @@ final chordModelFretboardFingeringProvider =
   final topNote = ref.watch(topNoteProvider);
   final scale = ref.watch(scaleDropdownValueProvider);
   final mode = ref.watch(modeDropdownValueProvider);
+  ref.watch(settingsStateNotifierProvider);
 
   // final settings = await ref.watch(settingsProvider.future);
   final settings =

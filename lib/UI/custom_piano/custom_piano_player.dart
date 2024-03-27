@@ -98,7 +98,7 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
         isLoading: isLoading,
         isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
         isScaleTonicSelected: ref.read(tonicUniversalNoteProvider),
-        tempo: ref.read(metronomeTempoProvider) as double,
+        tempo: ref.read(metronomeTempoProvider),
         extensions: ref.read(chordExtensionsProvider));
 
     sequence = sequencer['sequence'];

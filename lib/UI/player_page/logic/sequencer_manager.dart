@@ -21,7 +21,10 @@ class SequencerManager {
   List<Track> tracks = [];
   List _lastChords = [];
   List _lastExtensions = [];
-  final bool _lastTonicAsUniversalBassNote = true;
+  bool _lastTonicAsUniversalBassNote = true;
+  bool tonicAsUniversalBassNote = true;
+  bool _lastMetronomeSelected = false;
+  bool isMetronomeSelected = false;
   Map<int, double> trackVolumes = {};
   Track? selectedTrack;
   double _lastTempo = Constants.INITIAL_TEMPO;
@@ -56,7 +59,10 @@ class SequencerManager {
 
     this.playAllInstruments = playAllInstruments;
     this.tempo = tempo;
+    tonicAsUniversalBassNote = isScaleTonicSelected;
     print(this.tempo);
+    this.isMetronomeSelected = isMetronomeSelected;
+    print("isMetronome Selected: $isMetronomeSelected");
 
     sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
@@ -73,11 +79,9 @@ class SequencerManager {
         trackStepSequencerStates[track.id] = StepSequencerState();
       }
 
-      ProjectState? project = await createProject(
+      ProjectState? project = await _createProject(
         selectedChords: selectedChords,
         stepCount: stepCount,
-        isScaleTonicSelected: isScaleTonicSelected,
-        isMetronomeSelected: isMetronomeSelected,
         nBeats: stepCount,
       );
 
@@ -87,17 +91,12 @@ class SequencerManager {
     });
   }
 
-  Future<ProjectState>? createProject({
+  Future<ProjectState>? _createProject({
     List<ChordModel>? selectedChords,
     stepCount,
-    required bool isScaleTonicSelected,
-    required bool isMetronomeSelected,
     required int nBeats,
   }) async {
     ProjectState project = ProjectState.empty(stepCount);
-
-    // bool isScaleTonicSelected =
-    //     ref.read(tonicUniversalNoteProvider); //TODO: check this
 
     selectedChords?.forEach((chord) {
       for (var note in chord.selectedChordPitches!) {
@@ -105,7 +104,7 @@ class SequencerManager {
             chord.position, MusicConstants.midiValues[note]!, 0.60);
       }
 
-      var note = isScaleTonicSelected
+      var note = tonicAsUniversalBassNote
           ? "${chord.parentScaleKey}2"
           : chord.chordNotesWithIndexesRaw.first;
       // print('bass note $note');
@@ -258,17 +257,21 @@ class SequencerManager {
     }
   }
 
-  bool needToUpdateSequencer(selectedChords, extensions, tempo
-      // tonicAsUniversalBassNote,
-      ) {
+  bool needToUpdateSequencer(
+    selectedChords,
+    extensions,
+    tempo,
+    tonicAsUniversalBassNote,
+    isMetronomeSelected,
+  ) {
     if (!_listEquals(selectedChords, _lastChords) ||
-            !_listEquals(extensions, _lastExtensions) ||
-            tempo != _lastTempo
-        // ||
-        // tonicAsUniversalBassNote == _lastTonicAsUniversalBassNote
-        ) {
+        !_listEquals(extensions, _lastExtensions) ||
+        tempo != _lastTempo ||
+        tonicAsUniversalBassNote != _lastTonicAsUniversalBassNote ||
+        isMetronomeSelected != _lastMetronomeSelected) {
       handleStop();
-      // _lastTonicAsUniversalBassNote = tonicAsUniversalBassNote;
+      _lastTonicAsUniversalBassNote = tonicAsUniversalBassNote;
+      _lastMetronomeSelected = isMetronomeSelected;
       _lastChords = selectedChords;
       _lastExtensions = extensions;
       _lastTempo = tempo;
