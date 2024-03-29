@@ -7,8 +7,10 @@ class WheelPainter extends CustomPainter {
   final double rotation;
   final List chromaticNotes;
   final List scaleIntervals;
+  final String topNote;
 
-  WheelPainter(this.rotation, this.chromaticNotes, this.scaleIntervals);
+  WheelPainter(
+      this.rotation, this.chromaticNotes, this.scaleIntervals, this.topNote);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -31,6 +33,9 @@ class WheelPainter extends CustomPainter {
     }
 
     for (int i = 0; i < chromaticNotes.length; i++) {
+      print(
+          "i=$i, ${getDegreeColor(chromaticNotes[i], i)}, null:${scaleIntervals[i] == null}");
+
       double angle = 2 * math.pi * i / chromaticNotes.length - math.pi / 2;
       textPainter.text = TextSpan(
         text: chromaticNotes[i],
@@ -60,6 +65,8 @@ class WheelPainter extends CustomPainter {
     canvas.drawCircle(center, innerRadius, knobPaint);
 
     for (int i = 0; i < MusicConstants.notesWithFlatsAndSharps.length; i++) {
+      print(
+          "i=$i, MusicConstants.notesWithFlatsAndSharps[i]: ${MusicConstants.notesWithFlatsAndSharps[i]}, ");
       double angle =
           2 * math.pi * i / MusicConstants.notesWithFlatsAndSharps.length +
               rotation;
@@ -95,8 +102,11 @@ class WheelPainter extends CustomPainter {
       textPainter.text = TextSpan(
         text: MusicConstants.notesWithFlatsAndSharps[i],
 
-        style: const TextStyle(
-            color: Colors.white, fontSize: 18), //Color of inside notes
+        style: TextStyle(
+            color: MusicConstants.notesWithFlatsAndSharps[i] == topNote
+                ? Colors.orangeAccent
+                : Colors.white,
+            fontSize: 18), //Color of inside notes
       );
       textPainter.layout();
       Size textSize = textPainter.size;

@@ -32,7 +32,7 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
     _currentRotation = ref.read(wheelRotationProvider);
 
     scaleIntervals = Scales.data[widget.scaleModel.scale]
-        [widget.scaleModel.mode]['interpolatedScaleDegrees']!;
+        [widget.scaleModel.mode]['scaleDegrees']!;
     chromaticNotes = getChromaticNotes();
   }
 
@@ -85,6 +85,7 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
 
   @override
   Widget build(BuildContext context) {
+    String topNote = getTopNote();
     return GestureDetector(
       onPanStart: (details) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -109,11 +110,12 @@ class _ChromaticWheelState extends ConsumerState<ChromaticWheel> {
         setState(() {
           _currentRotation = closestStop * _rotationPerStop;
         });
-        String topNote = getTopNote();
+
         ref.read(topNoteProvider.notifier).update((state) => topNote);
       },
       child: CustomPaint(
-        painter: WheelPainter(_currentRotation, chromaticNotes, scaleIntervals),
+        painter: WheelPainter(
+            _currentRotation, chromaticNotes, scaleIntervals, topNote),
         child: const SizedBox(width: 300, height: 300),
       ),
     );

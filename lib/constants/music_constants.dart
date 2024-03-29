@@ -256,6 +256,18 @@ class MusicConstants {
   };
 
   static final Map<String, int> midiValues = {
+    'C0': 12,
+    'D♭0': 13,
+    'D0': 14,
+    'E♭0': 15,
+    'E0': 16,
+    'F0': 17,
+    'G♭0': 18,
+    'G0': 19,
+    'A♭0': 20,
+    'A0': 21,
+    'B♭0': 22,
+    'B0': 23,
     'C1': 24,
     'D1♭': 25,
     'D1': 26,
@@ -340,5 +352,6 @@ class MusicConstants {
     'A7': 105,
     'B♭7': 106,
     'B7': 107,
+    'C8': 108,
   };
 }

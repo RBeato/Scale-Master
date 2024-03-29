@@ -107,9 +107,11 @@ class SequencerManager {
       var note = tonicAsUniversalBassNote
           ? "${chord.parentScaleKey}2"
           : chord.chordNotesWithIndexesRaw.first;
-      // print('bass note $note');
+      print('Chord: $chord, bass note $note');
+
       note = MusicUtils.filterNoteNameWithSlash(note);
-      var bassMidiValue = MusicConstants.midiValues[note]!;
+      var bassMidiValue = MusicConstants.midiValues[
+          note]!; //!Problem generating some bass notes?? TODO// maybe is from having flats starting the note name
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
     });
 

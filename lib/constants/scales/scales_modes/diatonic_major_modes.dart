@@ -3,19 +3,8 @@ import 'package:tonic/tonic.dart';
 Map<String, dynamic> diatonicMajorModes = {
   'Ionian': {
     'scaleStepsRoman': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
-    'triad': [Interval.P1, Interval.M3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.M3, Interval.P5, Interval.M7],
     'intervals': [0, 2, 4, 5, 7, 9, 11],
     'scaleDegrees': [
-      Interval.P1,
-      Interval.M2,
-      Interval.M3,
-      Interval.P4,
-      Interval.P5,
-      Interval.M6,
-      Interval.M7
-    ],
-    'interpolatedScaleDegrees': [
       Interval.P1,
       null,
       Interval.M2,
@@ -34,19 +23,8 @@ Map<String, dynamic> diatonicMajorModes = {
   },
   'Dorian': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', 'VI', '♭VII'],
-    'triad': [Interval.P1, Interval.m3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.m3, Interval.P5, Interval.M7],
     'intervals': [0, 2, 3, 5, 7, 9, 10],
     'scaleDegrees': [
-      Interval.P1,
-      Interval.M2,
-      Interval.m3,
-      Interval.P4,
-      Interval.P5,
-      Interval.M6,
-      Interval.m7
-    ],
-    'interpolatedScaleDegrees': [
       Interval.P1,
       null,
       Interval.M2,
@@ -65,19 +43,8 @@ Map<String, dynamic> diatonicMajorModes = {
   },
   'Phrygian': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', 'V', '♭VI', '♭VII'],
-    'triad': [Interval.P1, Interval.m3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.m3, Interval.P5, Interval.M7],
     'intervals': [0, 1, 3, 5, 7, 8, 10],
     'scaleDegrees': [
-      Interval.P1,
-      Interval.m2,
-      Interval.m3,
-      Interval.P4,
-      Interval.P5,
-      Interval.m6,
-      Interval.m7
-    ],
-    'interpolatedScaleDegrees': [
       Interval.P1,
       Interval.m2,
       null,
@@ -95,21 +62,10 @@ Map<String, dynamic> diatonicMajorModes = {
     'chordType': ['m', '°', 'm', 'm', 'M', 'm', 'm'],
   },
   'Lydian': {
-    'scaleStepsRoman': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
-    'triad': [Interval.P1, Interval.M3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.M3, Interval.P5, Interval.M7],
+    'scaleStepsRoman': ['I', 'II', 'III', '♯IV', 'V', 'VI', 'VII'],
     'intervals': [0, 2, 4, 6, 7, 9, 11],
     'scaleDegrees': [
       Interval.P1,
-      Interval.M2,
-      Interval.M3,
-      Interval.A4, // Augmented 4th (Lydian characteristic note)
-      Interval.P5,
-      Interval.M6,
-      Interval.M7
-    ],
-    'interpolatedScaleDegrees': [
-      Interval.P1,
       null,
       Interval.M2,
       null,
@@ -122,24 +78,13 @@ Map<String, dynamic> diatonicMajorModes = {
       null,
       Interval.M7
     ],
-    'function': ['I', 'II', 'III', '#IV', 'V', 'vi', 'vii'],
+    'function': ['I', 'II', 'III', '♯IV', 'V', 'vi', 'vii'],
     'chordType': ['M', 'm', 'm', 'aug', 'M', 'm', '°'],
   }, // 'aug' represents augmented
   'Mixolydian': {
     'scaleStepsRoman': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
-    'triad': [Interval.P1, Interval.M3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.M3, Interval.P5, Interval.m7],
     'intervals': [0, 2, 4, 5, 7, 9, 10],
     'scaleDegrees': [
-      Interval.P1,
-      Interval.M2,
-      Interval.M3,
-      Interval.P4,
-      Interval.P5,
-      Interval.M6,
-      Interval.m7
-    ],
-    'interpolatedScaleDegrees': [
       Interval.P1,
       null,
       Interval.M2,
@@ -158,20 +103,9 @@ Map<String, dynamic> diatonicMajorModes = {
   },
   'Aeolian': {
     'scaleStepsRoman': ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'],
-    'triad': [Interval.P1, Interval.M3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.M3, Interval.P5, Interval.M7],
     'intervals': [0, 2, 4, 5, 7, 9, 10],
     'scaleDegrees': [
       Interval.P1,
-      Interval.M2,
-      Interval.m3,
-      Interval.P4,
-      Interval.P5,
-      Interval.m6,
-      Interval.m7
-    ],
-    'interpolatedScaleDegrees': [
-      Interval.P1,
       null,
       Interval.M2,
       Interval.m3,
@@ -179,43 +113,32 @@ Map<String, dynamic> diatonicMajorModes = {
       Interval.P4,
       null,
       Interval.P5,
-      null,
       Interval.m6,
+      null,
       Interval.m7,
       null,
     ],
-    'function': ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'],
+    'function': ['i', 'ii', '♭III', 'iv', 'v', '♭VI', '♭VII'],
     'chordType': ['m', '°', 'M', 'm', 'm', 'M', 'M']
   },
   'Locrian': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
-    'triad': [Interval.P1, Interval.m3, Interval.P5],
-    'tetrade': [Interval.P1, Interval.m3, Interval.P5, Interval.m7],
     'intervals': [0, 1, 3, 5, 6, 8, 10],
     'scaleDegrees': [
       Interval.P1,
       Interval.m2,
-      Interval.m3,
-      Interval.P4,
-      Interval.d5,
-      Interval.m6,
-      Interval.m7
-    ],
-    'interpolatedScaleDegrees': [
-      Interval.P1,
-      Interval.m2,
       null,
       Interval.m3,
       null,
       Interval.P4,
-      null,
       Interval.d5,
       null,
       Interval.m6,
+      null,
       Interval.m7,
       null,
     ],
-    'function': ['i°', '♭II', '♭iii', 'iv', '♭V', '♭vi', '♭VII'],
+    'function': ['i', '♭II', '♭iii', 'iv', '♭V', '♭vi', '♭VII'],
     'chordType': ['°', 'M', 'm', 'm', 'M', 'M', 'm']
   },
 };

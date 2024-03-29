@@ -12,6 +12,8 @@ class MusicUtils {
   static List<String> createChords(
       Settings settings, String key, String scale, String mode) {
     return MusicUtils.cleanNotesIndexes(Scales.data[scale][mode]['scaleDegrees']
+        .where((n) => n != null)
+        .toList()
         .map((interval) => Pitch.parse(key) + interval)
         .toList());
   }
@@ -35,7 +37,9 @@ class MusicUtils {
     Map<String, int> chordIntervals = _getChordIntervals(
         scaleIntervals,
         Scales.data[fingeringsModel.scaleModel!.scale]
-            [fingeringsModel.scaleModel!.mode]['scaleDegrees']);
+                [fingeringsModel.scaleModel!.mode]['scaleDegrees']
+            .where((n) => n != null)
+            .toList());
 
     var chordNotes =
         createNoteList(baseNote, chordIntervals.values.toList(), 4);
@@ -103,6 +107,41 @@ class MusicUtils {
     } else {
       return note;
     }
+  }
+
+  static String getTriadType(List<Interval?> scaleDegrees) {
+    // Find the positions of the root, third, and fifth intervals in the list
+    int? rootIndex =
+        scaleDegrees.indexWhere((interval) => interval == Interval.P1);
+    int? thirdIndex = scaleDegrees.indexWhere(
+        (interval) => interval == Interval.m3 || interval == Interval.M3);
+    int? fifthIndex =
+        scaleDegrees.indexWhere((interval) => interval == Interval.P5);
+
+    // If all three intervals are found
+    if (rootIndex != -1 && thirdIndex != -1 && fifthIndex != -1) {
+      // Calculate the intervals between the root, third, and fifth
+      int intervalRootThird = (thirdIndex - rootIndex) % 12;
+      int intervalThirdFifth = (fifthIndex - thirdIndex) % 12;
+
+      // Determine the type of triad based on the intervals between the root, third, and fifth
+      if (intervalRootThird == 3 && intervalThirdFifth == 4) {
+        return 'm'; // Minor
+      } else if (intervalRootThird == 4 && intervalThirdFifth == 3) {
+        return 'M'; // Major
+      } else if (intervalRootThird == 3 && intervalThirdFifth == 3) {
+        return '°'; // Diminished
+      } else if (intervalRootThird == 4 && intervalThirdFifth == 4) {
+        return 'aug'; // Augmented
+      } else if (intervalRootThird == 2 && intervalThirdFifth == 5) {
+        return 'sus2'; // Suspended 2nd
+      } else if (intervalRootThird == 5 && intervalThirdFifth == 2) {
+        return 'sus4'; // Suspended 4th
+      }
+    }
+
+    // If the conditions are not met, return 'Unknown'
+    return 'Unknown';
   }
 
   // Map<String, int> auxIntervals = {

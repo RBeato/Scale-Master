@@ -93,8 +93,10 @@ class FingeringsCreator {
   }
 
   setModeDegrees(scaleModel) {
-    _modeIntervals =
-        Scales.data[scaleModel.scale][scaleModel.mode]['scaleDegrees'];
+    _modeIntervals = Scales.data[scaleModel.scale][scaleModel.mode]
+            ['scaleDegrees']
+        .where((n) => n != null)
+        .toList();
   }
 
   filterSettings() {
