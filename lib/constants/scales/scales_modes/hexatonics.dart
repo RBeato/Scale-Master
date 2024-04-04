@@ -18,8 +18,6 @@ Map hexatonics = {
       Interval.A6,
       null,
     ],
-    'function': ['I', 'II', 'III', '♯IV', '♯V', '♯VI'],
-    'chordType': ['+', '+', '+', '+', '+', '+'],
   },
   'Major Hexatonic': {
     'scaleStepsRoman': ['I', 'II', 'III', 'IV', 'V', 'VI'],
@@ -38,8 +36,6 @@ Map hexatonics = {
       null,
       null,
     ],
-    'function': ['I', 'II', 'III', 'IV', 'V', 'VI'],
-    'chordType': ['M', 'M', 'M', 'M', 'M', 'M'],
   },
   'Minor Hexatonic': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', '♭VII'],
@@ -60,8 +56,6 @@ Map hexatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', '♭III', 'IV', 'V', '♭VII'],
-    'chordType': ['m', 'm', 'm', 'm', 'm', 'm'],
   },
   'Ritsu Onkai': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', '♭VI', '♭VII'],
@@ -80,8 +74,6 @@ Map hexatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', '♭III', 'IV', '♭VI', '♭VII'],
-    'chordType': ['°', '°', '°', '°', '°', '°'],
   },
   'Raga Kumud': {
     'scaleStepsRoman': ['I', 'II', 'III', 'V', 'VI', 'VII'],
@@ -100,8 +92,6 @@ Map hexatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', 'III', 'V', 'VI', 'VII'],
-    'chordType': ['M', 'M', 'M', 'M', 'M', 'M'],
   },
   'Mixolydian Hexatonic': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', 'VI', '♭VII'],
@@ -120,8 +110,6 @@ Map hexatonics = {
       null,
       Interval.m7,
     ],
-    'function': ['I', 'II', 'IV', 'V', 'VI', '♭VII'],
-    'chordType': ['M', 'M', 'M', 'M', 'M', 'M'],
   },
   'Phrygian Hexatonic': {
     'scaleStepsRoman': ['I', '♭III', 'IV', 'V', '♭VI', '♭VII'],
@@ -140,7 +128,5 @@ Map hexatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭III', 'IV', 'V', '♭VI', '♭VII'],
-    'chordType': ['m', 'm', 'm', 'm', 'm', 'm'],
   },
 };

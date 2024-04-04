@@ -18,8 +18,6 @@ Map harmonicMajorModes = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'ii', '♭III', 'IV', 'V', '♭VI', 'vii'],
-    'chordType': ['m', 'm', '°', 'M', 'm', '°', '°'],
   },
   'Dorian ♭5': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', '♭V', 'VI', '♭VII'],
@@ -38,8 +36,6 @@ Map harmonicMajorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'ii', '♭III', 'IV', '♭V', 'vi', '♭VII'],
-    'chordType': ['m', '°', 'm', 'M', 'm', '°', '°'],
   },
   'Phrygian ♭4': {
     'scaleStepsRoman': ['I', '♭II', '♭III', '♭IV', 'V', '♭VI', '♭VII'],
@@ -58,8 +54,6 @@ Map harmonicMajorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', '♭III', '♭IV', 'V', '♭VI', '♭VII'],
-    'chordType': ['m', 'm', '°', '+', 'M', '°', '°'],
   },
   'Lydian ♭3': {
     'scaleStepsRoman': ['I', 'II', '♭III', '♯IV', 'V', 'VI', 'VII'],
@@ -78,8 +72,6 @@ Map harmonicMajorModes = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', '♭III', '♯IV', 'V', 'VI', 'VII'],
-    'chordType': ['M', '+', 'm', 'M', 'M', '°', 'm'],
   },
   'Mixolydian ♭2': {
     'scaleStepsRoman': ['I', '♭II', 'III', 'IV', 'V', 'VI', '♭VII'],
@@ -98,8 +90,6 @@ Map harmonicMajorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', 'III', 'IV', 'V', 'VI', '♭VII'],
-    'chordType': ['M', 'm', '°', 'M', 'm', '°', 'm'],
   },
   'Lydian Augmented ♯2': {
     'scaleStepsRoman': ['I', '♯II', 'III', '♯IV', '♯V', 'VI', 'VII'],
@@ -118,8 +108,6 @@ Map harmonicMajorModes = {
       null,
       Interval.M7,
     ],
-    'function': ['I', '♯II', 'III', '♯IV', '♯V', 'VI', 'VII'],
-    'chordType': ['m', 'm', '°', 'M', 'm', '°', '°'],
   },
   'Locrian ♭♭7': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭♭VII'],
@@ -138,7 +126,5 @@ Map harmonicMajorModes = {
       null,
       null,
     ],
-    'function': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭♭VII'],
-    'chordType': ['°', 'm', '°', 'm', '°', '°', '°'],
   },
 };

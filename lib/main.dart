@@ -12,15 +12,12 @@ import 'home_page.dart';
 // chordLogicFromIntervals(modeIntervals);
 // build the chords names from the  'scaleDegrees' list and create the names rules from there.
 // for creating chords inside the mode, refer to other modes structures. Reorder modes inside the map so the search can be done by key number... and call MusicUtils.getTriadType() on it.
-// replace everything where the map keys 'function' and  'chordType are used to create the chords
 
+//TODO: Create a specific voicing for specific extensions on first chord and see if voice leading works as is
 //TODO: Fix 'Scale Tonic as Universal Bass Note' feature. It's not working properly
 //TODO: Fix PERFORMANCE ISSUES
-//TODO: Add adapted chromatic scale list to every scale to avoid problems with b5 and #11 for example
-//TODO: Create a specific voicing for specific extensions on first chord and see if voice leading works as is
 //TODO: Add metronome sound (add sound to every beat in the grid)
 //TODO: Add delay to image when playing to sync metronome indicator and sound
-//TODO: Remove excess piano notes at tops
 //TODO: pentatonics dropdown lags a lot
 
 void main() {

@@ -15,7 +15,7 @@ class CustomPiano extends StatefulWidget {
 }
 
 class _CustomPianoState extends State<CustomPiano> {
-  final int numberOfOctaves = 7;
+  final int numberOfOctaves = 6;
   final whiteKeyNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final blackKeyNotes = ['C♯/D♭', 'D♯/E♭', 'F♯/G♭', 'G♯/A♭', 'A♯/B♭'];
 
@@ -56,14 +56,15 @@ class _CustomPianoState extends State<CustomPiano> {
             .toList();
         var t = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
-        String? degree;
+
         Color? color = Colors.blue;
-        if (notesList.contains(t)) {
-          // print('Note is in scale');
-          // int index = notesList.indexOf(t);
-          // degree = widget.scaleInfo!.degreeFunction[index];
-          // color = ConstantColors.scaleColorMap[degree];
-        }
+        // if (notesList.contains(t)) {
+        notesList.first == t ? color = Colors.orange : color = Colors.blue;
+        // print('Note is in scale');
+        // int index = notesList.indexOf(t);
+        // var degree = widget.scaleInfo!.degreeFunction[index];
+        // color = ConstantColors.scaleColorMap[degree];
+        // }
         whiteKeys.add(CustomPianoKey(
           isBlack: false,
           note: noteName,

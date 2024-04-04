@@ -18,17 +18,6 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.M7,
       null,
     ],
-    'function': ['I', 'II', '♭III', 'IV', 'V', '♭VI', 'VII'],
-    'chordType': ['m', '°', '+', 'm', '7', 'M', '°'],
-    'originModeType': [
-      'Harmonic Minor',
-      'Locrian ♯6',
-      'Ionian Augmented',
-      'Romanian',
-      'Phrygian Dominant',
-      'Lydian ♯2',
-      'Ultralocrian',
-    ],
   },
   'Locrian ♯6': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
@@ -47,8 +36,6 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭ii', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['+', 'm', '7', 'M', '°', 'm', '°'],
   },
   'Ionian Augmented': {
     'scaleStepsRoman': ['I', 'II', 'III', '♯IV', '♯V', '♯VI', 'VII'],
@@ -66,16 +53,6 @@ Map<String, dynamic> harmonicMinorModes = {
       null,
       Interval.A6,
       Interval.M7,
-    ],
-    'function': ['I', 'II', 'III', '♯IV', '♯V', '♯VI', 'VII'],
-    'chordType': [
-      '+',
-      'm',
-      '7',
-      'M',
-      '°',
-      'm',
-      '°',
     ],
   },
   'Romanian': {
@@ -95,8 +72,6 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', '♭III', '♯IV', 'V', 'VI', '♭VII'],
-    'chordType': ['m', '7', 'M', '°', 'm', '°', '+'],
   },
   'Phrygian Dominant': {
     'scaleStepsRoman': ['I', '♭II', 'III', 'IV', 'V', '♭VI', '♭VII'],
@@ -114,16 +89,6 @@ Map<String, dynamic> harmonicMinorModes = {
       null,
       Interval.m7,
       null,
-    ],
-    'function': ['I', '♭II', 'III', 'IV', 'V', '♭VI', '♭VII'],
-    'chordType': [
-      '7',
-      'M',
-      '°',
-      'm',
-      '°',
-      '+',
-      'm',
     ],
   },
   'Lydian ♯2': {
@@ -143,8 +108,6 @@ Map<String, dynamic> harmonicMinorModes = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', '♯II', 'IV', 'V', '♭VI', 'VII'],
-    'chordType': ['M', '°', 'm', '°', '+', 'm', '7'],
   },
   'Ultralocrian': {
     'scaleStepsRoman': ['I', '♭II', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
@@ -163,7 +126,5 @@ Map<String, dynamic> harmonicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭ii', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['°', 'm', '°', '+', 'm', '7', 'M'],
   },
 };

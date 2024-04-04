@@ -23,7 +23,8 @@ class MusicUtils {
     var mode = Scales.data[fingeringsModel.scaleModel!.scale]
         [fingeringsModel.scaleModel!.mode];
 
-    var scaleIntervals = mode['intervals'];
+    var scaleIntervals =
+        mode['intervals']; //TODO: Change here to calculate intervals??
     // print("chordsIntervals: $scaleIntervals");
 
     List<int>? newIntervals;
@@ -35,11 +36,7 @@ class MusicUtils {
     scaleIntervals = newIntervals ?? scaleIntervals;
 
     Map<String, int> chordIntervals = _getChordIntervals(
-        scaleIntervals,
-        Scales.data[fingeringsModel.scaleModel!.scale]
-                [fingeringsModel.scaleModel!.mode]['scaleDegrees']
-            .where((n) => n != null)
-            .toList());
+        scaleIntervals, getScaleDegreesTonicIntervals(fingeringsModel));
 
     var chordNotes =
         createNoteList(baseNote, chordIntervals.values.toList(), 4);
@@ -50,10 +47,17 @@ class MusicUtils {
     return chordNotes;
   }
 
+  static List<Interval> getScaleDegreesTonicIntervals(
+          ChordScaleFingeringsModel fingeringsModel) =>
+      (Scales.data[fingeringsModel.scaleModel!.scale]
+                  [fingeringsModel.scaleModel!.mode]['scaleDegrees']
+              as List<Interval?>)
+          .where((n) => n != null)
+          .map((e) => e!)
+          .toList();
+
   static List<int> calculateIntervalsForChord(
       int selectedChordIndex, List initialIntervals) {
-    // Define the initial intervals for the Ionian scale
-
     List<int> appendingIntervals = [];
     List<int> intervals = [];
     for (int i = 0; i < initialIntervals.length; i++) {
@@ -80,20 +84,20 @@ class MusicUtils {
     }
 
     // Create a map to store the chord intervals
-    Map<String, int> chordIntervals = {};
+    Map<String, int> chordWithAllExtensions = {};
 
     // Populate the chord intervals map
     for (int i = 0; i < scaleDegrees.length; i++) {
       String chordTone = _mapIntervalToChordTone(scaleDegrees[i]);
-      chordIntervals[chordTone] = scaleIntervals[i];
+      chordWithAllExtensions[chordTone] = scaleIntervals[i];
     }
 
     // Reorder the chord intervals map based on the order of chord tones
     List<String> orderedChordTones = ['1', '3', '5', '7', '9', '11', '13'];
     Map<String, int> reorderedChordIntervals = {};
     for (var chordTone in orderedChordTones) {
-      if (chordIntervals.containsKey(chordTone)) {
-        reorderedChordIntervals[chordTone] = chordIntervals[chordTone]!;
+      if (chordWithAllExtensions.containsKey(chordTone)) {
+        reorderedChordIntervals[chordTone] = chordWithAllExtensions[chordTone]!;
       }
     }
 
@@ -109,38 +113,121 @@ class MusicUtils {
     }
   }
 
-  static String getTriadType(List<Interval?> scaleDegrees) {
-    // Find the positions of the root, third, and fifth intervals in the list
-    int? rootIndex =
-        scaleDegrees.indexWhere((interval) => interval == Interval.P1);
-    int? thirdIndex = scaleDegrees.indexWhere(
-        (interval) => interval == Interval.m3 || interval == Interval.M3);
-    int? fifthIndex =
-        scaleDegrees.indexWhere((interval) => interval == Interval.P5);
+  static getTriadsNames(modesIntervals) {
+    List<String> triadsNames = [];
+    for (var mode in modesIntervals) {
+      triadsNames.add(getTriadType(mode));
+    }
+    return triadsNames;
+  }
 
-    // If all three intervals are found
-    if (rootIndex != -1 && thirdIndex != -1 && fifthIndex != -1) {
-      // Calculate the intervals between the root, third, and fifth
-      int intervalRootThird = (thirdIndex - rootIndex) % 12;
-      int intervalThirdFifth = (fifthIndex - thirdIndex) % 12;
+  static List<List<Interval>> getScalesModesIntervalsLists(
+      String scale, String selectedMode) {
+    List<List<Interval>> orderedScaleDegrees = [];
 
-      // Determine the type of triad based on the intervals between the root, third, and fifth
-      if (intervalRootThird == 3 && intervalThirdFifth == 4) {
-        return 'm'; // Minor
-      } else if (intervalRootThird == 4 && intervalThirdFifth == 3) {
-        return 'M'; // Major
-      } else if (intervalRootThird == 3 && intervalThirdFifth == 3) {
-        return '°'; // Diminished
-      } else if (intervalRootThird == 4 && intervalThirdFifth == 4) {
-        return 'aug'; // Augmented
-      } else if (intervalRootThird == 2 && intervalThirdFifth == 5) {
-        return 'sus2'; // Suspended 2nd
-      } else if (intervalRootThird == 5 && intervalThirdFifth == 2) {
-        return 'sus4'; // Suspended 4th
+    bool foundSelectedMode = false;
+    final scaleModes = Scales.data[scale];
+
+    // Iterate from the selected mode to the end
+    for (var mode in scaleModes.keys) {
+      print(mode);
+      if (foundSelectedMode) {
+        final scaleDegrees =
+            (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)
+                .where((n) => n != null)
+                .map((e) => e!)
+                .toList();
+        orderedScaleDegrees.add(scaleDegrees);
+      } else if (mode == selectedMode) {
+        foundSelectedMode = true;
+        final scaleDegrees =
+            (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)
+                .where((n) => n != null)
+                .map((e) => e!)
+                .toList();
+        orderedScaleDegrees
+            .add(scaleDegrees); // Add the selected mode's scale degrees
       }
     }
 
-    // If the conditions are not met, return 'Unknown'
+    // Iterate from the beginning to the selected mode (excluding selected mode)
+    for (var mode in scaleModes.keys) {
+      if (mode == selectedMode) break;
+      print(mode);
+
+      final scaleDegrees =
+          (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)
+              .where((n) => n != null)
+              .map((e) => e!)
+              .toList();
+      orderedScaleDegrees.add(scaleDegrees);
+    }
+
+    return orderedScaleDegrees;
+  }
+
+  static String getTriadType(List<Interval?> scaleDegrees) {
+    // Check if the third interval is present
+    bool hasSecond = scaleDegrees.contains(Interval.m2) ||
+        scaleDegrees.contains(Interval.M2) ||
+        scaleDegrees.contains(Interval.A2);
+    // Check if the fourth interval is present
+    bool hasThird = scaleDegrees.contains(Interval.m3) ||
+        scaleDegrees.contains(Interval.M3);
+    // Check if the fourth interval is present
+    bool hasFourth = scaleDegrees.contains(Interval.d4) ||
+        scaleDegrees.contains(Interval.P4) ||
+        scaleDegrees.contains(Interval.A4);
+    // Check if the fifth interval is present
+    bool hasFifth = scaleDegrees.contains(Interval.d5) ||
+        scaleDegrees.contains(Interval.P5) ||
+        scaleDegrees.contains(Interval.A5);
+    // Check if the sixth interval is present
+    bool hasSixth = scaleDegrees.contains(Interval.m6) ||
+        scaleDegrees.contains(Interval.M6);
+
+    // If there is no third, it's either sus2 or sus4
+    if (!hasThird) {
+      if (hasFourth && hasFifth) {
+        return 'sus4'; // Suspended fourth
+      } else if (hasSecond && hasFifth) {
+        return 'sus2'; // Suspended second
+      }
+    }
+
+    // If there's a third, check its type and the intervals after it
+    if (hasThird) {
+      // Find the index of the third interval
+      int thirdIndex = scaleDegrees.indexOf(Interval.m3);
+      if (thirdIndex == -1) {
+        thirdIndex = scaleDegrees.indexOf(Interval.M3);
+      }
+
+      // Check the interval after the third
+      Interval? intervalAfterThird = thirdIndex + 1 < scaleDegrees.length
+          ? scaleDegrees[thirdIndex + 1]
+          : null;
+
+      // If the third is minor, check for diminished or minor triad
+      if (scaleDegrees.contains(Interval.m3)) {
+        if (scaleDegrees[thirdIndex + 2] == Interval.d5) {
+          return '°'; // Diminished
+        } else if (scaleDegrees[thirdIndex + 2] == Interval.P5) {
+          return 'm'; // Minor
+        }
+      }
+
+      // If the third is major, check for augmented or major triad
+      if (scaleDegrees.contains(Interval.M3)) {
+        if (scaleDegrees[thirdIndex + 2] == Interval.A5) {
+          return 'aug'; // Augmented
+        } else if (scaleDegrees[thirdIndex + 2] == Interval.P5) {
+          return 'M'; // Major
+        }
+      }
+    }
+
+    // If none of the above conditions are met, return null
     return 'Unknown';
   }
 

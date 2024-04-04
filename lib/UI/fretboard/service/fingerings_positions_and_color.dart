@@ -85,17 +85,17 @@ class FingeringsCreator {
   addChordsTypes(ScaleModel scaleModel) {
     List<String> aux = [];
     for (int i = 0; i < scaleModel.scaleNotesNames.length; i++) {
-      aux.add(scaleModel.scaleNotesNames[i] +
-          Scales.data[scaleModel.scale][scaleModel.mode]['chordType'][i]
-              .toString());
+      aux.add(
+          '${scaleModel.scaleNotesNames[i]}${scaleModel.chordTypes[i] == 'M' ? '' : scaleModel.chordTypes[i]}');
     }
     scaleModel.scaleNotesNames = aux;
   }
 
   setModeDegrees(scaleModel) {
-    _modeIntervals = Scales.data[scaleModel.scale][scaleModel.mode]
-            ['scaleDegrees']
+    _modeIntervals = (Scales.data[scaleModel.scale]
+            [scaleModel.mode]!['scaleDegrees'])
         .where((n) => n != null)
+        .map((e) => e!)
         .toList();
   }
 

@@ -17,8 +17,6 @@ Map pentatonics = {
       Interval.M6,
       null,
     ],
-    'function': ['I', 'II', 'III', 'V', 'VI'],
-    'chordType': ['M', 'M', 'M', 'm', 'M'],
   },
   'Minor Pentatonic': {
     'scaleStepsRoman': ['I', '♭III', 'IV', 'V', '♭VII'],
@@ -37,8 +35,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭III', 'IV', 'V', '♭VII'],
-    'chordType': ['m', 'M', 'M', 'm', 'm'],
   },
   'Blues': {
     'scaleStepsRoman': ['I', '♭III', 'IV', '♭V', 'V', '♭VII'],
@@ -57,8 +53,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭III', 'IV', '♭V', 'V', '♭VII'],
-    'chordType': ['m', 'M', '7', 'm', '7', 'm'],
   },
   'Major Blues': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'III', 'IV', 'V', '♭VII'],
@@ -77,8 +71,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', '♭III', 'III', 'IV', 'V', '♭VII'],
-    'chordType': ['M', 'M', 'm', 'M', '7', '7', 'm'],
   },
   'Minor Blues': {
     'scaleStepsRoman': ['I', '♭III', 'IV', '♭V', 'V', '♭VII'],
@@ -97,8 +89,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭III', 'IV', '♭V', 'V', '♭VII'],
-    'chordType': ['m', 'M', '7', 'm', '7', 'm'],
   },
   'Egyptian': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', 'VII'],
@@ -117,8 +107,6 @@ Map pentatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', 'IV', 'V', 'VII'],
-    'chordType': ['M', 'M', 'M', 'm', 'M'],
   },
   'Hirajoshi': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'V', '♭VI'],
@@ -136,8 +124,6 @@ Map pentatonics = {
       null,
       null,
     ],
-    'function': ['I', '♭II', '♭III', 'V', '♭VI'],
-    'chordType': ['°', 'm', '°', 'm', '°'],
   },
   'In-Sen': {
     'scaleStepsRoman': ['I', '♭II', 'IV', 'V', 'VII'],
@@ -156,8 +142,6 @@ Map pentatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', '♭II', 'IV', 'V', 'VII'],
-    'chordType': ['°', 'm', 'M', 'M', '°'],
   },
   'Iwato': {
     'scaleStepsRoman': ['I', '♭II', 'IV', 'V', '♭VII'],
@@ -176,8 +160,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', 'IV', 'V', '♭VII'],
-    'chordType': ['°', 'm', '°', 'm', '°'],
   },
   'Kumoi': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', 'VI'],
@@ -196,8 +178,6 @@ Map pentatonics = {
       null,
       null,
     ],
-    'function': ['I', 'II', 'IV', 'V', 'VI'],
-    'chordType': ['M', 'm', 'M', 'm', 'M'],
   },
   'Pelog': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'V', '♭VI'],
@@ -216,8 +196,6 @@ Map pentatonics = {
       null,
       null,
     ],
-    'function': ['I', 'II', '♭III', 'V', '♭VI'],
-    'chordType': ['M', 'm', 'm', 'M', 'm'],
   },
   'Prometheus': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', 'VII'],
@@ -236,8 +214,6 @@ Map pentatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', 'IV', 'V', 'VII'],
-    'chordType': ['M', 'm', 'M', 'M', 'M'],
   },
   'Prometheus Neapolitan': {
     'scaleStepsRoman': ['I', '♭II', 'IV', 'V', 'VII'],
@@ -256,8 +232,6 @@ Map pentatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', '♭II', 'IV', 'V', 'VII'],
-    'chordType': ['°', 'm', 'M', 'M', 'M'],
   },
   'Prometheus Spanish': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'V', 'VII'],
@@ -276,8 +250,6 @@ Map pentatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', 'II', '♭III', 'V', 'VII'],
-    'chordType': ['M', 'm', 'm', 'M', 'M'],
   },
   'Ritusen': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'V', '♭VI'],
@@ -296,8 +268,6 @@ Map pentatonics = {
       null,
       null,
     ],
-    'function': ['I', '♭II', '♭III', 'V', '♭VI'],
-    'chordType': ['°', 'm', '°', 'm', '°'],
   },
   'Ryukyu': {
     'scaleStepsRoman': ['I', '♭II', 'IV', 'V', '♭VII'],
@@ -316,8 +286,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', 'IV', 'V', '♭VII'],
-    'chordType': ['°', 'm', 'M', 'M', 'm'],
   },
   'Yo': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', '♭VII'],
@@ -336,8 +304,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', 'IV', 'V', '♭VII'],
-    'chordType': ['M', 'm', 'M', 'm', '°'],
   },
   'Yo-Kumoi': {
     'scaleStepsRoman': ['I', 'II', 'III', 'V', '♭VII'],
@@ -356,8 +322,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', 'III', 'V', '♭VII'],
-    'chordType': ['M', 'M', 'm', 'm', '°'],
   },
   'Zhi': {
     'scaleStepsRoman': ['I', 'II', 'IV', 'V', '♭VII'],
@@ -376,8 +340,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', 'IV', 'V', '♭VII'],
-    'chordType': ['M', 'm', 'M', 'm', '°'],
   },
   'Zhi-Yu': {
     'scaleStepsRoman': ['I', 'II', 'III', 'V', '♭VII'],
@@ -396,8 +358,6 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', 'III', 'V', '♭VII'],
-    'chordType': ['M', 'M', 'm', 'm', '°'],
   },
   'Zhi-Yu-Kumoi': {
     'scaleStepsRoman': ['I', 'II', 'III', 'V', '♭VII'],
@@ -416,7 +376,5 @@ Map pentatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', 'III', 'V', '♭VII'],
-    'chordType': ['M', 'M', 'm', 'm', '°'],
   },
 };

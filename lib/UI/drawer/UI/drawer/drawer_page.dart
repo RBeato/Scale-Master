@@ -34,6 +34,7 @@ class _DrawerPageState extends ConsumerState<DrawerPage> {
                   child: const ListTile(
                     title: Text(
                       'Clear Preferences',
+                      style: TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   )),

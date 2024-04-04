@@ -18,8 +18,6 @@ Map octatonics = {
       null,
       Interval.M7,
     ],
-    'function': ['I', '♭II', '♭III', '♯III', '♯IV', 'V', '♭VI', '♭VII'],
-    'chordType': ['°', '°', 'm', 'M', 'M', '°', 'm', 'm'],
   },
   'Half-Whole': {
     'scaleStepsRoman': ['I', '♭II', '♯II', '♯III', 'V', '♭VI', '♭VII'],
@@ -38,7 +36,5 @@ Map octatonics = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', '♯II', '♯III', 'V', '♭VI', '♭VII'],
-    'chordType': ['°', '°', 'm', 'M', '°', '°', '°'],
   },
 };

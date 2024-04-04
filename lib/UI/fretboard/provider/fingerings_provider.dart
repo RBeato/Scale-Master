@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tonic/tonic.dart';
 import '../../../constants/flats_and_sharps_to_flats_converter.dart';
 import '../../../constants/scales/scales_data_v2.dart';
 import '../../../models/scale_model.dart';
@@ -17,19 +18,24 @@ final chordModelFretboardFingeringProvider =
   final mode = ref.watch(modeDropdownValueProvider);
   ref.watch(settingsStateNotifierProvider);
 
-  // final settings = await ref.watch(settingsProvider.future);
   final settings =
       await ref.watch(settingsStateNotifierProvider.notifier).settings;
 
   final List<String> scaleNotesNames = MusicUtils.createChords(
       settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
+  final scaleIntervals = Scales.data[scale.toString()][mode]['scaleStepsRoman'];
+  final List<List<Interval>> modesIntervals =
+      MusicUtils.getScalesModesIntervalsLists(scale, mode);
+
+  final List<String> chordTypes = MusicUtils.getTriadsNames(modesIntervals);
+
   ScaleModel item = ScaleModel(
     parentScaleKey: topNote,
     scale: scale.toString(),
     scaleNotesNames: scaleNotesNames,
-    chordTypes: Scales.data[scale.toString()][mode]['chordType'],
-    degreeFunction: Scales.data[scale.toString()][mode]['function'],
+    chordTypes: chordTypes,
+    degreeFunction: scaleIntervals,
     mode: mode,
     settings: settings,
     originModeType: '',

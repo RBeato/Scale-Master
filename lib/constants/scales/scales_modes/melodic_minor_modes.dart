@@ -18,8 +18,6 @@ Map<String, dynamic> melodicMinorModes = {
       null,
       Interval.M7
     ],
-    'function': ['I', 'ii', '♭iii', 'IV', 'V', 'vi', 'vii'],
-    'chordType': ['m', 'm', '+', 'M', 'M', 'o', 'o'],
   },
   'Dorian ♭2': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', 'VI', 'VII'],
@@ -38,8 +36,6 @@ Map<String, dynamic> melodicMinorModes = {
       null,
       Interval.M7
     ],
-    'function': ['i', 'ii', '♭III', 'IV', 'V', 'vi', 'vii'],
-    'chordType': ['m', '+', 'M', 'M', 'o', 'o', 'm'],
   },
   'Lydian Augmented': {
     'scaleStepsRoman': ['I', 'II', 'III', '♯IV', '♯V', 'VI', 'VII'],
@@ -58,8 +54,6 @@ Map<String, dynamic> melodicMinorModes = {
       null,
       Interval.M7
     ],
-    'function': ['I', 'II', 'iii', '♯IV', '♯V', 'vi', 'vii'],
-    'chordType': ['+', 'M', 'M', 'o', 'o', 'm', 'm'],
   },
   'Mixolydian ♭6': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', '♭VI', '♭VII'],
@@ -78,8 +72,6 @@ Map<String, dynamic> melodicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', 'II', '♭III', 'IV', 'V', '♭VI', '♭VII'],
-    'chordType': ['M', 'o', 'o', 'm', 'm', '+', 'M'],
   },
   'Semilocrian': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
@@ -98,8 +90,6 @@ Map<String, dynamic> melodicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['o', 'o', 'm', 'm', '+', 'M', 'M'],
   },
   'Superlocrian': {
     'scaleStepsRoman': ['I', '♭II', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
@@ -118,8 +108,5 @@ Map<String, dynamic> melodicMinorModes = {
       Interval.m7,
       null,
     ],
-    'function': ['I', '♭II', '♭III', '♭IV', '♭V', '♭VI', '♭VII'],
-    'chordType': ['o', 'm', 'm', '+', 'M', 'M', 'o'],
   },
-  // Repeat the structure for other modes of Melodic Minor
 };
