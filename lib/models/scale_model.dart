@@ -1,4 +1,5 @@
 import 'package:scale_master_guitar/models/settings_model.dart';
+import 'package:tonic/tonic.dart';
 
 class ScaleModel {
   String parentScaleKey = 'C';
@@ -7,6 +8,7 @@ class ScaleModel {
   List<String> scaleNotesNames = [];
   List<String> chordTypes = [];
   List<String> degreeFunction = [];
+  List<List<Interval>> modesScalarTonicIntervals = [];
   String? originModeType;
   Settings? settings;
 
@@ -18,6 +20,7 @@ class ScaleModel {
     required this.chordTypes,
     required this.degreeFunction,
     required this.originModeType,
+    required this.modesScalarTonicIntervals,
     this.settings,
   });
 
@@ -29,6 +32,7 @@ class ScaleModel {
     List<String>? scaleNotesNames,
     List<String>? chordTypes,
     List<String>? degreeFunction,
+    List<List<Interval>>? modesIntervals,
     String? originModeType,
     Settings? settings,
   }) {
@@ -36,6 +40,7 @@ class ScaleModel {
       parentScaleKey: parentScaleKey ?? this.parentScaleKey,
       scale: scale ?? this.scale,
       mode: mode ?? this.mode,
+      modesScalarTonicIntervals: modesIntervals ?? modesScalarTonicIntervals,
       scaleNotesNames: scaleNotesNames ?? this.scaleNotesNames,
       chordTypes: chordTypes ?? this.chordTypes,
       degreeFunction: degreeFunction ?? this.degreeFunction,

@@ -25,10 +25,11 @@ final chordModelFretboardFingeringProvider =
       settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
   final scaleIntervals = Scales.data[scale.toString()][mode]['scaleStepsRoman'];
-  final List<List<Interval>> modesIntervals =
+  final List<List<Interval>> modesScalarTonicIntervals =
       MusicUtils.getScalesModesIntervalsLists(scale, mode);
 
-  final List<String> chordTypes = MusicUtils.getTriadsNames(modesIntervals);
+  final List<String> chordTypes =
+      MusicUtils.getTriadsNames(modesScalarTonicIntervals);
 
   ScaleModel item = ScaleModel(
     parentScaleKey: topNote,
@@ -37,6 +38,7 @@ final chordModelFretboardFingeringProvider =
     chordTypes: chordTypes,
     degreeFunction: scaleIntervals,
     mode: mode,
+    modesScalarTonicIntervals: modesScalarTonicIntervals,
     settings: settings,
     originModeType: '',
   );

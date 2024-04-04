@@ -18,31 +18,38 @@ class MusicUtils {
         .toList());
   }
 
-  static List<String> getChordInfo(
-      String baseNote, ChordScaleFingeringsModel fingeringsModel, int index) {
-    var mode = Scales.data[fingeringsModel.scaleModel!.scale]
+  static List<String> getChordInfo(String baseNote,
+      ChordScaleFingeringsModel fingeringsModel, int chordIndex) {
+    var selectedMode = Scales.data[fingeringsModel.scaleModel!.scale]
         [fingeringsModel.scaleModel!.mode];
 
-    var scaleIntervals =
-        mode['intervals']; //TODO: Change here to calculate intervals??
-    // print("chordsIntervals: $scaleIntervals");
+    int selectedModeIndex = Scales.data[fingeringsModel.scaleModel!.scale].keys
+        .where((element) => element == selectedMode)
+        .toList()
+        .indexOf(fingeringsModel.scaleModel!.mode);
 
-    List<int>? newIntervals;
-    if (index != 0) {
-      newIntervals = calculateIntervalsForChord(index, scaleIntervals);
-      // print("newIntervals: $newIntervals");
-    }
+    int index = ((selectedModeIndex + chordIndex + 1) %
+            selectedMode["scaleStepsRoman"].length)
+        .toInt();
 
-    scaleIntervals = newIntervals ?? scaleIntervals;
+    var chordMode =
+        Scales.data[fingeringsModel.scaleModel!.scale].keys.toList()[index];
 
-    Map<String, int> chordIntervals = _getChordIntervals(
-        scaleIntervals, getScaleDegreesTonicIntervals(fingeringsModel));
+    List<int> chordModeScalarIntervals =
+        Scales.data[fingeringsModel.scaleModel!.scale][chordMode]['intervals'];
+    List<Interval> chordModeTonicIntervals =
+        (Scales.data[fingeringsModel.scaleModel!.scale][chordMode]
+                ['scaleDegrees'] as List<Interval?>)
+            .where((n) => n != null)
+            .map((e) => e!)
+            .toList();
+
+    Map<String, int> chordIntervals =
+        _getChordIntervals(chordModeScalarIntervals, chordModeTonicIntervals);
+    // getScaleDegreesTonicIntervals(fingeringsModel));
 
     var chordNotes =
         createNoteList(baseNote, chordIntervals.values.toList(), 4);
-    // print("Chord Notes: $chordNotes");
-
-    // var getchordNotes(auxIntervals, auxDisplacementValue, selectedChord);
 
     return chordNotes;
   }
