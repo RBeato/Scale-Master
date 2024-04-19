@@ -57,7 +57,7 @@ Map harmonicMajorModes = {
   },
   'Lydian ♭3': {
     'scaleStepsRoman': ['I', 'II', '♭III', '♯IV', 'V', 'VI', 'VII'],
-    'intervals': [0, 3, 4, 5, 7, 8, 10],
+    'intervals': [0, 2, 3, 6, 7, 9, 11],
     'scaleDegrees': [
       Interval.P1,
       null,
@@ -81,7 +81,7 @@ Map harmonicMajorModes = {
       Interval.m2,
       null,
       null,
-      Interval.m3,
+      Interval.M3,
       Interval.P4,
       null,
       Interval.P5,
@@ -93,7 +93,7 @@ Map harmonicMajorModes = {
   },
   'Lydian Augmented ♯2': {
     'scaleStepsRoman': ['I', '♯II', 'III', '♯IV', '♯V', 'VI', 'VII'],
-    'intervals': [0, 2, 3, 5, 7, 8, 11],
+    'intervals': [0, 3, 4, 6, 8, 9, 11],
     'scaleDegrees': [
       Interval.P1,
       null,
@@ -111,7 +111,7 @@ Map harmonicMajorModes = {
   },
   'Locrian ♭♭7': {
     'scaleStepsRoman': ['I', '♭II', '♭III', 'IV', '♭V', '♭VI', '♭♭VII'],
-    'intervals': [0, 1, 3, 5, 7, 8, 10],
+    'intervals': [0, 1, 3, 5, 6, 8, 9],
     'scaleDegrees': [
       Interval.P1,
       Interval.m2,

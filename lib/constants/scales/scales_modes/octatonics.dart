@@ -2,7 +2,7 @@ import 'package:tonic/tonic.dart';
 
 Map octatonics = {
   'Whole-Half': {
-    'scaleStepsRoman': ['I', '♭II', '♭III', '♯III', '♯IV', 'V', '♭VI', '♭VII'],
+    'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', '♭VI', 'VI', 'VII'],
     'intervals': [0, 1, 3, 4, 6, 7, 9, 10],
     'scaleDegrees': [
       Interval.P1,
@@ -20,7 +20,17 @@ Map octatonics = {
     ],
   },
   'Half-Whole': {
-    'scaleStepsRoman': ['I', '♭II', '♯II', '♯III', 'V', '♭VI', '♭VII'],
+    'scaleStepsRoman': [
+      'I',
+      '♭II',
+      '♭III',
+      'III',
+      '♯IV',
+      'V',
+      'VI',
+      '♭VII',
+      '♭VII'
+    ],
     'intervals': [0, 1, 3, 4, 6, 7, 9, 10],
     'scaleDegrees': [
       Interval.P1,

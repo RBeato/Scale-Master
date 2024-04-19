@@ -55,6 +55,24 @@ Map<String, dynamic> melodicMinorModes = {
       Interval.M7
     ],
   },
+  'Lydian Dominant': {
+    'scaleStepsRoman': ['I', 'II', 'III', '♯IV', 'V', 'VI', '♭VII'],
+    'intervals': [0, 2, 4, 6, 8, 9, 1],
+    'scaleDegrees': [
+      Interval.P1,
+      null,
+      Interval.M2,
+      null,
+      Interval.M3,
+      null,
+      Interval.A4,
+      Interval.P5,
+      null,
+      Interval.M6,
+      Interval.m7,
+      null,
+    ],
+  },
   'Mixolydian ♭6': {
     'scaleStepsRoman': ['I', 'II', '♭III', 'IV', 'V', '♭VI', '♭VII'],
     'intervals': [0, 2, 3, 5, 7, 8, 10],

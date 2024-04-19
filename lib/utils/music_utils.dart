@@ -7,6 +7,7 @@ import '../constants/music_constants.dart';
 import '../constants/scales/scales_data_v2.dart';
 import '../models/chord_scale_model.dart';
 import '../models/settings_model.dart';
+import 'chord_utils.dart';
 
 class MusicUtils {
   static List<String> createChords(
@@ -37,6 +38,7 @@ class MusicUtils {
 
     List<int> chordModeScalarIntervals =
         Scales.data[fingeringsModel.scaleModel!.scale][chordMode]['intervals'];
+
     List<Interval> chordModeTonicIntervals =
         (Scales.data[fingeringsModel.scaleModel!.scale][chordMode]
                 ['scaleDegrees'] as List<Interval?>)
@@ -123,12 +125,279 @@ class MusicUtils {
   static getTriadsNames(modesIntervals) {
     List<String> triadsNames = [];
     for (var mode in modesIntervals) {
-      triadsNames.add(getTriadType(mode));
+      // triadsNames.add(    getTriadType(mode));
+      var triad = getTonicTriadType(mode);
+      triadsNames.add(triad);
+      print("mode $mode, triad: $triad");
     }
     return triadsNames;
   }
 
-  static List<List<Interval>> getScalesModesIntervalsLists(
+  static getTonicTriadType(List<Interval?> scaleDegrees) {
+    bool hasSecond = scaleDegrees.contains(Interval.m2) ||
+        scaleDegrees.contains(Interval.M2) ||
+        scaleDegrees.contains(Interval.A2);
+    // Check if the fourth interval is present
+    bool hasThird = scaleDegrees.contains(Interval.m3) ||
+        scaleDegrees.contains(Interval.M3);
+    // Check if the fourth interval is present
+    bool hasFourth = scaleDegrees.contains(Interval.d4) ||
+        scaleDegrees.contains(Interval.P4) ||
+        scaleDegrees.contains(Interval.A4);
+    // Check if the fifth interval is present
+    bool hasFifth = scaleDegrees.contains(Interval.d5) ||
+        scaleDegrees.contains(Interval.P5) ||
+        scaleDegrees.contains(Interval.A5);
+    // Check if the sixth interval is present
+    bool hasSixth = scaleDegrees.contains(Interval.m6) ||
+        scaleDegrees.contains(Interval.M6) ||
+        scaleDegrees.contains(Interval.A6);
+    bool hasSeventh = scaleDegrees.contains(Interval.d7) ||
+        scaleDegrees.contains(Interval.m7) ||
+        scaleDegrees.contains(Interval.M7);
+
+    List<Interval> intervals = [];
+    print("scaleDegrees: $scaleDegrees");
+
+    if (scaleDegrees.length == 8) {
+      if (scaleDegrees.contains(Interval.M3) &&
+          scaleDegrees.contains(Interval.m3)) {
+        intervals.addAll([
+          scaleDegrees[0]!,
+          scaleDegrees[3]!,
+          scaleDegrees[5]!,
+        ]);
+      } else {
+        intervals.addAll([
+          scaleDegrees[0]!,
+          scaleDegrees[2]!,
+          scaleDegrees[4]!,
+        ]);
+      }
+    }
+
+    if (scaleDegrees.length == 7) {
+      if (hasSecond &&
+          hasThird &&
+          hasFourth &&
+          hasFifth &&
+          hasSixth &&
+          hasSeventh) {
+        if (scaleDegrees.contains(Interval.M3) &&
+            scaleDegrees.contains(Interval.m3)) {
+          intervals
+              .addAll([scaleDegrees[0]!, scaleDegrees[3]!, scaleDegrees[5]!]);
+        } else {
+          intervals
+              .addAll([scaleDegrees[0]!, scaleDegrees[2]!, scaleDegrees[4]!]);
+        }
+      } else {
+        print("Something wrong with the scale degrees");
+      }
+    }
+    if (scaleDegrees.length == 6) {
+      // if (hasSecond && hasThird && hasFourth && hasFifth && hasSixth) {
+      if (scaleDegrees.contains(Interval.M3) &&
+          scaleDegrees.contains(Interval.m3)) {
+        intervals
+            .addAll([scaleDegrees[0]!, scaleDegrees[2]!, scaleDegrees[4]!]);
+      }
+      if (scaleDegrees.contains(Interval.P5) &&
+          scaleDegrees.contains(Interval.d5)) {
+        intervals
+            .addAll([scaleDegrees[0]!, scaleDegrees[1]!, scaleDegrees[3]!]);
+      } else {
+        intervals
+            .addAll([scaleDegrees[0]!, scaleDegrees[2]!, scaleDegrees[4]!]);
+      }
+      // }
+    }
+    if (scaleDegrees.length == 5) {
+      if (scaleDegrees.contains(Interval.M3) &&
+          scaleDegrees.contains(Interval.m3)) {
+        intervals
+            .addAll([scaleDegrees[0]!, scaleDegrees[3]!, scaleDegrees[5]!]);
+      } else {
+        intervals
+            .addAll([scaleDegrees[0]!, scaleDegrees[2]!, scaleDegrees[4]!]);
+      }
+    }
+
+    String chordType = "unknown";
+
+    try {
+      chordType = ChordPattern.fromIntervals(intervals).abbrs.first;
+    } catch (e) {
+      chordType = ChordUtils.handleCustomPatterns(intervals);
+    }
+
+    // print(
+    //     "Test chord notes form tonic parser: ${ChordPattern.parse('C $chordType')}");
+
+    return chordType;
+  }
+
+  static List<List<Interval>> getOtherScaleModesIntervalsLists(
+      String scale, String selectedMode, String type) {
+    List<List<Interval>> orderedScaleDegrees = [];
+
+    bool foundSelectedMode = false;
+    final scaleModes = Scales.data[scale];
+
+    var scaleDegrees =
+        (scaleModes[selectedMode]!['scaleDegrees'] as List<Interval?>)
+            .where((n) => n != null)
+            .map((e) => e!)
+            .toList();
+
+    if (type == 'Pentatonics' && scaleDegrees.length == 6) {
+      //tODO: Address 6 note pentatonics
+      scaleDegrees = removePassingTones(scaleDegrees);
+    }
+
+    if (type == 'Octatonics' && scaleDegrees.length == 8) {
+      for (int i = 0; i < 2; i++) {
+        List<Interval> modeIntervals = [];
+        for (int j = 0; j < scaleDegrees.length; j++) {
+          var interval =
+              scaleDegrees[(j + i) % scaleDegrees.length] - scaleDegrees[(i)];
+          //Hardcoded fix for strange intervals
+          if (interval == Interval.d4) {
+            interval = Interval.M3;
+          }
+          //Hardcoded fix for strange intervals
+          if (interval == Interval.d5 && modeIntervals[3] == Interval.M3) {
+            interval = Interval.A4;
+          }
+          modeIntervals.add(interval);
+        }
+        orderedScaleDegrees.add(modeIntervals);
+      }
+      //Repeat pattern 4 times
+      orderedScaleDegrees
+          .addAll([orderedScaleDegrees[0], orderedScaleDegrees[1]]);
+      orderedScaleDegrees
+          .addAll([orderedScaleDegrees[0], orderedScaleDegrees[1]]);
+      orderedScaleDegrees
+          .addAll([orderedScaleDegrees[0], orderedScaleDegrees[1]]);
+    } else {
+      orderedScaleDegrees.add(scaleDegrees);
+
+      for (int i = 1; i < scaleDegrees.length; i++) {
+        List<Interval> modeIntervals = [];
+        for (int j = 0; j < scaleDegrees.length; j++) {
+          modeIntervals.add(
+              scaleDegrees[(j + i) % scaleDegrees.length] - scaleDegrees[(i)]);
+        }
+        orderedScaleDegrees.add(modeIntervals);
+      }
+    }
+
+    List fixedOrderedScaleDegrees = [];
+    for (var orderedScale in orderedScaleDegrees) {
+      fixedOrderedScaleDegrees.add(fixIntervals(orderedScale));
+    }
+
+    for (int i = 0; i < fixedOrderedScaleDegrees.length; i++) {
+      print(
+          "${orderedScaleDegrees[i]} fixed orderedScaleDegrees $i: ${fixedOrderedScaleDegrees[i]}");
+    }
+
+    return orderedScaleDegrees; //! or return fixedOrderedScaleDegrees????
+  }
+
+  List<Interval> removeMiddleNotes(List<Interval> scaleDegrees) {
+    List<Interval> cleanedScale = [];
+
+    // Iterate through the scale degrees
+    for (int i = 0; i < scaleDegrees.length; i += 2) {
+      cleanedScale.add(scaleDegrees[i]);
+    }
+
+    return cleanedScale;
+  }
+
+  static List<Interval> removePassingTones(List<Interval> scaleDegrees) {
+    List<Interval> cleanedScale = [];
+
+    // Iterate through the scale degrees
+    for (int i = 0; i < scaleDegrees.length; i++) {
+      // Check if there are at least three intervals remaining in the scale
+      if (i + 2 < scaleDegrees.length) {
+        // Calculate the semitone difference between the current interval and the next two intervals
+        int semitones1 =
+            (scaleDegrees[i + 1].semitones - scaleDegrees[i].semitones).abs();
+        int semitones2 =
+            (scaleDegrees[i + 2].semitones - scaleDegrees[i + 1].semitones)
+                .abs();
+
+        // If both sets of intervals have a total of 3 semitones, skip the middle interval
+        if (semitones1 == 3 && semitones2 == 3) {
+          cleanedScale.add(scaleDegrees[i]); // Add the first interval
+          cleanedScale.add(scaleDegrees[i + 2]); // Add the third interval
+          i += 2; // Skip the next two intervals
+        } else {
+          cleanedScale.add(scaleDegrees[i]); // Add the current interval
+        }
+      } else {
+        // If there are less than three intervals remaining, add the current interval
+        cleanedScale.add(scaleDegrees[i]);
+      }
+    }
+
+    return cleanedScale;
+  }
+
+  static List<Interval> fixIntervals(List<Interval> intervals) {
+    List<Interval> fixedIntervals = [];
+    Map<Interval, int> intervalCount = {};
+
+    for (var interval in intervals) {
+      intervalCount.update(interval, (count) => count + 1, ifAbsent: () => 1);
+    }
+
+    for (var interval in intervals) {
+      Interval newInterval = interval;
+
+      if (interval == Interval.d2) {
+        newInterval = Interval.M2;
+      } else if (interval == Interval.d3) {
+        newInterval = Interval.m3;
+      } else if (interval == Interval.d4) {
+        newInterval = Interval.P4;
+      } else if (interval == Interval.d6) {
+        newInterval = Interval.m6;
+      } else if (interval == Interval.A2) {
+        if (intervalCount.containsKey(Interval.M2) ||
+            intervalCount.containsKey(Interval.m3)) {
+          newInterval = Interval.M2;
+        }
+      } else if (interval == Interval.A3) {
+        if (intervalCount.containsKey(Interval.m3) ||
+            intervalCount.containsKey(Interval.P4)) {
+          newInterval = Interval.m3;
+        }
+      } else if (interval == Interval.A4) {
+        if (intervalCount.containsKey(Interval.P4) ||
+            intervalCount.containsKey(Interval.A5)) {
+          newInterval = Interval.P4;
+        }
+      } else if (interval == Interval.A6) {
+        if (intervalCount.containsKey(Interval.m6) ||
+            intervalCount.containsKey(Interval.M6)) {
+          newInterval = Interval.m6;
+        }
+      }
+
+      fixedIntervals.add(newInterval);
+      intervalCount.update(newInterval, (count) => count + 1,
+          ifAbsent: () => 1);
+    }
+
+    return fixedIntervals;
+  }
+
+  static List<List<Interval>> getSevenNoteScalesModesIntervalsLists(
       String scale, String selectedMode) {
     List<List<Interval>> orderedScaleDegrees = [];
 
@@ -172,101 +441,6 @@ class MusicUtils {
 
     return orderedScaleDegrees;
   }
-
-  static String getTriadType(List<Interval?> scaleDegrees) {
-    // Check if the third interval is present
-    bool hasSecond = scaleDegrees.contains(Interval.m2) ||
-        scaleDegrees.contains(Interval.M2) ||
-        scaleDegrees.contains(Interval.A2);
-    // Check if the fourth interval is present
-    bool hasThird = scaleDegrees.contains(Interval.m3) ||
-        scaleDegrees.contains(Interval.M3);
-    // Check if the fourth interval is present
-    bool hasFourth = scaleDegrees.contains(Interval.d4) ||
-        scaleDegrees.contains(Interval.P4) ||
-        scaleDegrees.contains(Interval.A4);
-    // Check if the fifth interval is present
-    bool hasFifth = scaleDegrees.contains(Interval.d5) ||
-        scaleDegrees.contains(Interval.P5) ||
-        scaleDegrees.contains(Interval.A5);
-    // Check if the sixth interval is present
-    bool hasSixth = scaleDegrees.contains(Interval.m6) ||
-        scaleDegrees.contains(Interval.M6);
-
-    // If there is no third, it's either sus2 or sus4
-    if (!hasThird) {
-      if (hasFourth && hasFifth) {
-        return 'sus4'; // Suspended fourth
-      } else if (hasSecond && hasFifth) {
-        return 'sus2'; // Suspended second
-      }
-    }
-
-    // If there's a third, check its type and the intervals after it
-    if (hasThird) {
-      // Find the index of the third interval
-      int thirdIndex = scaleDegrees.indexOf(Interval.m3);
-      if (thirdIndex == -1) {
-        thirdIndex = scaleDegrees.indexOf(Interval.M3);
-      }
-
-      // Check the interval after the third
-      Interval? intervalAfterThird = thirdIndex + 1 < scaleDegrees.length
-          ? scaleDegrees[thirdIndex + 1]
-          : null;
-
-      // If the third is minor, check for diminished or minor triad
-      if (scaleDegrees.contains(Interval.m3)) {
-        if (scaleDegrees[thirdIndex + 2] == Interval.d5) {
-          return '°'; // Diminished
-        } else if (scaleDegrees[thirdIndex + 2] == Interval.P5) {
-          return 'm'; // Minor
-        }
-      }
-
-      // If the third is major, check for augmented or major triad
-      if (scaleDegrees.contains(Interval.M3)) {
-        if (scaleDegrees[thirdIndex + 2] == Interval.A5) {
-          return 'aug'; // Augmented
-        } else if (scaleDegrees[thirdIndex + 2] == Interval.P5) {
-          return 'M'; // Major
-        }
-      }
-    }
-
-    // If none of the above conditions are met, return null
-    return 'Unknown';
-  }
-
-  // Map<String, int> auxIntervals = {
-  //   '1': 0,
-  //   '3': 0,
-  //   '5': 0,
-  //   '7': 0,
-  //   '9': 0,
-  //   '11': 0,
-  //   '13': 0,
-  // };
-
-  // for (int i = 0; i < auxIntervals.keys.length; i++) {
-  //   var e = scaleIntervals[i];
-  //   String key = auxIntervals.keys.toList()[i];
-
-  //   if (i < 4) {
-  //     auxIntervals[key] = scaleIntervals[i * 2]; //for 1,3,5
-  //   }
-  //   if (i == 4) {
-  //     auxIntervals[key] = scaleIntervals[1] + 12; //9
-  //   }
-  //   if (i == 5) {
-  //     auxIntervals[key] = scaleIntervals[3] + 12; //11
-  //   }
-  //   if (i == 6) {
-  //     auxIntervals[key] = scaleIntervals[5] + 12; //13
-  //   }
-  // }
-  // print("auxIntervals: $auxIntervals");
-  // return auxIntervals;
 
   static List<String> createNoteList(
       String baseNote, List<int> intervals, int octave) {
@@ -390,48 +564,4 @@ class MusicUtils {
     int index = random.nextInt(itemList.length);
     return index;
   }
-
-  // static String _mapIntervalToChordTone(Interval interval) {
-  //   if (interval == Interval.P1) {
-  //     return '1';
-  //   } else if (interval == Interval.m2) {
-  //     return 'b9';
-  //   } else if (interval == Interval.M2) {
-  //     return '9';
-  //   } else if (interval == Interval.d3 || interval == Interval.m3) {
-  //     return 'b3';
-  //   } else if (interval == Interval.M3) {
-  //     return '3';
-  //   } else if (interval == Interval.d4 || interval == Interval.P4) {
-  //     return '11';
-  //   } else if (interval == Interval.A4) {
-  //     return '#11';
-  //   } else if (interval == Interval.d5 || interval == Interval.P5) {
-  //     return '5';
-  //   } else if (interval == Interval.A5) {
-  //     return '#5';
-  //   } else if (interval == Interval.m6 || interval == Interval.M6) {
-  //     return '13';
-  //   } else if (interval == Interval.d7 ||
-  //       interval == Interval.m7 ||
-  //       interval == Interval.M7) {
-  //     return 'b7';
-  //   } else if (interval == Interval.P8) {
-  //     return '8';
-  //   } else if (interval == Interval.A1) {
-  //     return '#1';
-  //   } else if (interval == Interval.A2) {
-  //     return '#9';
-  //   } else if (interval == Interval.A3) {
-  //     return '#3';
-  //   } else if (interval == Interval.A6) {
-  //     return '#13';
-  //   } else if (interval == Interval.A7) {
-  //     return '#7';
-  //   } else if (interval == Interval.TT) {
-  //     return 'TT';
-  //   } else {
-  //     throw ArgumentError('Invalid interval: $interval');
-  //   }
-  // }
 }

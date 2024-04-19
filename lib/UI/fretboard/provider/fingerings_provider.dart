@@ -25,8 +25,28 @@ final chordModelFretboardFingeringProvider =
       settings, flatsAndSharpsToFlats(topNote), scale, mode);
 
   final scaleIntervals = Scales.data[scale.toString()][mode]['scaleStepsRoman'];
-  final List<List<Interval>> modesScalarTonicIntervals =
-      MusicUtils.getScalesModesIntervalsLists(scale, mode);
+
+  List<List<Interval>> modesScalarTonicIntervals = [];
+
+  if (scale == 'Diatonic Major' ||
+      scale == 'Melodic Minor' ||
+      scale == 'Harmonic Minor' ||
+      scale == 'Harmonic Major') {
+    modesScalarTonicIntervals =
+        MusicUtils.getSevenNoteScalesModesIntervalsLists(scale, mode);
+  }
+  if (scale == 'Pentatonics') {
+    modesScalarTonicIntervals =
+        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Pentatonics');
+  }
+  if (scale == 'Hexatonics') {
+    modesScalarTonicIntervals =
+        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Hexatonics');
+  }
+  if (scale == 'Octatonics') {
+    modesScalarTonicIntervals =
+        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Octatonics');
+  }
 
   final List<String> chordTypes =
       MusicUtils.getTriadsNames(modesScalarTonicIntervals);

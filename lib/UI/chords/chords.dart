@@ -25,87 +25,90 @@ class Chords extends ConsumerWidget {
         data: (ChordScaleFingeringsModel? scaleFingerings) {
           return Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: scaleFingerings!.scaleModel!.scaleNotesNames
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    final index = entry.key;
-                    final c = entry.value;
-                    var scale = scaleFingerings.scaleModel!.scale!;
-                    var mode = scaleFingerings.scaleModel!.mode!;
-                    var value =
-                        Scales.data[scale][mode]['scaleStepsRoman'][index];
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: scaleFingerings!.scaleModel!.scaleNotesNames
+                        .asMap()
+                        .entries
+                        .map((entry) {
+                      final index = entry.key;
+                      final c = entry.value;
+                      var scale = scaleFingerings.scaleModel!.scale!;
+                      var mode = scaleFingerings.scaleModel!.mode!;
+                      var value =
+                          Scales.data[scale][mode]['scaleStepsRoman'][index];
 
-                    return Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: SizedBox(
-                        width: 45, // Set a fixed width for all containers
-                        height: 45, // Set a fixed height for all containers
-                        child: GestureDetector(
-                          onTap: () {
-                            int beats = ref.read(beatCounterProvider);
-                            if (beats > 40) {
-                              showPopup(
-                                  context, "You can't add more than 40 beats");
+                      return Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: SizedBox(
+                          width: 45, // Set a fixed width for all containers
+                          height: 45, // Set a fixed height for all containers
+                          child: GestureDetector(
+                            onTap: () {
+                              int beats = ref.read(beatCounterProvider);
+                              if (beats > 40) {
+                                showPopup(context,
+                                    "You can't add more than 40 beats");
 
-                              return;
-                            }
-                            _addChord(
-                                Taps.single,
-                                ref.read(selectedChordsProvider.notifier),
-                                c,
-                                scaleFingerings,
-                                index,
-                                alreadySelectedChords);
-                          },
-                          onDoubleTap: () {
-                            if (ref.read(beatCounterProvider) > 40) {
-                              showPopup(
-                                  context, "You can't add more than 40 beats");
-
-                              return;
-                            }
-                            _addChord(
-                                Taps.double,
-                                ref.read(selectedChordsProvider.notifier),
-                                c,
-                                scaleFingerings,
-                                index,
-                                alreadySelectedChords);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: ConstantColors.scaleColorMap[value]
-                                  .withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(
-                                  10), // Add rounded corners
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 2,
-                              ), // Add a white border
-                            ),
-                            child: Center(
-                              child: FittedBox(
-                                child: Text(
+                                return;
+                              }
+                              _addChord(
+                                  Taps.single,
+                                  ref.read(selectedChordsProvider.notifier),
                                   c,
-                                  style: const TextStyle(
-                                      fontSize: 20, color: Colors.white),
+                                  scaleFingerings,
+                                  index,
+                                  alreadySelectedChords);
+                            },
+                            onDoubleTap: () {
+                              if (ref.read(beatCounterProvider) > 40) {
+                                showPopup(context,
+                                    "You can't add more than 40 beats");
+
+                                return;
+                              }
+                              _addChord(
+                                  Taps.double,
+                                  ref.read(selectedChordsProvider.notifier),
+                                  c,
+                                  scaleFingerings,
+                                  index,
+                                  alreadySelectedChords);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: ConstantColors.scaleColorMap[value]
+                                    .withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(
+                                    10), // Add rounded corners
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ), // Add a white border
+                              ),
+                              child: Center(
+                                child: FittedBox(
+                                  child: Text(
+                                    c,
+                                    style: const TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const InfoAboutChordsIcon(),
-              ],
+                      );
+                    }).toList(),
+                  ),
+                  const InfoAboutChordsIcon(),
+                ],
+              ),
             ),
           );
         },

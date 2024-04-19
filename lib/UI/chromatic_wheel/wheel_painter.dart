@@ -65,8 +65,8 @@ class WheelPainter extends CustomPainter {
     canvas.drawCircle(center, innerRadius, knobPaint);
 
     for (int i = 0; i < MusicConstants.notesWithFlatsAndSharps.length; i++) {
-      print(
-          "i=$i, MusicConstants.notesWithFlatsAndSharps[i]: ${MusicConstants.notesWithFlatsAndSharps[i]}, ");
+      // print(
+      //     "i=$i, MusicConstants.notesWithFlatsAndSharps[i]: ${MusicConstants.notesWithFlatsAndSharps[i]}, ");
       double angle =
           2 * math.pi * i / MusicConstants.notesWithFlatsAndSharps.length +
               rotation;
