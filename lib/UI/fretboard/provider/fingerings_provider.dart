@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tonic/tonic.dart';
-import '../../../constants/flats_and_sharps_to_flats_converter.dart';
 import '../../../constants/scales/scales_data_v2.dart';
 import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
@@ -22,46 +21,40 @@ final chordModelFretboardFingeringProvider =
       await ref.watch(settingsStateNotifierProvider.notifier).settings;
 
   final List<String> scaleNotesNames = MusicUtils.createChords(
-      settings, flatsAndSharpsToFlats(topNote), scale, mode);
+      settings, MusicUtils.flatsAndSharpsToFlats(topNote), scale, mode);
 
   final scaleIntervals = Scales.data[scale.toString()][mode]['scaleStepsRoman'];
 
   List<List<Interval>> modesScalarTonicIntervals = [];
+
+  ScaleModel item = ScaleModel(
+    parentScaleKey: topNote,
+    scale: scale.toString(),
+    scaleNotesNames: scaleNotesNames,
+    chordTypes: [],
+    degreeFunction: scaleIntervals,
+    mode: mode,
+    modesScalarTonicIntervals: [],
+    settings: settings,
+    originModeType: '',
+    notesIntervalsRelativeToTonicForBuildingChordsList: [],
+    completeChordNames: [],
+  );
 
   if (scale == 'Diatonic Major' ||
       scale == 'Melodic Minor' ||
       scale == 'Harmonic Minor' ||
       scale == 'Harmonic Major') {
     modesScalarTonicIntervals =
-        MusicUtils.getSevenNoteScalesModesIntervalsLists(scale, mode);
-  }
-  if (scale == 'Pentatonics') {
+        MusicUtils.getSevenNoteScalesModesIntervalsLists(item);
+  } else {
     modesScalarTonicIntervals =
-        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Pentatonics');
-  }
-  if (scale == 'Hexatonics') {
-    modesScalarTonicIntervals =
-        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Hexatonics');
-  }
-  if (scale == 'Octatonics') {
-    modesScalarTonicIntervals =
-        MusicUtils.getOtherScaleModesIntervalsLists(scale, mode, 'Octatonics');
+        MusicUtils.getOtherScaleModesIntervalsLists(item);
   }
 
-  final List<String> chordTypes =
-      MusicUtils.getTriadsNames(modesScalarTonicIntervals);
+  item.modesScalarTonicIntervals = modesScalarTonicIntervals;
 
-  ScaleModel item = ScaleModel(
-    parentScaleKey: topNote,
-    scale: scale.toString(),
-    scaleNotesNames: scaleNotesNames,
-    chordTypes: chordTypes,
-    degreeFunction: scaleIntervals,
-    mode: mode,
-    modesScalarTonicIntervals: modesScalarTonicIntervals,
-    settings: settings,
-    originModeType: '',
-  );
+  MusicUtils.getTriadsNames(item, modesScalarTonicIntervals);
 
   ChordScaleFingeringsModel fingering =
       FingeringsCreator().createChordsScales(item, settings);

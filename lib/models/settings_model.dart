@@ -9,6 +9,7 @@ abstract class JsonTo {
 class Settings extends Equatable {
   bool showScaleDegrees;
   bool isSingleColor;
+  bool isTonicUniversalBassNote;
   String keyboardSound;
   String bassSound;
   String drumsSound;
@@ -16,6 +17,7 @@ class Settings extends Equatable {
   Settings({
     this.showScaleDegrees = false,
     this.isSingleColor = false,
+    this.isTonicUniversalBassNote = false,
     this.keyboardSound = 'Piano',
     this.bassSound = 'Double Bass',
     this.drumsSound = 'Acoustic',
@@ -31,6 +33,9 @@ class Settings extends Equatable {
     if (settingsSelection == SettingsSelection.keyboardSound) {
       return keyboardSound;
     }
+    if (settingsSelection == SettingsSelection.isTonicUniversalBassNote) {
+      return isTonicUniversalBassNote;
+    }
     if (settingsSelection == SettingsSelection.scaleDegrees) {
       return showScaleDegrees;
     }
@@ -43,6 +48,7 @@ class Settings extends Equatable {
   List<Object> get props => [
         showScaleDegrees,
         isSingleColor,
+        isTonicUniversalBassNote,
         keyboardSound,
         drumsSound,
         bassSound,
@@ -53,6 +59,7 @@ class Settings extends Equatable {
     return 'Settings: '
         '\n $showScaleDegrees'
         '\n $isSingleColor'
+        '\n $isTonicUniversalBassNote'
         '\n $keyboardSound'
         '\n $drumsSound'
         '\n $bassSound';

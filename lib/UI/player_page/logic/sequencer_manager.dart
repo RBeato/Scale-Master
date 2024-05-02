@@ -18,26 +18,28 @@ final sequencerManagerProvider = Provider((ref) => SequencerManager());
 
 class SequencerManager {
   Map<int, StepSequencerState> trackStepSequencerStates = {};
-  List<Track> tracks = [];
+  // List<Track> tracks = [];
+  // late Sequence sequence;
   List _lastChords = [];
-  List _lastExtensions = [];
+  // final List _lastExtensions = [];
   bool _lastTonicAsUniversalBassNote = true;
   bool tonicAsUniversalBassNote = true;
   bool _lastMetronomeSelected = false;
   bool isMetronomeSelected = false;
   Map<int, double> trackVolumes = {};
-  Track? selectedTrack;
+  // Track? selectedTrack;
   double _lastTempo = Constants.INITIAL_TEMPO;
   double tempo = Constants.INITIAL_TEMPO;
   double position = 0.0;
   bool isPlaying = false;
   bool isTrackLooping = true;
-  late Sequence sequence;
   int stepCount = 0;
   bool isLoading = false;
   bool playAllInstruments = true;
 
-  Future<Map<String, dynamic>> initialize({
+  Future<List<Track>> initialize({
+    tracks,
+    sequence,
     playAllInstruments,
     isPlaying,
     stepCount,
@@ -50,45 +52,46 @@ class SequencerManager {
     isMetronomeSelected,
     beatCounter,
     tempo,
-    extensions,
     required List<Instrument> instruments,
   }) async {
     if (isPlaying) {
-      handleStop();
+      handleStop(sequence);
     }
 
     this.playAllInstruments = playAllInstruments;
     this.tempo = tempo;
     tonicAsUniversalBassNote = isScaleTonicSelected;
-    print(this.tempo);
     this.isMetronomeSelected = isMetronomeSelected;
-    print("isMetronome Selected: $isMetronomeSelected");
-
-    sequence = Sequence(tempo: tempo, endBeat: stepCount.toDouble());
 
     GlobalState().setKeepEngineRunning(true);
 
-    // if (!playAllInstruments) {
-    //   instruments = [instruments[1]];
-    // }
+    try {
+      // Create tracks
+      List<Track> createdTracks = await sequence.createTracks(instruments);
 
-    return sequence.createTracks(instruments).then((createdTracks) async {
       tracks = createdTracks;
-      for (var track in tracks) {
+      selectedTrack = tracks[0];
+
+      for (Track track in tracks) {
         trackVolumes[track.id] = 0.0;
         trackStepSequencerStates[track.id] = StepSequencerState();
       }
 
+      // Create project state
       ProjectState? project = await _createProject(
         selectedChords: selectedChords,
         stepCount: stepCount,
         nBeats: stepCount,
       );
 
-      loadProjectState(project!);
-
-      return {'tracks': tracks, 'sequence': sequence};
-    });
+      // Load project state
+      loadProjectState(project!, tracks, sequence);
+    } catch (e, stackTrace) {
+      print('Error during initialization: $e');
+      print(stackTrace);
+      // Handle the error as needed
+    }
+    return tracks;
   }
 
   Future<ProjectState>? _createProject({
@@ -99,32 +102,33 @@ class SequencerManager {
     ProjectState project = ProjectState.empty(stepCount);
 
     selectedChords?.forEach((chord) {
-      for (var note in chord.selectedChordPitches!) {
+      for (var note in chord.allChordExtensions!) {
         project.pianoState.setVelocity(
-            chord.position, MusicConstants.midiValues[note]!, 0.60);
+            chord.position, MusicConstants.midiValues[note]!, 0.99);
       }
 
       var note = tonicAsUniversalBassNote
-          ? "${chord.parentScaleKey}2"
-          : chord.chordNotesWithIndexesRaw.first;
+          ? chord.parentScaleKey
+          : MusicUtils.extractNoteName(chord.completeChordName!);
       print('Chord: $chord, bass note $note');
 
       note = MusicUtils.filterNoteNameWithSlash(note);
-      var bassMidiValue = MusicConstants.midiValues[
-          note]!; //!Problem generating some bass notes?? TODO// maybe is from having flats starting the note name
-      project.bassState.setVelocity(chord.position, bassMidiValue, 0.99);
+      note = MusicUtils.flatsAndSharpsToFlats(note);
+      var bassMidiValue = MusicConstants.midiValues["${note}2"]!;
+      print("bass note: $note, midi value: $bassMidiValue");
+
+      project.bassState.setVelocity(chord.position, bassMidiValue, 0.79);
     });
 
     if (isMetronomeSelected) {
       for (int i = 0; i < nBeats; i++) {
-        project.drumState
-            .setVelocity(0, MusicConstants.midiValues['C2']!, 0.99);
+        project.drumState.setVelocity(i, 44, 0.49);
       }
     }
     return project;
   }
 
-  playPianoNote(String note) {
+  playPianoNote(String note, tracks, Sequence sequence) {
     sequence.loopState = LoopState.Off;
     sequence.tempo = 200;
     note = MusicUtils.filterNoteNameWithSlash(note);
@@ -136,7 +140,7 @@ class SequencerManager {
     sequence.play();
   }
 
-  handleTogglePlayStop(WidgetRef ref) {
+  handleTogglePlayStop(WidgetRef ref, Sequence sequence) {
     ref.read(isSequencerPlayingProvider.notifier).update((state) => !state);
     bool isPlaying = ref.read(isSequencerPlayingProvider);
 
@@ -148,11 +152,12 @@ class SequencerManager {
     }
   }
 
-  handleStop() {
+  handleStop(Sequence sequence) {
     sequence.stop();
+    // ref.read(isSequencerPlayingProvider.notifier).update((state) => !state);
   }
 
-  _handleSetLoop(bool nextIsLooping) {
+  _handleSetLoop(bool nextIsLooping, Sequence sequence) {
     if (nextIsLooping) {
       sequence.setLoop(0, stepCount.toDouble());
     } else {
@@ -164,13 +169,14 @@ class SequencerManager {
     // });
   }
 
-  handleToggleLoop(isLooping) {
+  handleToggleLoop(bool isLooping, Sequence sequence) {
     final nextIsLooping = !isLooping;
 
-    _handleSetLoop(nextIsLooping);
+    _handleSetLoop(nextIsLooping, sequence);
   }
 
-  _handleStepCountChange(int nextStepCount) {
+  _handleStepCountChange(
+      int nextStepCount, List<Track> tracks, Sequence sequence) {
     if (nextStepCount < 1) return;
 
     sequence.setEndBeat(nextStepCount.toDouble());
@@ -194,17 +200,17 @@ class SequencerManager {
     // });
   }
 
-  _handleTempoChange(nextTempo) {
+  _handleTempoChange(double nextTempo, Sequence sequence) {
     if (nextTempo <= 0) return;
     sequence.setTempo(nextTempo);
   }
 
-  handleTrackChange(Track nextTrack) {
-    selectedTrack = nextTrack;
-    // setState(() {
-    //   selectedTrack = nextTrack;
-    // });
-  }
+  // handleTrackChange(Track nextTrack) {
+  //   selectedTrack = nextTrack;
+  //   // setState(() {
+  //   //   selectedTrack = nextTrack;
+  //   // });
+  // }
 
   handleVolumeChange(double nextVolume, Track selectedTrack) {
     selectedTrack.changeVolumeNow(volume: nextVolume);
@@ -234,23 +240,24 @@ class SequencerManager {
     track.syncBuffer();
   }
 
-  loadProjectState(ProjectState projectState) {
-    handleStop();
+  loadProjectState(
+      ProjectState projectState, List<Track> tracks, Sequence sequence) {
+    handleStop(sequence);
 
     trackStepSequencerStates[tracks[0].id] = projectState.drumState;
     trackStepSequencerStates[tracks[1].id] = projectState.pianoState;
     trackStepSequencerStates[tracks[2].id] = projectState.bassState;
 
-    _handleStepCountChange(projectState.stepCount);
-    _handleTempoChange(tempo);
-    _handleSetLoop(projectState.isLooping);
+    _handleStepCountChange(projectState.stepCount, tracks, sequence);
+    _handleTempoChange(tempo, sequence);
+    _handleSetLoop(projectState.isLooping, sequence);
 
     _syncTrack(tracks[0]);
     _syncTrack(tracks[1]);
     _syncTrack(tracks[2]);
   }
 
-  clearTracks(ref) {
+  clearTracks(ref, List<Track> tracks, Sequence sequence) {
     sequence.stop();
     if (tracks.isNotEmpty) {
       trackStepSequencerStates[tracks[0].id] = StepSequencerState();
@@ -260,22 +267,20 @@ class SequencerManager {
   }
 
   bool needToUpdateSequencer(
-    selectedChords,
-    extensions,
-    tempo,
-    tonicAsUniversalBassNote,
-    isMetronomeSelected,
+    Sequence sequence,
+    List selectedChords,
+    double tempo,
+    bool tonicAsUniversalBassNote,
+    bool isMetronomeSelected,
   ) {
     if (!_listEquals(selectedChords, _lastChords) ||
-        !_listEquals(extensions, _lastExtensions) ||
         tempo != _lastTempo ||
         tonicAsUniversalBassNote != _lastTonicAsUniversalBassNote ||
         isMetronomeSelected != _lastMetronomeSelected) {
-      handleStop();
+      handleStop(sequence);
       _lastTonicAsUniversalBassNote = tonicAsUniversalBassNote;
       _lastMetronomeSelected = isMetronomeSelected;
       _lastChords = selectedChords;
-      _lastExtensions = extensions;
       _lastTempo = tempo;
       return true;
     }

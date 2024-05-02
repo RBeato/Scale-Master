@@ -4,10 +4,6 @@ import 'package:scale_master_guitar/UI/drawer/models/settings_state.dart';
 import '../UI/drawer/settings_enum.dart';
 import '../storage/localstorage_service.dart';
 
-// final settingsProvider = FutureProvider<Settings>((ref) async {
-//   return await ref.watch(settingsStateNotifierProvider.notifier).settings;
-// });
-
 final settingsStateNotifierProvider =
     StateNotifierProvider<SettingsStateNotifier, SettingsState>((ref) {
   return SettingsStateNotifier();

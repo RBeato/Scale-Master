@@ -13,12 +13,10 @@ import '../../../constants.dart';
 import '../../../models/settings_model.dart';
 import '../../../models/step_sequencer_state.dart';
 import '../../fretboard/provider/beat_counter_provider.dart';
-import '../provider/chord_extensions_provider.dart';
 
 import '../provider/is_metronome_selected.dart';
 import '../provider/metronome_tempo_provider.dart';
 import '../provider/is_playing_provider.dart';
-import '../provider/tonic_universal_note_provider.dart';
 import 'chord_player_bar.dart';
 
 class PlayerWidget extends ConsumerStatefulWidget {
@@ -38,7 +36,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   Map<int, StepSequencerState> trackStepSequencerStates = {};
   List<Track> tracks = [];
   Map<int, double> trackVolumes = {};
-  Track? selectedTrack;
+  // Track? selectedTrack;
   late Ticker ticker;
   SequencerManager sequencerManager = SequencerManager();
   double tempo = Constants.INITIAL_TEMPO;
@@ -52,11 +50,10 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   @override
   void initState() {
     super.initState();
-
     initializeSequencer();
   }
 
-  void initializeSequencer() async {
+  Future<void> initializeSequencer() async {
     setState(() {
       isLoading = true;
     });
@@ -64,14 +61,33 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     // Initialize sequencer manager
     isPlaying = ref.read(isSequencerPlayingProvider);
     sequencerManager = ref.read(sequencerManagerProvider);
+    var stepCount = ref.read(beatCounterProvider).toDouble();
 
+    sequence = Sequence(tempo: tempo, endBeat: stepCount);
+    // print("selectedTrack ${selectedTrack.hashCode}");
     // Initialize sequencer and tracks
-    await getSequencer();
+    tracks = await sequencerManager.initialize(
+      tracks: tracks,
+      sequence: sequence,
+      playAllInstruments: true,
+      instruments: SoundPlayerUtils.getInstruments(widget.settings),
+      isPlaying: ref.read(isSequencerPlayingProvider),
+      stepCount: ref.read(beatCounterProvider),
+      trackVolumes: trackVolumes,
+      trackStepSequencerStates: trackStepSequencerStates,
+      selectedChords: ref.read(selectedChordsProvider),
+      // selectedTrack: selectedTrack,
+      isLoading: isLoading,
+      isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
+      isScaleTonicSelected: widget.settings.isTonicUniversalBassNote,
+      tempo: ref.read(metronomeTempoProvider),
+    );
 
     // Start ticker
     ticker = createTicker((Duration elapsed) {
       setState(() {
         tempo = ref.read(metronomeTempoProvider); //sequence.getTempo();
+
         position = sequence.getBeat();
         isPlaying = sequence.getIsPlaying();
 
@@ -91,23 +107,22 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   }
 
   Future<void> getSequencer() async {
-    sequencer = await sequencerManager.initialize(
-        playAllInstruments: true,
-        instruments: SoundPlayerUtils.getInstruments(widget.settings),
-        isPlaying: ref.read(isSequencerPlayingProvider),
-        stepCount: ref.read(beatCounterProvider),
-        trackVolumes: trackVolumes,
-        trackStepSequencerStates: trackStepSequencerStates,
-        selectedChords: ref.read(selectedChordsProvider),
-        selectedTrack: selectedTrack,
-        isLoading: isLoading,
-        isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
-        isScaleTonicSelected: ref.read(tonicUniversalNoteProvider),
-        tempo: ref.read(metronomeTempoProvider),
-        extensions: ref.read(chordExtensionsProvider));
-
-    sequence = sequencer['sequence'];
-    tracks = sequencer['tracks'];
+    await sequencerManager.initialize(
+      tracks: tracks,
+      sequence: sequence,
+      playAllInstruments: true,
+      instruments: SoundPlayerUtils.getInstruments(widget.settings),
+      isPlaying: ref.read(isSequencerPlayingProvider),
+      stepCount: ref.read(beatCounterProvider),
+      trackVolumes: trackVolumes,
+      trackStepSequencerStates: trackStepSequencerStates,
+      selectedChords: ref.read(selectedChordsProvider),
+      // selectedTrack: selectedTrack,
+      isLoading: isLoading,
+      isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
+      isScaleTonicSelected: widget.settings.isTonicUniversalBassNote,
+      tempo: ref.read(metronomeTempoProvider),
+    );
   }
 
   @override
@@ -118,45 +133,42 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   @override
   Widget build(BuildContext context) {
+    print("Building");
     isPlaying = ref.watch(isSequencerPlayingProvider);
     if (!isPlaying) {
-      sequencerManager.handleStop();
+      sequencerManager.handleStop(sequence);
     }
-    final extensions = ref.watch(chordExtensionsProvider);
-    final tonicAsUniversalBassNote = ref.watch(tonicUniversalNoteProvider);
     final selectedChords = ref.watch(selectedChordsProvider);
     ref.watch(metronomeTempoProvider);
+
     final isMetronomeSelected = ref.watch(isMetronomeSelectedProvider);
 
     updateSequencer(
       selectedChords,
-      extensions,
-      tonicAsUniversalBassNote,
       isMetronomeSelected,
     );
 
     return ChordPlayerBar(
-      selectedTrack: selectedTrack,
+      selectedTrack: tracks.isEmpty ? null : tracks[0],
       isLoading: isLoading,
       isPlaying: isPlaying,
       tempo: ref.read(metronomeTempoProvider),
       isLooping: isLooping,
-      clearTracks: () => sequencerManager.clearTracks(ref),
-      handleTogglePlayStop: () => sequencerManager.handleTogglePlayStop(ref),
+      clearTracks: () => sequencerManager.clearTracks(ref, tracks, sequence),
+      handleTogglePlayStop: () =>
+          sequencerManager.handleTogglePlayStop(ref, sequence),
     );
   }
 
   updateSequencer(
     List selectedChords,
-    List extensions,
-    bool tonicAsUniversalBassNote,
     bool isMetronomeSelected,
   ) {
     if (sequencerManager.needToUpdateSequencer(
+      sequence,
       selectedChords,
-      extensions,
       tempo,
-      tonicAsUniversalBassNote,
+      widget.settings.isTonicUniversalBassNote,
       isMetronomeSelected,
     )) {
       setState(() {
@@ -165,8 +177,8 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
       //add new chords to sequence.
       getSequencer();
+      // selectedTrack = tracks[0];
       setState(() {
-        selectedTrack = tracks[0];
         isLoading = false;
       });
     }

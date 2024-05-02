@@ -37,8 +37,6 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
                       newValue!;
                   ref.read(modeDropdownValueProvider.notifier).state =
                       Scales.data[newValue].keys.first as String;
-                  // print(ref.read(modeDropdownValueProvider.notifier).state);
-                  // print(ref.read(scaleDropdownValueProvider.notifier).state);
                 },
                 items: Scales.data.keys
                     .map<DropdownMenuItem<String>>((dynamic value) {
@@ -73,7 +71,8 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
                 },
                 items: Scales.data[selectedScale].keys
                     .map<DropdownMenuItem<String>>((dynamic value) {
-                  String key = value as String;
+                  String key = value.toString();
+                  print(key);
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key,

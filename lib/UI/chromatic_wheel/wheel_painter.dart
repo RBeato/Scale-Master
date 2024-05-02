@@ -33,8 +33,8 @@ class WheelPainter extends CustomPainter {
     }
 
     for (int i = 0; i < chromaticNotes.length; i++) {
-      print(
-          "i=$i, ${getDegreeColor(chromaticNotes[i], i)}, null:${scaleIntervals[i] == null}");
+      // print(
+      //     "i=$i, ${getDegreeColor(chromaticNotes[i], i)}, null:${scaleIntervals[i] == null}");
 
       double angle = 2 * math.pi * i / chromaticNotes.length - math.pi / 2;
       textPainter.text = TextSpan(

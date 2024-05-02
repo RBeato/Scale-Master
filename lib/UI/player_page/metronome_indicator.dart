@@ -9,13 +9,12 @@ class MetronomeIndicator extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentStep = ref.watch(currentBeatProvider);
-    print("currentStep: $currentStep");
     return Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(child: Consumer(builder: (context, watch, _) {
-            final numberBeats = ref.watch(beatCounterProvider) as int;
-            print("number of beats: $numberBeats");
+            final numberBeats = ref.watch(beatCounterProvider);
+
             return Container(
               decoration: const BoxDecoration(
                 border: Border(

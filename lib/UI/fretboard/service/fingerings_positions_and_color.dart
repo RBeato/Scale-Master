@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:tonic/tonic.dart' as tonic;
 
 import '../../../constants/color_constants.dart';
-import '../../../constants/flats_and_sharps_to_flats_converter.dart';
 import '../../../constants/flats_only_nomenclature_converter.dart';
 import '../../../constants/fretboard_notes.dart';
 import '../../../constants/scales/scales_data_v2.dart';
 import '../../../models/scale_model.dart';
 import '../../../models/chord_scale_model.dart';
 import '../../../models/settings_model.dart';
+import '../../../utils/music_utils.dart';
 
 class FingeringsCreator {
   String? _modeOption;
@@ -57,7 +57,7 @@ class FingeringsCreator {
   }
 
   createFretboardPositions(ScaleModel scaleModel) {
-    _key = flatsAndSharpsToFlats(scaleModel.parentScaleKey);
+    _key = MusicUtils.flatsAndSharpsToFlats(scaleModel.parentScaleKey);
     addChordsTypes(scaleModel);
     setModeDegrees(scaleModel);
     filterSettings();
@@ -84,7 +84,7 @@ class FingeringsCreator {
 
   addChordsTypes(ScaleModel scaleModel) {
     List<String> aux = [];
-    for (int i = 0; i < scaleModel.scaleNotesNames.length; i++) {
+    for (int i = 0; i < scaleModel.chordTypes.length; i++) {
       aux.add(
           '${scaleModel.scaleNotesNames[i]}${scaleModel.chordTypes[i] == 'M' ? '' : scaleModel.chordTypes[i]}');
     }

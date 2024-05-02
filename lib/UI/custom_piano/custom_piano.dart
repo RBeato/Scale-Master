@@ -69,7 +69,7 @@ class _CustomPianoState extends State<CustomPiano> {
           isBlack: false,
           note: noteName,
           containerColor: color,
-          onKeyPressed: widget.onKeyPressed,
+          onKeyPressed: (noteName) => widget.onKeyPressed(noteName),
           isInScale: _isInScale(noteName), // Check if note is in scale
         ));
       }
@@ -112,7 +112,7 @@ class _CustomPianoState extends State<CustomPiano> {
             isBlack: true,
             note: noteName,
             containerColor: color,
-            onKeyPressed: widget.onKeyPressed,
+            onKeyPressed: (noteName) => widget.onKeyPressed(noteName),
             isInScale: _isInScale(noteName), // Check if note is in scale
           ),
         ));

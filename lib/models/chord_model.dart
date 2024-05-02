@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/models/settings_model.dart';
 import '../constants/color_constants.dart';
-import '../constants/flats_and_sharps_to_flats_converter.dart';
 import '../constants/flats_to_sharps_nomenclature.dart';
 import '../utils/music_utils.dart';
 
@@ -26,6 +25,7 @@ class ChordModel {
   Settings? settings;
   String? chordFunction;
   String? chordDegree;
+  String? completeChordName;
 
   ChordModel({
     required this.noteName,
@@ -39,6 +39,7 @@ class ChordModel {
     required this.originalScaleType,
     required this.parentScaleKey,
     required this.chordNotesWithIndexesRaw,
+    required this.completeChordName,
     this.chordNameForAudio,
     this.chordNameForUI,
     this.function,
@@ -54,7 +55,7 @@ class ChordModel {
     // function = _info('function');
     // typeOfChord = _info('chordType');
     chordNameForUI = _getChordNameForUI();
-    chordNameForAudio = flatsAndSharpsToFlats(parentScaleKey);
+    chordNameForAudio = MusicUtils.flatsAndSharpsToFlats(parentScaleKey);
     color = _getColorFromFunction();
     allChordExtensions = _getOrganizedPitches();
   }
@@ -69,7 +70,7 @@ class ChordModel {
 
   String _getChordNameForUI() {
     return ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-            .contains(flatsAndSharpsToFlats(parentScaleKey))
+            .contains(MusicUtils.flatsAndSharpsToFlats(parentScaleKey))
         ? flatsToSharpsNomenclature(parentScaleKey)
         : parentScaleKey;
   }
@@ -94,6 +95,7 @@ class ChordModel {
     String? chordNameForAudio,
     String? function,
     String? typeOfChord,
+    String? completeChordName,
     Color? color,
     List<String>? allChordExtensions,
     List<String>? pitches,
@@ -125,11 +127,12 @@ class ChordModel {
       settings: settings ?? this.settings,
       chordFunction: chordFunction ?? this.chordFunction,
       chordDegree: chordDegree ?? this.chordDegree,
+      completeChordName: completeChordName ?? this.completeChordName,
     );
   }
 
   @override
   String toString() {
-    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, selectedChordPitches: $selectedChordPitches,allChordExtension $allChordExtensions, originModeType: $originModeType)';
+    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, selectedChordPitches: $selectedChordPitches,allChordExtension $allChordExtensions, originModeType: $originModeType), completeChordName: $completeChordName, chordFunction: $chordFunction, chordDegree: $chordDegree, settings: $settings)';
   }
 }

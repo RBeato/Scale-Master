@@ -6,6 +6,7 @@ import '../constants/flats_only_nomenclature_converter.dart';
 import '../constants/music_constants.dart';
 import '../constants/scales/scales_data_v2.dart';
 import '../models/chord_scale_model.dart';
+import '../models/scale_model.dart';
 import '../models/settings_model.dart';
 import 'chord_utils.dart';
 
@@ -19,41 +20,41 @@ class MusicUtils {
         .toList());
   }
 
-  static List<String> getChordInfo(String baseNote,
+  static List<String> getChordInfo(
       ChordScaleFingeringsModel fingeringsModel, int chordIndex) {
-    var selectedMode = Scales.data[fingeringsModel.scaleModel!.scale]
-        [fingeringsModel.scaleModel!.mode];
+    //This returns a list with stacked thirds for adding extensions
+    // Map<String, int> chordIntervals = _getChordIntervalsStackedThirds(
+    //     fingeringsModel.scaleModel!.modesScalarTonicIntervals[chordIndex]);
 
-    int selectedModeIndex = Scales.data[fingeringsModel.scaleModel!.scale].keys
-        .where((element) => element == selectedMode)
-        .toList()
-        .indexOf(fingeringsModel.scaleModel!.mode);
+    Map<String, int> chordIntervals = _getNotesScaleNotes(
+        fingeringsModel.scaleModel!.modesScalarTonicIntervals[chordIndex]);
 
-    int index = ((selectedModeIndex + chordIndex + 1) %
-            selectedMode["scaleStepsRoman"].length)
-        .toInt();
-
-    var chordMode =
-        Scales.data[fingeringsModel.scaleModel!.scale].keys.toList()[index];
-
-    List<int> chordModeScalarIntervals =
-        Scales.data[fingeringsModel.scaleModel!.scale][chordMode]['intervals'];
-
-    List<Interval> chordModeTonicIntervals =
-        (Scales.data[fingeringsModel.scaleModel!.scale][chordMode]
-                ['scaleDegrees'] as List<Interval?>)
-            .where((n) => n != null)
-            .map((e) => e!)
-            .toList();
-
-    Map<String, int> chordIntervals =
-        _getChordIntervals(chordModeScalarIntervals, chordModeTonicIntervals);
-    // getScaleDegreesTonicIntervals(fingeringsModel));
+//Get the note that is the one that the chord is built on (not the note that names the chord)
+    String baseNote = extractNoteName(
+        fingeringsModel.scaleModel!.scaleNotesNames[chordIndex]);
 
     var chordNotes =
         createNoteList(baseNote, chordIntervals.values.toList(), 4);
 
-    return chordNotes;
+    //get the first, third and fifth element from the list
+    return [chordNotes[0], chordNotes[2], chordNotes[4]];
+  }
+
+  static Map<String, int> _getNotesScaleNotes(List<Interval> intervals) {
+    Map<String, int> chordScaleNotes = {};
+    for (var i in intervals) {
+      String note = _mapIntervalToChordTone(i);
+      chordScaleNotes[note] = i.semitones;
+    }
+    return chordScaleNotes;
+  }
+
+  static List<int> convertToSemiTones(List<Interval> intervals) {
+    List<int> semiTones = [];
+    for (var interval in intervals) {
+      semiTones.add(interval.semitones);
+    }
+    return semiTones;
   }
 
   static List<Interval> getScaleDegreesTonicIntervals(
@@ -85,34 +86,6 @@ class MusicUtils {
     return intervals;
   }
 
-  static Map<String, int> _getChordIntervals(
-      List<int> scaleIntervals, List<Interval> scaleDegrees) {
-    if (scaleIntervals.length != scaleDegrees.length) {
-      throw ArgumentError(
-          'Scale intervals and scale degrees must have the same length');
-    }
-
-    // Create a map to store the chord intervals
-    Map<String, int> chordWithAllExtensions = {};
-
-    // Populate the chord intervals map
-    for (int i = 0; i < scaleDegrees.length; i++) {
-      String chordTone = _mapIntervalToChordTone(scaleDegrees[i]);
-      chordWithAllExtensions[chordTone] = scaleIntervals[i];
-    }
-
-    // Reorder the chord intervals map based on the order of chord tones
-    List<String> orderedChordTones = ['1', '3', '5', '7', '9', '11', '13'];
-    Map<String, int> reorderedChordIntervals = {};
-    for (var chordTone in orderedChordTones) {
-      if (chordWithAllExtensions.containsKey(chordTone)) {
-        reorderedChordIntervals[chordTone] = chordWithAllExtensions[chordTone]!;
-      }
-    }
-
-    return reorderedChordIntervals;
-  }
-
   static String filterNoteNameWithSlash(String note) {
     if (note.contains('♯') && note.contains('/')) {
       List<String> parts = note.split('/');
@@ -122,15 +95,21 @@ class MusicUtils {
     }
   }
 
-  static getTriadsNames(modesIntervals) {
+  static getTriadsNames(ScaleModel item, List modesIntervals) {
     List<String> triadsNames = [];
-    for (var mode in modesIntervals) {
-      // triadsNames.add(    getTriadType(mode));
-      var triad = getTonicTriadType(mode);
-      triadsNames.add(triad);
-      print("mode $mode, triad: $triad");
+    List<String> chordNotes = [];
+    for (var i = 0; i < modesIntervals.length; i++) {
+      var chordType = getTonicTriadType(modesIntervals[i]);
+      var chordNote =
+          Pitch.parse('${filterNoteNameWithSlash(item.parentScaleKey)}3') +
+              item.notesIntervalsRelativeToTonicForBuildingChordsList![i] +
+              ChordUtils.getChordNoteIntervalToScaleDegree(chordType);
+      var chordNoteNoIndex = cleanNotesIndexes([chordNote]).first;
+      triadsNames.add(chordType);
+      chordNotes.add("$chordNoteNoIndex$chordType");
     }
-    return triadsNames;
+    item.chordTypes = triadsNames;
+    item.completeChordNames = chordNotes;
   }
 
   static getTonicTriadType(List<Interval?> scaleDegrees) {
@@ -157,7 +136,7 @@ class MusicUtils {
         scaleDegrees.contains(Interval.M7);
 
     List<Interval> intervals = [];
-    print("scaleDegrees: $scaleDegrees");
+    // print("scaleDegrees: $scaleDegrees");
 
     if (scaleDegrees.length == 8) {
       if (scaleDegrees.contains(Interval.M3) &&
@@ -231,31 +210,44 @@ class MusicUtils {
       chordType = ChordUtils.handleCustomPatterns(intervals);
     }
 
-    // print(
-    //     "Test chord notes form tonic parser: ${ChordPattern.parse('C $chordType')}");
-
     return chordType;
   }
 
   static List<List<Interval>> getOtherScaleModesIntervalsLists(
-      String scale, String selectedMode, String type) {
+      ScaleModel scaleModel) {
     List<List<Interval>> orderedScaleDegrees = [];
 
-    bool foundSelectedMode = false;
-    final scaleModes = Scales.data[scale];
+    final scaleModes = Scales.data[scaleModel.scale];
 
     var scaleDegrees =
-        (scaleModes[selectedMode]!['scaleDegrees'] as List<Interval?>)
+        (scaleModes[scaleModel.mode]!['scaleDegrees'] as List<Interval?>)
             .where((n) => n != null)
             .map((e) => e!)
             .toList();
 
-    if (type == 'Pentatonics' && scaleDegrees.length == 6) {
-      //tODO: Address 6 note pentatonics
-      scaleDegrees = removePassingTones(scaleDegrees);
+    if (scaleModel.scale == 'Pentatonics' && scaleDegrees.length == 6) {
+      if (scaleModel.mode == 'Major Blues') {
+        scaleDegrees = [
+          Interval.P1,
+          Interval.M2,
+          Interval.M3,
+          Interval.P5,
+          Interval.M6
+        ];
+      }
+      if (scaleModel.mode == 'Blues') {
+        scaleDegrees = [
+          Interval.P1,
+          Interval.m3,
+          Interval.P4,
+          Interval.P5,
+          Interval.m7
+        ];
+      }
+      // scaleDegrees = removePassingTones(scaleDegrees);
     }
 
-    if (type == 'Octatonics' && scaleDegrees.length == 8) {
+    if (scaleModel.scale == 'Octatonics' && scaleDegrees.length == 8) {
       for (int i = 0; i < 2; i++) {
         List<Interval> modeIntervals = [];
         for (int j = 0; j < scaleDegrees.length; j++) {
@@ -302,6 +294,8 @@ class MusicUtils {
       print(
           "${orderedScaleDegrees[i]} fixed orderedScaleDegrees $i: ${fixedOrderedScaleDegrees[i]}");
     }
+    scaleModel.notesIntervalsRelativeToTonicForBuildingChordsList =
+        scaleDegrees;
 
     return orderedScaleDegrees; //! or return fixedOrderedScaleDegrees????
   }
@@ -312,37 +306,6 @@ class MusicUtils {
     // Iterate through the scale degrees
     for (int i = 0; i < scaleDegrees.length; i += 2) {
       cleanedScale.add(scaleDegrees[i]);
-    }
-
-    return cleanedScale;
-  }
-
-  static List<Interval> removePassingTones(List<Interval> scaleDegrees) {
-    List<Interval> cleanedScale = [];
-
-    // Iterate through the scale degrees
-    for (int i = 0; i < scaleDegrees.length; i++) {
-      // Check if there are at least three intervals remaining in the scale
-      if (i + 2 < scaleDegrees.length) {
-        // Calculate the semitone difference between the current interval and the next two intervals
-        int semitones1 =
-            (scaleDegrees[i + 1].semitones - scaleDegrees[i].semitones).abs();
-        int semitones2 =
-            (scaleDegrees[i + 2].semitones - scaleDegrees[i + 1].semitones)
-                .abs();
-
-        // If both sets of intervals have a total of 3 semitones, skip the middle interval
-        if (semitones1 == 3 && semitones2 == 3) {
-          cleanedScale.add(scaleDegrees[i]); // Add the first interval
-          cleanedScale.add(scaleDegrees[i + 2]); // Add the third interval
-          i += 2; // Skip the next two intervals
-        } else {
-          cleanedScale.add(scaleDegrees[i]); // Add the current interval
-        }
-      } else {
-        // If there are less than three intervals remaining, add the current interval
-        cleanedScale.add(scaleDegrees[i]);
-      }
     }
 
     return cleanedScale;
@@ -398,11 +361,11 @@ class MusicUtils {
   }
 
   static List<List<Interval>> getSevenNoteScalesModesIntervalsLists(
-      String scale, String selectedMode) {
+      ScaleModel scaleModel) {
     List<List<Interval>> orderedScaleDegrees = [];
 
     bool foundSelectedMode = false;
-    final scaleModes = Scales.data[scale];
+    final scaleModes = Scales.data[scaleModel.scale];
 
     // Iterate from the selected mode to the end
     for (var mode in scaleModes.keys) {
@@ -414,7 +377,7 @@ class MusicUtils {
                 .map((e) => e!)
                 .toList();
         orderedScaleDegrees.add(scaleDegrees);
-      } else if (mode == selectedMode) {
+      } else if (mode == scaleModel.mode) {
         foundSelectedMode = true;
         final scaleDegrees =
             (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)
@@ -428,7 +391,7 @@ class MusicUtils {
 
     // Iterate from the beginning to the selected mode (excluding selected mode)
     for (var mode in scaleModes.keys) {
-      if (mode == selectedMode) break;
+      if (mode == scaleModel.mode) break;
       print(mode);
 
       final scaleDegrees =
@@ -438,6 +401,11 @@ class MusicUtils {
               .toList();
       orderedScaleDegrees.add(scaleDegrees);
     }
+    scaleModel.notesIntervalsRelativeToTonicForBuildingChordsList =
+        (scaleModes[scaleModel.mode]!['scaleDegrees'] as List<Interval?>)
+            .where((n) => n != null)
+            .map((e) => e!)
+            .toList();
 
     return orderedScaleDegrees;
   }
@@ -446,9 +414,7 @@ class MusicUtils {
       String baseNote, List<int> intervals, int octave) {
     List<String> notes = [];
 
-    String cleanedNoteName = extractNoteName(baseNote);
-
-    String noteToFlats = flatsOnlyNoteNomenclature(cleanedNoteName);
+    String noteToFlats = flatsOnlyNoteNomenclature(baseNote);
 
     // Parse the base note
     var basePitch = Pitch.parse(noteToFlats);
@@ -490,8 +456,10 @@ class MusicUtils {
     List<String> testFlatsList = listOfNotes
         .map((note) {
           String noteAsString = note.toString();
-          String processedNote = flatsOnlyNoteNomenclature(
-              noteAsString.substring(0, noteAsString.length - 1));
+          String processedNote =
+              // flatsOnlyNoteNomenclature(//TODO: Fix this string
+              noteAsString.substring(0, noteAsString.length - 1);
+          // );
           return processedNote;
         })
         .cast<String>()
@@ -563,5 +531,64 @@ class MusicUtils {
 
     int index = random.nextInt(itemList.length);
     return index;
+  }
+
+  static flatsAndSharpsToFlats(noteSubString) {
+    // print('Called flatsOnlyNoteNomenclature');
+    switch (noteSubString) {
+      case 'C':
+        noteSubString = 'C';
+        break;
+      case 'C♯/D♭':
+        noteSubString = 'D♭';
+        break;
+      case 'C♯':
+        noteSubString = 'D♭';
+        break;
+      case 'D':
+        noteSubString = 'D';
+        break;
+      case 'D♯/E♭':
+        noteSubString = 'E♭';
+        break;
+      case 'D♯':
+        noteSubString = 'E♭';
+        break;
+      case 'E':
+        noteSubString = 'E';
+        break;
+      case 'F':
+        noteSubString = 'F';
+        break;
+      case 'F♯/G♭':
+        noteSubString = 'G♭';
+        break;
+      case 'F♯':
+        noteSubString = 'G♭';
+        break;
+      case 'G':
+        noteSubString = 'G';
+        break;
+      case 'G♯/A♭':
+        noteSubString = 'A♭';
+        break;
+      case 'G♯':
+        noteSubString = 'A♭';
+        break;
+      case 'A':
+        noteSubString = 'A';
+        break;
+      case 'A♯/B♭':
+        noteSubString = 'B♭';
+        break;
+      case 'A♯':
+        noteSubString = 'B♭';
+        break;
+      case 'B':
+        noteSubString = 'B';
+        break;
+    }
+
+    return noteSubString;
   }
 }

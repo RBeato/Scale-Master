@@ -31,7 +31,7 @@ class ChordListWidget extends StatelessWidget {
                                 color: chord.color,
                                 child: Center(
                                   child: Text(
-                                    chord.noteName,
+                                    chord.completeChordName!,
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),

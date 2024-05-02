@@ -3,7 +3,6 @@ import '../../../models/chord_model.dart';
 
 import '../../fretboard/provider/beat_counter_provider.dart';
 import '../../fretboard/service/chord_progression_voice_leading_creator.dart';
-import 'chord_extensions_provider.dart';
 
 final selectedChordsProvider =
     StateNotifierProvider<SelectedChords, List<ChordModel>>(
@@ -29,17 +28,13 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
   }
 
   updateChords([ChordModel? chordModel]) {
-    var chordExtensions = ref.read(chordExtensionsProvider) ?? [];
-    List<ChordModel> chords = [];
     List<ChordModel> temp = [...state];
 
     if (chordModel != null) {
       temp.add(chordModel);
     }
 
-    chords = filterChords(chordExtensions, temp);
-
-    updateProgression(chords);
+    updateProgression(temp);
 
     int sum =
         state.fold(0, (previousValue, item) => previousValue + item.duration);

@@ -11,6 +11,8 @@ class ScaleModel {
   List<List<Interval>> modesScalarTonicIntervals = [];
   String? originModeType;
   Settings? settings;
+  List<Interval>? notesIntervalsRelativeToTonicForBuildingChordsList = [];
+  List<String> completeChordNames = [];
 
   ScaleModel({
     this.parentScaleKey = 'C',
@@ -22,6 +24,8 @@ class ScaleModel {
     required this.originModeType,
     required this.modesScalarTonicIntervals,
     this.settings,
+    required this.notesIntervalsRelativeToTonicForBuildingChordsList,
+    required this.completeChordNames,
   });
 
   // Copy method for immutability
@@ -35,6 +39,8 @@ class ScaleModel {
     List<List<Interval>>? modesIntervals,
     String? originModeType,
     Settings? settings,
+    List<String>? notesForBuildingChords,
+    List<String>? completeChordNames,
   }) {
     return ScaleModel(
       parentScaleKey: parentScaleKey ?? this.parentScaleKey,
@@ -46,6 +52,10 @@ class ScaleModel {
       degreeFunction: degreeFunction ?? this.degreeFunction,
       originModeType: originModeType ?? this.originModeType,
       settings: settings ?? this.settings,
+      notesIntervalsRelativeToTonicForBuildingChordsList:
+          notesIntervalsRelativeToTonicForBuildingChordsList ??
+              notesIntervalsRelativeToTonicForBuildingChordsList,
+      completeChordNames: completeChordNames ?? this.completeChordNames,
     );
   }
 

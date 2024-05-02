@@ -45,64 +45,141 @@ class ChordUtils {
 
     if (chordPattern == 'P1,m3,m6') {
       //*inversion
-      return 'M7/5'; // Minor chord
+      return 'M7/5';
     }
     if (chordPattern == 'P1,m3,m7') {
-      return 'm7'; // Minor chord
+      return 'm7';
     }
     if (chordPattern == 'P1,M3,m7') {
-      return '7'; // Minor chord
+      return '7';
     }
     if (chordPattern == 'P1,d3,m6') {
-      return 'mMaj7'; // Minor chord
+      return 'ERROR'; //return 'mMaj7';
     }
     if (chordPattern == 'P1,m3,M6') {
-      return 'dim/3'; // Minor chord
+      return 'dim/3';
     }
     if (chordPattern == 'P1,P4,M6') {
       //*inversion
-      return 'M64'; // Minor chord
+      return 'M64';
     }
     if (chordPattern == 'P1,M3,M6') {
-      return 'm6'; // Minor chord
+      return 'm6';
     }
     if (chordPattern == 'P1,P4,m6') {
       //*inversion
-      return 'm64'; // Minor chord
+      return 'm64';
     }
 
     if (chordPattern == 'P1,P4,m7') {
       //*inversion
-      return 'sus4/2'; // Minor chord
+      return 'sus4/2';
     }
     if (chordPattern == 'P1,P4,M7') {
-      return '1/4/7'; // Minor chord
+      return '1/4/7';
     }
     if (chordPattern == 'P1,A4,M6') {
       //*inversion
-      return '7/5/3'; // Minor chord
+      return '7/5/3';
     }
     if (chordPattern == 'P1,A4,m6') {
       //*inversion
-      return "7/3"; // Minor chord
+      return "7/3";
     }
     if (chordPattern == 'P1,A4,M6') {
       //*inversion
-      return 'dim/4'; // Minor chord
+      return 'dim/4';
     }
     if (chordPattern == 'P1,A4,M7') {
-      return 'Maj7#11'; // Minor chord
+      return 'Maj7#11';
     }
     if (chordPattern == 'P1,m3,M7') {
-      return 'mMaj7'; // Minor chord
+      return 'mMaj7';
     }
     if (chordPattern == 'P1,d5,m7') {
-      return 'ø7'; // Minor chord
+      return 'ø7';
     }
     if (chordPattern == 'P1,A5,M7') {
-      return 'aug Maj7'; // Minor chord
+      return 'aug Maj7';
     } else {
       return 'UNKNOWN';
+    }
+  }
+
+  static Interval getChordNoteIntervalToScaleDegree(String type) {
+    if (type == 'm') {
+      return Interval.P1;
+    }
+    if (type == 'M') {
+      return Interval.P1;
+    }
+    if (type == '') {
+      return Interval.P1;
+    }
+    if (type == 'M7/5') {
+      return Interval.m3;
+    }
+
+    if (type == 'm7') {
+      return Interval.P1;
+    }
+    if (type == '7') {
+      return Interval.P1;
+    }
+
+    if (type == 'P1,d3,m6') {}
+    if (type == 'dim/3') {
+      return Interval.M6;
+    }
+    if (type == 'M64') {
+      return Interval.P4;
+    }
+    if (type == 'm6') {
+      return Interval.M6;
+    }
+
+    if (type == 'm64') {
+      return Interval.P4;
+    }
+    if (type == 'sus4/2') {
+      return Interval.P4;
+    }
+
+    if (type == '1/4/7') {
+      return Interval.P1;
+    }
+    if (type == '7/5/3') {
+      return Interval.M2;
+    }
+
+    if (type == '7/3 #4') {
+      return Interval.M2;
+    }
+
+    if (type == 'dim/4') {
+      return Interval.A4;
+    }
+
+    if (type == 'Maj7#11') {
+      return Interval.P1;
+    }
+
+    if (type == 'mMaj7') {
+      return Interval.P1;
+    }
+    if (type == 'ø7') {
+      return Interval.P1;
+    }
+    if (type == 'aug Maj7') {
+      return Interval.P1;
+    }
+    if (type == '°') {
+      return Interval.P1;
+    }
+    if (type == '+') {
+      return Interval.P1;
+    } else {
+      throw Exception('Unknown chord type');
     }
   }
 }

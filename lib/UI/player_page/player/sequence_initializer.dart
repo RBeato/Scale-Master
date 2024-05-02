@@ -3,30 +3,31 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_sequencer/sequence.dart';
 import 'package:flutter_sequencer/track.dart';
+import 'package:scale_master_guitar/UI/player_page/provider/is_playing_provider.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
 import 'package:scale_master_guitar/constants.dart';
 
-import '../../models/scale_model.dart';
-import '../../models/step_sequencer_state.dart';
-import '../../utils/player_utils.dart';
-import '../fretboard/provider/beat_counter_provider.dart';
-import '../player_page/logic/sequencer_manager.dart';
-import '../player_page/provider/is_metronome_selected.dart';
-import '../player_page/provider/is_playing_provider.dart';
-import '../player_page/provider/metronome_tempo_provider.dart';
-import 'custom_piano.dart';
+import '../../../models/scale_model.dart';
+import '../../../models/settings_model.dart';
+import '../../../models/step_sequencer_state.dart';
+import '../../../utils/player_utils.dart';
+import '../../fretboard/provider/beat_counter_provider.dart';
+import '../logic/sequencer_manager.dart';
+import '../provider/is_metronome_selected.dart';
+import '../provider/metronome_tempo_provider.dart';
 
-class CustomPianoSoundController extends ConsumerStatefulWidget {
-  const CustomPianoSoundController(this.scaleModel, {Key? key})
+class SequencerInitializer extends ConsumerStatefulWidget {
+  const SequencerInitializer(this.scaleModel, this.musicPlayer, {Key? key})
       : super(key: key);
 
   final ScaleModel? scaleModel;
+  final Widget musicPlayer;
 
   @override
-  CustomPianoState createState() => CustomPianoState();
+  SequencerInitializerState createState() => SequencerInitializerState();
 }
 
-class CustomPianoState extends ConsumerState<CustomPianoSoundController>
+class SequencerInitializerState extends ConsumerState<SequencerInitializer>
     with SingleTickerProviderStateMixin {
   Map<int, StepSequencerState> trackStepSequencerStates = {};
   List<Track> tracks = [];
@@ -40,6 +41,7 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
   late Sequence sequence;
   Map<String, dynamic> sequencer = {};
   late bool isLoading;
+  late Settings settings;
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
 
     sequence = Sequence(tempo: tempo, endBeat: stepCount);
 
-    tracks = await sequencerManager.initialize(
+    await sequencerManager.initialize(
         tracks: tracks,
         sequence: sequence,
         playAllInstruments: false,
@@ -108,11 +110,6 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
 
   @override
   Widget build(BuildContext context) {
-    // print("tracks: ${tracks[0]}");
-    return CustomPiano(
-      widget.scaleModel,
-      onKeyPressed: (note) =>
-          sequencerManager.playPianoNote(note, tracks, sequence),
-    );
+    return widget.musicPlayer;
   }
 }

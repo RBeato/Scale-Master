@@ -18,7 +18,7 @@ class Chords extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final alreadySelectedChords = ref.watch(selectedChordsProvider);
+    final selectedChords = ref.watch(selectedChordsProvider);
     final fingerings = ref.watch(chordModelFretboardFingeringProvider);
 
     return fingerings.when(
@@ -32,7 +32,7 @@ class Chords extends ConsumerWidget {
                 children: [
                   Row(
                     // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: scaleFingerings!.scaleModel!.scaleNotesNames
+                    children: scaleFingerings!.scaleModel!.completeChordNames
                         .asMap()
                         .entries
                         .map((entry) {
@@ -63,7 +63,7 @@ class Chords extends ConsumerWidget {
                                   c,
                                   scaleFingerings,
                                   index,
-                                  alreadySelectedChords);
+                                  selectedChords);
                             },
                             onDoubleTap: () {
                               if (ref.read(beatCounterProvider) > 40) {
@@ -78,7 +78,7 @@ class Chords extends ConsumerWidget {
                                   c,
                                   scaleFingerings,
                                   index,
-                                  alreadySelectedChords);
+                                  selectedChords);
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -144,8 +144,8 @@ class Chords extends ConsumerWidget {
       ChordScaleFingeringsModel scaleFingerings,
       index,
       List<ChordModel> alreadySelectedChords) {
-    var chordNotes =
-        MusicUtils.getChordInfo(uiChordName, scaleFingerings, index);
+    var chordNotes = MusicUtils.getChordInfo(scaleFingerings, index);
+    print("chordNotes: $chordNotes");
 
     var position = alreadySelectedChords.isEmpty
         ? 0
@@ -161,9 +161,11 @@ class Chords extends ConsumerWidget {
       chordNotesWithIndexesRaw: chordNotes,
       chordFunction: scaleFingerings.scaleModel!.chordTypes[index],
       chordDegree: scaleFingerings.scaleModel!.degreeFunction[index],
+      completeChordName: uiChordName,
       scale: scaleFingerings.scaleModel!.scale!,
       originalScaleType: scaleFingerings.scaleModel!.scale!,
       parentScaleKey: scaleFingerings.scaleModel!.parentScaleKey,
+      selectedChordPitches: MusicUtils.cleanNotesIndexes(chordNotes),
     );
 
     return chord;

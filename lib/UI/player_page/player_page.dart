@@ -7,7 +7,6 @@ import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_prov
 
 import '../chords/chords.dart';
 import '../fretboard/UI/fretboard_neck.dart';
-import 'draggable_handle.dart';
 
 class PlayerPage extends ConsumerWidget {
   const PlayerPage({Key? key}) : super(key: key);
@@ -42,13 +41,13 @@ class PlayerPage extends ConsumerWidget {
                           Expanded(flex: 1, child: Container()),
                         ],
                       ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child:
-                            DraggableHandle(), // Use your draggable handle widget here
-                      ),
+                      // Positioned(
+                      //   bottom: 0,
+                      //   left: 0,
+                      //   right: 0,
+                      //   child:
+                      //       DraggableHandle(), // Use your draggable handle widget here
+                      // ),
                     ],
                   );
                 },

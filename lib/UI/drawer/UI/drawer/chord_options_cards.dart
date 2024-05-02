@@ -55,6 +55,13 @@ class GeneralOptionsCards extends StatelessWidget {
           settingSelection: SettingsSelection.singleColor,
           switchValue: settings.isSingleColor,
         ),
+        DrawerGeneralSwitch(
+          title: 'Tonic as Universal Bass Note',
+          subtitle:
+              'if selected all chords will have the scale tonic as the bass note',
+          settingSelection: SettingsSelection.isTonicUniversalBassNote,
+          switchValue: settings.isTonicUniversalBassNote,
+        ),
       ],
     );
   }
