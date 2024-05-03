@@ -67,6 +67,7 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
     // print("selectedTrack ${selectedTrack.hashCode}");
     // Initialize sequencer and tracks
     tracks = await sequencerManager.initialize(
+      ref: ref,
       tracks: tracks,
       sequence: sequence,
       playAllInstruments: true,
@@ -107,7 +108,8 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
   }
 
   Future<void> getSequencer() async {
-    await sequencerManager.initialize(
+    tracks = await sequencerManager.initialize(
+      ref: ref,
       tracks: tracks,
       sequence: sequence,
       playAllInstruments: true,
@@ -133,7 +135,6 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
 
   @override
   Widget build(BuildContext context) {
-    print("Building");
     isPlaying = ref.watch(isSequencerPlayingProvider);
     if (!isPlaying) {
       sequencerManager.handleStop(sequence);

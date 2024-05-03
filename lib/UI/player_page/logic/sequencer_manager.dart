@@ -10,6 +10,7 @@ import '../../../constants/music_constants.dart';
 import '../../../models/chord_model.dart';
 import '../../../models/step_sequencer_state.dart';
 import '../../../utils/music_utils.dart';
+import '../provider/bass_note_index_provider.dart';
 import '../provider/is_playing_provider.dart';
 import '../provider/selected_chords_provider.dart';
 import 'package:collection/collection.dart';
@@ -38,6 +39,7 @@ class SequencerManager {
   bool playAllInstruments = true;
 
   Future<List<Track>> initialize({
+    ref,
     tracks,
     sequence,
     playAllInstruments,
@@ -57,6 +59,8 @@ class SequencerManager {
     if (isPlaying) {
       handleStop(sequence);
     }
+
+    clearEverything(tracks, sequence);
 
     this.playAllInstruments = playAllInstruments;
     this.tempo = tempo;
@@ -79,6 +83,7 @@ class SequencerManager {
 
       // Create project state
       ProjectState? project = await _createProject(
+        ref: ref,
         selectedChords: selectedChords,
         stepCount: stepCount,
         nBeats: stepCount,
@@ -95,14 +100,18 @@ class SequencerManager {
   }
 
   Future<ProjectState>? _createProject({
-    List<ChordModel>? selectedChords,
+    required WidgetRef ref,
+    required List<ChordModel> selectedChords,
     stepCount,
     required int nBeats,
   }) async {
     ProjectState project = ProjectState.empty(stepCount);
 
-    selectedChords?.forEach((chord) {
+    for (int i = 0; i < selectedChords.length; i++) {
+      ChordModel chord = selectedChords[i];
+      print("chord $chord");
       for (var note in chord.allChordExtensions!) {
+        //TODO: use .selectedChordPitches
         project.pianoState.setVelocity(
             chord.position, MusicConstants.midiValues[note]!, 0.99);
       }
@@ -110,19 +119,34 @@ class SequencerManager {
       var note = tonicAsUniversalBassNote
           ? chord.parentScaleKey
           : MusicUtils.extractNoteName(chord.completeChordName!);
-      print('Chord: $chord, bass note $note');
+      // print('Chord: $chord, bass note $note');
 
       note = MusicUtils.filterNoteNameWithSlash(note);
       note = MusicUtils.flatsAndSharpsToFlats(note);
-      var bassMidiValue = MusicConstants.midiValues["${note}2"]!;
-      print("bass note: $note, midi value: $bassMidiValue");
+
+      var index = ref.read(bassNoteIndexProvider);
+
+      if (i > 0) {
+        index = MusicUtils.calculateIndexForBassNote(
+          //!TODO: Fix this
+          MusicUtils.extractNoteName(selectedChords[i - 1].completeChordName!),
+          note,
+          index,
+        );
+        ref.read(bassNoteIndexProvider.notifier).update((state) => index);
+      }
+
+      var bassMidiValue = MusicConstants.midiValues["$note$index"]!;
+
+      print(
+          "TonicAsUniversalNote: $tonicAsUniversalBassNote, bass note: $note, midi value: $bassMidiValue , index: $index");
 
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.79);
-    });
+    }
 
     if (isMetronomeSelected) {
       for (int i = 0; i < nBeats; i++) {
-        project.drumState.setVelocity(i, 44, 0.49);
+        project.drumState.setVelocity(i, 44, 0.19);
       }
     }
     return project;
@@ -262,8 +286,20 @@ class SequencerManager {
     if (tracks.isNotEmpty) {
       trackStepSequencerStates[tracks[0].id] = StepSequencerState();
       _syncTrack(tracks[0]);
-      ref.read(selectedChordsProvider.notifier).removeAll();
+      if (ref != null) {
+        ref.read(selectedChordsProvider.notifier).removeAll();
+      }
     }
+  }
+
+  void clearEverything(List<Track> tracks, Sequence sequence) {
+    sequence.stop();
+    for (var track in tracks) {
+      trackStepSequencerStates[track.id] = StepSequencerState();
+      _syncTrack(track);
+    }
+    tracks.clear(); // Clear all tracks
+    _handleStepCountChange(0, tracks, sequence); // Reset the step count to 0
   }
 
   bool needToUpdateSequencer(

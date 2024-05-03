@@ -59,7 +59,7 @@ class GeneralOptionsCards extends StatelessWidget {
           title: 'Tonic as Universal Bass Note',
           subtitle:
               'if selected all chords will have the scale tonic as the bass note',
-          settingSelection: SettingsSelection.isTonicUniversalBassNote,
+          settingSelection: SettingsSelection.tonicUniversalBassNote,
           switchValue: settings.isTonicUniversalBassNote,
         ),
       ],

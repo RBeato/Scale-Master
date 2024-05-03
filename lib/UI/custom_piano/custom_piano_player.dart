@@ -59,6 +59,7 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
     sequence = Sequence(tempo: tempo, endBeat: stepCount);
 
     tracks = await sequencerManager.initialize(
+        ref: ref,
         tracks: tracks,
         sequence: sequence,
         playAllInstruments: false,

@@ -37,7 +37,7 @@ class LocalStorageService {
     if (settingsSelection == SettingsSelection.scaleDegrees) {
       value = settings.showScaleDegrees;
     }
-    if (settingsSelection == SettingsSelection.isTonicUniversalBassNote) {
+    if (settingsSelection == SettingsSelection.tonicUniversalBassNote) {
       value = settings.isTonicUniversalBassNote;
     }
     if (settingsSelection == SettingsSelection.singleColor) {
@@ -59,7 +59,7 @@ class LocalStorageService {
     bool isSingleColor =
         preferences.getBool(SettingsSelection.singleColor.toString()) ?? false;
     bool isTonicUniversalBassNote = preferences
-            .getBool(SettingsSelection.isTonicUniversalBassNote.toString()) ??
+            .getBool(SettingsSelection.tonicUniversalBassNote.toString()) ??
         false;
     String keyboardSound =
         preferences.getString(SettingsSelection.keyboardSound.toString()) ??
@@ -90,7 +90,7 @@ class LocalStorageService {
         SettingsSelection.scaleDegrees.toString(), settings.showScaleDegrees);
     preferences.setBool(
         SettingsSelection.singleColor.toString(), settings.isSingleColor);
-    preferences.setBool(SettingsSelection.singleColor.toString(),
+    preferences.setBool(SettingsSelection.tonicUniversalBassNote.toString(),
         settings.isTonicUniversalBassNote);
     preferences.setString(
         SettingsSelection.keyboardSound.toString(), settings.keyboardSound);
@@ -106,8 +106,7 @@ class LocalStorageService {
       settings.showScaleDegrees = value;
     } else if (settingsSelection == SettingsSelection.singleColor) {
       settings.isSingleColor = value;
-    } else if (settingsSelection ==
-        SettingsSelection.isTonicUniversalBassNote) {
+    } else if (settingsSelection == SettingsSelection.tonicUniversalBassNote) {
       settings.isTonicUniversalBassNote = value;
     } else if (settingsSelection == SettingsSelection.keyboardSound) {
       settings.keyboardSound = value;

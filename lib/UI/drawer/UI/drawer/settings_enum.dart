@@ -1,7 +1,7 @@
 enum SettingsSelection {
   scaleDegrees,
   singleColor,
-  isTonicUniversalBassNote,
+  tonicUniversalBassNote,
   keyboardSound,
   bassSound,
   drumsSound,

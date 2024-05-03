@@ -33,7 +33,7 @@ class Settings extends Equatable {
     if (settingsSelection == SettingsSelection.keyboardSound) {
       return keyboardSound;
     }
-    if (settingsSelection == SettingsSelection.isTonicUniversalBassNote) {
+    if (settingsSelection == SettingsSelection.tonicUniversalBassNote) {
       return isTonicUniversalBassNote;
     }
     if (settingsSelection == SettingsSelection.scaleDegrees) {

@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'home_page.dart';
 
-//TODO: Fix 'Scale Tonic as Universal Bass Note' feature. It's not working properly
+//TODO: Add landing page
 //TODO: Fix PERFORMANCE ISSUES
-//TODO: Add metronome sound (add sound to every beat in the grid)
-//TODO: Add delay to image when playing to sync metronome indicator and sound
 //TODO: fix dropdown overflow
+//TODO: Fix bassNoteIndex calculation
+//TODO: Change player chords notes indexes (currently '2') to '3' or '4'
+//TODO: Fix notes on keyboard
+//TODO: Fix stop button
 
 void main() {
   try {

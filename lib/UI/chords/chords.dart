@@ -165,7 +165,8 @@ class Chords extends ConsumerWidget {
       scale: scaleFingerings.scaleModel!.scale!,
       originalScaleType: scaleFingerings.scaleModel!.scale!,
       parentScaleKey: scaleFingerings.scaleModel!.parentScaleKey,
-      selectedChordPitches: MusicUtils.cleanNotesIndexes(chordNotes),
+      selectedChordPitches: MusicUtils.flatsAndSharpsToFlats(
+          MusicUtils.cleanNotesIndexes(chordNotes)),
     );
 
     return chord;

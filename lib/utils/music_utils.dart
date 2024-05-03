@@ -33,8 +33,7 @@ class MusicUtils {
     String baseNote = extractNoteName(
         fingeringsModel.scaleModel!.scaleNotesNames[chordIndex]);
 
-    var chordNotes =
-        createNoteList(baseNote, chordIntervals.values.toList(), 4);
+    var chordNotes = createNoteList(baseNote, chordIntervals.values.toList());
 
     //get the first, third and fifth element from the list
     return [chordNotes[0], chordNotes[2], chordNotes[4]];
@@ -410,14 +409,13 @@ class MusicUtils {
     return orderedScaleDegrees;
   }
 
-  static List<String> createNoteList(
-      String baseNote, List<int> intervals, int octave) {
+  static List<String> createNoteList(String baseNote, List<int> intervals) {
     List<String> notes = [];
 
     String noteToFlats = flatsOnlyNoteNomenclature(baseNote);
 
     // Parse the base note
-    var basePitch = Pitch.parse(noteToFlats);
+    var basePitch = Pitch.parse("${noteToFlats}3");
 
     // Calculate notes for each interval
     for (int interval in intervals) {
@@ -591,4 +589,50 @@ class MusicUtils {
 
     return noteSubString;
   }
+
+  static int calculateIndexForBassNote(
+      String previousChordNote, String currentNote, int currentIndex) {
+    // Get the index of the notes
+    int index1 = MusicConstants.notesWithFlats.indexOf(previousChordNote);
+    int index2 = MusicConstants.notesWithFlats.indexOf(currentNote);
+
+    // Calculate the distance between the notes
+    int distance = index2 - index1;
+
+    // Check for octave change
+    bool octaveChange = (distance.abs() < 4);
+    if (octaveChange) {
+      if (currentIndex == 2) {
+        currentIndex = currentIndex + 1;
+      }
+      if (currentIndex == 3) {
+        currentIndex = currentIndex - 1;
+      }
+    }
+
+    return currentIndex;
+  }
+
+  // static int calculateIndexForBassNote(
+  //     String previousChordNote, String currentNote, int currentIndex) {
+  //   int index = currentIndex;
+
+  //   int index1 = MusicConstants.notesWithFlats.indexOf(previousChordNote);
+  //   int index2 = MusicConstants.notesWithFlats.indexOf(currentNote);
+
+  //   int distance1 = index2 - index1;
+  //   int distance2 = index1 - index2;
+
+  //   if (distance1 > 4 || distance2 > 4) {
+  //     if (index == 2) {
+  //       index = index + 1;
+  //     }
+  //   }
+  //   if (distance2 <= 4 || distance2 <= 4) {
+  //     if (index == 3) {
+  //       index = index - 1;
+  //     }
+  //   }
+  //   return index;
+  // }
 }
