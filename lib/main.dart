@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'home_page.dart';
 
-//TODO: Add landing page
 //TODO: Fix PERFORMANCE ISSUES
 //TODO: fix dropdown overflow
 //TODO: Fix bassNoteIndex calculation
@@ -11,9 +11,12 @@ import 'home_page.dart';
 //TODO: Fix notes on keyboard
 //TODO: Fix stop button
 
-void main() {
+void main() async {
   try {
-    WidgetsFlutterBinding.ensureInitialized();
+    WidgetsBinding widgetsBiding = WidgetsFlutterBinding.ensureInitialized();
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBiding);
+    // await Future.delayed(const Duration(seconds: 1));
+    FlutterNativeSplash.remove();
     runApp(const ProviderScope(child: MyApp()));
   } catch (error) {
     print('Setup has failed');
