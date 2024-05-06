@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scale_master_guitar/constants/music_constants.dart';
 import '../../models/scale_model.dart';
 import '../../utils/music_utils.dart';
 import 'custom_piano_key.dart';
@@ -54,12 +55,14 @@ class _CustomPianoState extends State<CustomPiano> {
         var notesList = widget.scaleInfo!.scaleNotesNames
             .map((e) => MusicUtils.extractNoteName(e))
             .toList();
-        var t = MusicUtils.extractNoteName(
+        var cleanedNoteName = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
 
         Color? color = Colors.blue;
         // if (notesList.contains(t)) {
-        notesList.first == t ? color = Colors.orange : color = Colors.blue;
+        notesList.first == cleanedNoteName
+            ? color = Colors.orange
+            : color = Colors.blue;
         // print('Note is in scale');
         // int index = notesList.indexOf(t);
         // var degree = widget.scaleInfo!.degreeFunction[index];
@@ -70,7 +73,10 @@ class _CustomPianoState extends State<CustomPiano> {
           note: noteName,
           containerColor: color,
           onKeyPressed: (noteName) => widget.onKeyPressed(noteName),
-          isInScale: _isInScale(noteName), // Check if note is in scale
+          isInScale: _isInScale(
+            cleanedNoteName,
+            notesList,
+          ), // Check if note is in scale
         ));
       }
     }
@@ -93,11 +99,15 @@ class _CustomPianoState extends State<CustomPiano> {
         var notesList = widget.scaleInfo!.scaleNotesNames
             .map((e) => MusicUtils.extractNoteName(e))
             .toList();
-        var t = MusicUtils.extractNoteName(
+        var cleanedNoteName = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
         String? degree;
+
         Color? color = Colors.blue;
-        if (notesList.contains(t)) {
+        notesList.first == cleanedNoteName
+            ? color = Colors.orange
+            : color = Colors.blue;
+        if (notesList.contains(cleanedNoteName)) {
           // print('Note is in scale');
           // int index = notesList.indexOf(t);
           // degree = widget.scaleInfo!.degreeFunction[index];
@@ -113,7 +123,8 @@ class _CustomPianoState extends State<CustomPiano> {
             note: noteName,
             containerColor: color,
             onKeyPressed: (noteName) => widget.onKeyPressed(noteName),
-            isInScale: _isInScale(noteName), // Check if note is in scale
+            isInScale: _isInScale(
+                cleanedNoteName, notesList), // Check if note is in scale
           ),
         ));
       }
@@ -121,18 +132,13 @@ class _CustomPianoState extends State<CustomPiano> {
     return blackKeys;
   }
 
-  // Check if the note is contained in the selected scale
-  bool _isInScale(String noteName) {
-    if (widget.scaleInfo != null) {
-      List notesList = widget.scaleInfo!.scaleNotesNames
-          .map((e) => MusicUtils.extractNoteName(e))
-          .toList();
-      if (noteName.contains('/')) {
-        noteName = MusicUtils.filterNoteNameWithSlash(noteName);
-      }
-      String note = MusicUtils.extractNoteName(noteName);
-      return notesList.contains(note);
-    }
-    return false;
+  bool _isInScale(String cleanedNoteName, List notesList) {
+    var listMidiValues = List.from(notesList)
+        .map((e) => MusicConstants
+            .midiValues["${MusicUtils.flatsAndSharpsToFlats(e)}1"])
+        .toList();
+    var noteMidiValue = MusicConstants.midiValues["${cleanedNoteName}1"];
+
+    return listMidiValues.contains(noteMidiValue);
   }
 }

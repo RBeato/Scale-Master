@@ -6,8 +6,6 @@ import 'home_page.dart';
 
 //TODO: Fix PERFORMANCE ISSUES
 //TODO: fix dropdown overflow
-//TODO: Fix bassNoteIndex calculation
-//TODO: Change player chords notes indexes (currently '2') to '3' or '4'
 //TODO: Fix notes on keyboard
 //TODO: Fix stop button
 

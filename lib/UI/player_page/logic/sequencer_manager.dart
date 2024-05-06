@@ -109,9 +109,7 @@ class SequencerManager {
 
     for (int i = 0; i < selectedChords.length; i++) {
       ChordModel chord = selectedChords[i];
-      print("chord $chord");
       for (var note in chord.chordNotesInversionWithIndexes!) {
-        //TODO: fix selectedChordPitches. Inversion Creation problem
         project.pianoState.setVelocity(
             chord.position, MusicConstants.midiValues[note]!, 0.99);
       }

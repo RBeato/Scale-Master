@@ -42,9 +42,9 @@ class HomePageState extends ConsumerState<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(flex: 2, child: ScaleSelector()),
+            Expanded(flex: 1, child: ScaleSelector()),
             const Expanded(
-              flex: 10,
+              flex: 8,
               child: WheelAndPianoColumn(),
             ),
           ],
@@ -66,15 +66,18 @@ class WheelAndPianoColumn extends ConsumerWidget {
         data: (data) {
           return Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const SizedBox(height: 20),
                 Expanded(
                   flex: 2,
                   child: Center(child: ChromaticWheel(data!.scaleModel!)),
                 ),
                 Expanded(
                   flex: 1,
-                  child: CustomPianoSoundController(data.scaleModel),
+                  child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CustomPianoSoundController(data.scaleModel)),
                 ),
               ],
             ),

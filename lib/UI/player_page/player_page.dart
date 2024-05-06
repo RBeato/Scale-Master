@@ -33,21 +33,16 @@ class PlayerPage extends ConsumerWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+                          const SizedBox(height: 10),
                           Fretboard(),
-                          const Expanded(flex: 2, child: Chords()),
+                          const Expanded(
+                              flex: 3, child: Center(child: Chords())),
                           Expanded(
                               flex: 4,
                               child: PlayerWidget(data!.scaleModel!.settings!)),
-                          Expanded(flex: 1, child: Container()),
+                          const SizedBox(height: 40),
                         ],
                       ),
-                      // Positioned(
-                      //   bottom: 0,
-                      //   left: 0,
-                      //   right: 0,
-                      //   child:
-                      //       DraggableHandle(), // Use your draggable handle widget here
-                      // ),
                     ],
                   );
                 },
