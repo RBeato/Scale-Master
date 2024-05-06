@@ -6,6 +6,10 @@ class VoiceLeadingCreator {
     if (selectedChords.isEmpty) {
       return selectedChords;
     }
+    print(
+        "selectedChord.chordNotesInversionWithIndexes ${selectedChords.first.chordNotesInversionWithIndexes.hashCode}");
+    print(
+        "selectedChord.selectedChordPitches ${selectedChords.first.selectedChordPitches.hashCode}");
 
     // Create random inversion for the first chord
     _createFirstChordRandomInversion(selectedChords.first);
@@ -19,18 +23,20 @@ class VoiceLeadingCreator {
   }
 
   static void _createFirstChordRandomInversion(ChordModel chordModel) {
-    List<String> chordNotes = chordModel.selectedChordPitches!;
+    List<String> chordNotes = List.from(chordModel
+        .selectedChordPitches!); //to create a new object. Not a reference to the same object
     int randomInt = MusicUtils.selectRandomItem(chordNotes);
     for (int i = 0; i < randomInt - 1; i++) {
       chordNotes.add(chordNotes.first);
       chordNotes.removeAt(0);
     }
-    addOctaveIndexes(chordNotes);
+    chordModel.chordNotesInversionWithIndexes = addOctaveIndexes(chordNotes);
   }
 
   static void _createVoiceLeading(
       ChordModel lastChord, ChordModel secondToLastChord) {
-    List<String> lastChordNotes = lastChord.selectedChordPitches!;
+    List<String> lastChordNotes = List.from(lastChord
+        .selectedChordPitches!); //to create a new object. Not a reference to the same object
 
     List<String> reorderedChordNotes = [];
     for (var note in lastChordNotes) {
@@ -41,10 +47,11 @@ class VoiceLeadingCreator {
         (a, b) => MusicUtils.getNoteIndex(a) - MusicUtils.getNoteIndex(b));
 
     addOctaveIndexes(reorderedChordNotes);
-    lastChord.selectedChordPitches = reorderedChordNotes;
+
+    lastChord.chordNotesInversionWithIndexes = reorderedChordNotes;
   }
 
-  static void addOctaveIndexes(List<String> reorderedNotes) {
+  static addOctaveIndexes(List<String> reorderedNotes) {
     int octave = 4;
     int prevNoteIndex = -1;
 
@@ -54,9 +61,10 @@ class VoiceLeadingCreator {
         octave++;
       }
       reorderedNotes[i] =
-          reorderedNotes[i].substring(0, reorderedNotes[i].length - 1) +
+          reorderedNotes[i].substring(0, reorderedNotes[i].length) +
               octave.toString();
       prevNoteIndex = noteIndex;
     }
+    return reorderedNotes;
   }
 }

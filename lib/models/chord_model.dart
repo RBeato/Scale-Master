@@ -19,7 +19,7 @@ class ChordModel {
   String? function;
   String? typeOfChord;
   Color? color;
-  List<String>? allChordExtensions;
+  List<String>? chordNotesInversionWithIndexes;
   List<String>? selectedChordPitches;
   String? originModeType;
   Settings? settings;
@@ -46,7 +46,7 @@ class ChordModel {
     // this.chordProgression,
     this.typeOfChord,
     this.color,
-    this.allChordExtensions,
+    this.chordNotesInversionWithIndexes,
     this.selectedChordPitches,
     this.originModeType,
     this.settings,
@@ -57,7 +57,7 @@ class ChordModel {
     chordNameForUI = _getChordNameForUI();
     chordNameForAudio = MusicUtils.flatsAndSharpsToFlats(parentScaleKey);
     color = _getColorFromFunction();
-    allChordExtensions = _getOrganizedPitches();
+    // chordNotesInversionWithIndexes = _getOrganizedPitches();
   }
 
   List<String> _getOrganizedPitches() {
@@ -120,7 +120,7 @@ class ChordModel {
       function: function ?? this.function,
       typeOfChord: typeOfChord ?? this.typeOfChord,
       color: color ?? this.color,
-      allChordExtensions:
+      chordNotesInversionWithIndexes:
           allChordExtensions ?? pitches, // Update organizedPitches
       selectedChordPitches: pitches ?? selectedChordPitches,
       originModeType: originModeType ?? this.originModeType,
@@ -133,6 +133,6 @@ class ChordModel {
 
   @override
   String toString() {
-    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, selectedChordPitches: $selectedChordPitches,allChordExtension $allChordExtensions, originModeType: $originModeType), completeChordName: $completeChordName, chordFunction: $chordFunction, chordDegree: $chordDegree, settings: $settings)';
+    return 'ScaleModel(scale: $scale, mode: $mode, chordNameForAudio: $chordNameForAudio, chordNameForUI: $chordNameForUI, function: $function,typeOfChord: $typeOfChord color: $color, selectedChordPitches: $selectedChordPitches,allChordExtension $chordNotesInversionWithIndexes, originModeType: $originModeType), completeChordName: $completeChordName, chordFunction: $chordFunction, chordDegree: $chordDegree, settings: $settings)';
   }
 }

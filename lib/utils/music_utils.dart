@@ -22,20 +22,14 @@ class MusicUtils {
 
   static List<String> getChordInfo(
       ChordScaleFingeringsModel fingeringsModel, int chordIndex) {
-    //This returns a list with stacked thirds for adding extensions
-    // Map<String, int> chordIntervals = _getChordIntervalsStackedThirds(
-    //     fingeringsModel.scaleModel!.modesScalarTonicIntervals[chordIndex]);
-
     Map<String, int> chordIntervals = _getNotesScaleNotes(
         fingeringsModel.scaleModel!.modesScalarTonicIntervals[chordIndex]);
 
-//Get the note that is the one that the chord is built on (not the note that names the chord)
     String baseNote = extractNoteName(
         fingeringsModel.scaleModel!.scaleNotesNames[chordIndex]);
 
     var chordNotes = createNoteList(baseNote, chordIntervals.values.toList());
 
-    //get the first, third and fifth element from the list
     return [chordNotes[0], chordNotes[2], chordNotes[4]];
   }
 
@@ -531,7 +525,7 @@ class MusicUtils {
     return index;
   }
 
-  static flatsAndSharpsToFlats(noteSubString) {
+  static flatsAndSharpsToFlats(String noteSubString) {
     // print('Called flatsOnlyNoteNomenclature');
     switch (noteSubString) {
       case 'C':

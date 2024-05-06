@@ -110,10 +110,8 @@ class SequencerManager {
     for (int i = 0; i < selectedChords.length; i++) {
       ChordModel chord = selectedChords[i];
       print("chord $chord");
-      for (var note in chord.selectedChordPitches!) {
+      for (var note in chord.chordNotesInversionWithIndexes!) {
         //TODO: fix selectedChordPitches. Inversion Creation problem
-        // allChordExtensions!) {
-        //TODO: use .selectedChordPitches
         project.pianoState.setVelocity(
             chord.position, MusicConstants.midiValues[note]!, 0.99);
       }
@@ -130,7 +128,6 @@ class SequencerManager {
 
       if (i > 0) {
         index = MusicUtils.calculateIndexForBassNote(
-          //!TODO: Fix this
           MusicUtils.extractNoteName(selectedChords[i - 1].completeChordName!),
           note,
           index,

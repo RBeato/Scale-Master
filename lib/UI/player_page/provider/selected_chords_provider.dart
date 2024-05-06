@@ -42,29 +42,29 @@ class SelectedChords extends StateNotifier<List<ChordModel>> {
     ref.read(beatCounterProvider.notifier).update((state) => sum);
   }
 
-  List<ChordModel> filterChords(
-      List<String> extensions, List<ChordModel> chords) {
-    final extensionIndexes = {
-      '7': 3,
-      '9': 4,
-      '11': 5,
-      '13': 6,
-    };
+  // List<ChordModel> filterChords(
+  //     List<String> extensions, List<ChordModel> chords) {
+  //   final extensionIndexes = {
+  //     '7': 3,
+  //     '9': 4,
+  //     '11': 5,
+  //     '13': 6,
+  //   };
 
-    var c = chords.map((chord) {
-      List<String> updatedPitches =
-          chord.allChordExtensions?.take(3).toList() ?? [];
+  //   var c = chords.map((chord) {
+  //     List<String> updatedPitches =
+  //         chord.allChordExtensions?.take(3).toList() ?? [];
 
-      for (var ext in extensions) {
-        final index = extensionIndexes[ext];
-        if (index != null) {
-          updatedPitches.add(chord.allChordExtensions![index]);
-        }
-      }
-      return chord.copyWith(pitches: updatedPitches);
-    }).toList();
-    return c;
-  }
+  //     for (var ext in extensions) {
+  //       final index = extensionIndexes[ext];
+  //       if (index != null) {
+  //         updatedPitches.add(chord.allChordExtensions![index]);
+  //       }
+  //     }
+  //     return chord.copyWith(pitches: updatedPitches);
+  //   }).toList();
+  //   return c;
+  // }
 
   void removeAll() {
     state = [];

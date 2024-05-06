@@ -15,7 +15,6 @@ void main() async {
   try {
     WidgetsBinding widgetsBiding = WidgetsFlutterBinding.ensureInitialized();
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBiding);
-    // await Future.delayed(const Duration(seconds: 1));
     FlutterNativeSplash.remove();
     runApp(const ProviderScope(child: MyApp()));
   } catch (error) {

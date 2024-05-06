@@ -153,21 +153,22 @@ class Chords extends ConsumerWidget {
             alreadySelectedChords.last.duration;
 
     ChordModel? chord = ChordModel(
-      id: position,
-      noteName: scaleFingerings.scaleModel!.scaleNotesNames[index],
-      duration: tap == Taps.single ? 2 : 4,
-      mode: scaleFingerings.scaleModel!.mode!,
-      position: position,
-      chordNotesWithIndexesRaw: chordNotes,
-      chordFunction: scaleFingerings.scaleModel!.chordTypes[index],
-      chordDegree: scaleFingerings.scaleModel!.degreeFunction[index],
-      completeChordName: uiChordName,
-      scale: scaleFingerings.scaleModel!.scale!,
-      originalScaleType: scaleFingerings.scaleModel!.scale!,
-      parentScaleKey: scaleFingerings.scaleModel!.parentScaleKey,
-      selectedChordPitches: MusicUtils.flatsAndSharpsToFlats(
-          MusicUtils.cleanNotesIndexes(chordNotes)),
-    );
+        id: position,
+        noteName: scaleFingerings.scaleModel!.scaleNotesNames[index],
+        duration: tap == Taps.single ? 2 : 4,
+        mode: scaleFingerings.scaleModel!.mode!,
+        position: position,
+        chordNotesWithIndexesRaw: chordNotes,
+        chordFunction: scaleFingerings.scaleModel!.chordTypes[index],
+        chordDegree: scaleFingerings.scaleModel!.degreeFunction[index],
+        completeChordName: uiChordName,
+        scale: scaleFingerings.scaleModel!.scale!,
+        originalScaleType: scaleFingerings.scaleModel!.scale!,
+        parentScaleKey: scaleFingerings.scaleModel!.parentScaleKey,
+        selectedChordPitches: MusicUtils.cleanNotesIndexes(chordNotes)
+            .map((n) => MusicUtils.flatsAndSharpsToFlats(n) as String)
+            .toList(),
+        chordNotesInversionWithIndexes: []);
 
     return chord;
   }
