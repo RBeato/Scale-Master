@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'UI/fretboard/provider/fingerings_provider.dart';
 import 'home_page.dart';
 
 //TODO: Fix PERFORMANCE ISSUES
 //TODO: fix dropdown overflow
-//TODO: Fix notes on keyboard
-//TODO: Fix stop button
+//TODO: fix voice leading
+//TODO: manage excessive clicking on the player page
 
 void main() async {
   try {
-    WidgetsBinding widgetsBiding = WidgetsFlutterBinding.ensureInitialized();
-    FlutterNativeSplash.preserve(widgetsBinding: widgetsBiding);
+    WidgetsFlutterBinding.ensureInitialized();
+    final container = ProviderContainer();
+    await container.read(chordModelFretboardFingeringProvider.future);
     FlutterNativeSplash.remove();
+
     runApp(const ProviderScope(child: MyApp()));
   } catch (error) {
     print('Setup has failed');

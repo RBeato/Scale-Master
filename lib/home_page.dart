@@ -68,7 +68,6 @@ class WheelAndPianoColumn extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(height: 20),
                 Expanded(
                   flex: 2,
                   child: Center(child: ChromaticWheel(data!.scaleModel!)),
@@ -83,7 +82,8 @@ class WheelAndPianoColumn extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const CircularProgressIndicator(color: Colors.orange),
+        loading: () => const Center(
+            child: CircularProgressIndicator(color: Colors.orange)),
         error: (error, stackTrace) => Text('Error: $error'));
   }
 }

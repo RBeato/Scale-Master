@@ -27,7 +27,7 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width *
-                    0.3, // Adjust the max width as needed
+                    0.2, // Adjust the max width as needed
               ),
               child: DropdownButtonFormField<String>(
                 dropdownColor: Colors.grey[800],
@@ -59,7 +59,7 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width *
-                    0.3, // Adjust the max width as needed
+                    0.2, // Adjust the max width as needed
               ),
               child: DropdownButtonFormField<String>(
                 dropdownColor: Colors.grey[800],

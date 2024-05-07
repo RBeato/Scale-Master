@@ -7,7 +7,7 @@ import '../chords_list.dart';
 import '../metronome/metronome_display.dart';
 import '../metronome/metronome_icon.dart';
 
-class ChordPlayerBar extends ConsumerWidget {
+class ChordPlayerBar extends ConsumerStatefulWidget {
   const ChordPlayerBar({
     Key? key,
     required this.selectedTrack,
@@ -28,17 +28,53 @@ class ChordPlayerBar extends ConsumerWidget {
   final Function() handleTogglePlayStop;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ChordPlayerBarState createState() => ChordPlayerBarState();
+}
+
+class ChordPlayerBarState extends ConsumerState<ChordPlayerBar> {
+  bool _showNoChordSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedChords = ref.watch(selectedChordsProvider);
 
-    if (selectedTrack == null || selectedChords.isEmpty) {
+    // Reset _showNoChordSelected when there are changes in selectedChords
+    if (selectedChords.isNotEmpty) {
+      _showNoChordSelected = false;
+    }
+
+    if (widget.selectedTrack == null || selectedChords.isEmpty) {
+      if (!_showNoChordSelected) {
+        // Show CircularProgressIndicator for 500ms
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            setState(() {
+              _showNoChordSelected = true;
+            });
+          }
+        });
+        return const Center(
+            child: CircularProgressIndicator(
+          color: Colors.orangeAccent,
+        ));
+      } else {
+        // Show "No chord selected!" after the delay
+        return const Center(
+          child: Text(
+            "No chord selected!",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      }
+    }
+
+    if (widget.isLoading) {
       return const Center(
-          child: Text("No chord selected!",
-              style: TextStyle(color: Colors.white)));
+          child: CircularProgressIndicator(
+        color: Colors.orangeAccent,
+      ));
     }
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.black,
@@ -56,23 +92,25 @@ class ChordPlayerBar extends ConsumerWidget {
           ),
           //CLEAR DRUMS BUTTON and TRANSPORT
           Positioned(
-              left: 0,
-              bottom: 0,
-              child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: GestureDetector(
-                    onTap: handleTogglePlayStop,
-                    child: Icon(
-                      isPlaying ? Icons.stop : Icons.play_arrow,
-                      color: Colors.white70,
-                      size: 40,
-                    ),
-                  ))),
+            left: 0,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                onTap: widget.handleTogglePlayStop,
+                child: Icon(
+                  widget.isPlaying ? Icons.stop : Icons.play_arrow,
+                  color: Colors.white70,
+                  size: 40,
+                ),
+              ),
+            ),
+          ),
           Positioned(
             bottom: 0,
             right: 0,
             child: InkWell(
-              onTap: clearTracks,
+              onTap: widget.clearTracks,
               child: Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: const BoxDecoration(
@@ -95,7 +133,7 @@ class ChordPlayerBar extends ConsumerWidget {
                 width: 70,
                 height: 30.0,
                 child: MetronomeDisplay(
-                  selectedTempo: tempo,
+                  selectedTempo: widget.tempo,
                 ),
               ),
             ),

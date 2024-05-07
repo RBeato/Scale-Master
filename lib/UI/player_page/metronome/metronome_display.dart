@@ -2,9 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../provider/is_playing_provider.dart';
 import '../provider/metronome_tempo_provider.dart';
 
-class MetronomeDisplay extends StatelessWidget {
+class MetronomeDisplay extends ConsumerWidget {
   const MetronomeDisplay({
     required this.selectedTempo,
     // required this.handleChange,
@@ -14,7 +15,7 @@ class MetronomeDisplay extends StatelessWidget {
   // final Function(int nextTempo) handleChange;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
@@ -24,9 +25,15 @@ class MetronomeDisplay extends StatelessWidget {
       ),
       child: MaterialButton(
         padding: EdgeInsets.zero,
-        onPressed: () => showDialog(
-            context: context,
-            builder: (_) => BPMSelector(selectedTempo: selectedTempo)),
+        onPressed: () {
+          ref
+              .read(isSequencerPlayingProvider.notifier)
+              .update((state) => false);
+
+          showDialog(
+              context: context,
+              builder: (_) => BPMSelector(selectedTempo: selectedTempo));
+        },
         child: Text(
           selectedTempo.toString(),
           style: const TextStyle(

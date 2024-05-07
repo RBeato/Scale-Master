@@ -280,6 +280,7 @@ class SequencerManager {
 
   clearTracks(ref, List<Track> tracks, Sequence sequence) {
     sequence.stop();
+    ref.read(isSequencerPlayingProvider.notifier).update((state) => false);
     if (tracks.isNotEmpty) {
       trackStepSequencerStates[tracks[0].id] = StepSequencerState();
       _syncTrack(tracks[0]);

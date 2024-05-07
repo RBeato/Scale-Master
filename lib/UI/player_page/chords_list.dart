@@ -9,41 +9,37 @@ class ChordListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return chordList.isEmpty
-        ? const Center(
-            child: Text("No chords selected",
-                style: TextStyle(color: Colors.white)))
-        : Column(
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
             children: [
-              Expanded(
-                child: Stack(
+              const MetronomeIndicator(),
+              Opacity(
+                opacity: 0.9,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const MetronomeIndicator(),
-                    Opacity(
-                      opacity: 0.9,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (final chord in chordList)
-                            Expanded(
-                              flex: chord.duration,
-                              child: Container(
-                                color: chord.color,
-                                child: Center(
-                                  child: Text(
-                                    chord.completeChordName!,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
+                    for (final chord in chordList)
+                      Expanded(
+                        flex: chord.duration,
+                        child: Container(
+                          color: chord.color,
+                          child: Center(
+                            child: Text(
+                              chord.completeChordName!,
+                              style: const TextStyle(color: Colors.white),
                             ),
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ],
-          );
+          ),
+        ),
+      ],
+    );
   }
 }
