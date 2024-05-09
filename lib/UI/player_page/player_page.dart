@@ -5,14 +5,17 @@ import 'package:scale_master_guitar/UI/fretboard/provider/fingerings_provider.da
 import 'package:scale_master_guitar/UI/player_page/player/player_widget.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/player_page_title.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/selected_chords_provider.dart';
-import 'package:scale_master_guitar/UI/player_page/save_image_button.dart';
 
+import '../../models/chord_scale_model.dart';
 import '../chords/chords.dart';
 import '../fretboard/UI/fretboard_neck.dart';
 import '../fretboard_page/fretboard_page.dart';
+import '../fretboard_page/provider/fretboard_page_fingerings_provider.dart';
 
 class PlayerPage extends ConsumerWidget {
-  const PlayerPage({Key? key}) : super(key: key);
+  PlayerPage({Key? key}) : super(key: key);
+
+  ChordScaleFingeringsModel? f;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +33,9 @@ class PlayerPage extends ConsumerWidget {
           actions: [
             IconButton(
               onPressed: () {
-                // Navigate to the next page when the arrow icon is tapped
+                if (f != null) {
+                  ref.read(fretboardPageFingeringsProvider.notifier).update(f!);
+                }
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const FretboardPage()));
               },
@@ -41,6 +46,7 @@ class PlayerPage extends ConsumerWidget {
         body: SafeArea(
             child: fingerings.when(
                 data: (data) {
+                  f = data;
                   return Stack(
                     children: [
                       Column(

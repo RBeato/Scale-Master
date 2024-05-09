@@ -32,7 +32,7 @@ class HomePageState extends ConsumerState<HomePage> {
           IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const PlayerPage()));
+                  MaterialPageRoute(builder: (context) => PlayerPage()));
             },
             icon: const Icon(Icons.arrow_forward, color: Colors.orange),
           ),

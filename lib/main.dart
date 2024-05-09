@@ -9,6 +9,7 @@ import 'home_page.dart';
 //TODO: fix dropdown overflow
 //TODO: fix voice leading
 //TODO: manage excessive clicking on the player page
+//TODO: new fretboard page
 
 void main() async {
   try {

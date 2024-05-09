@@ -16,6 +16,24 @@ class ChordScaleFingeringsModel {
       this.scaleDegreesPositionsMap,
       this.scaleModel});
 
+  ChordScaleFingeringsModel copyWith({
+    List? chordVoicingNotesPositions,
+    List? scaleNotesPositions,
+    Map<String, Color>? scaleColorfulMap,
+    Map<String, String>? scaleDegreesPositionsMap,
+    ScaleModel? scaleModel,
+  }) {
+    return ChordScaleFingeringsModel(
+      chordVoicingNotesPositions:
+          chordVoicingNotesPositions ?? this.chordVoicingNotesPositions,
+      scaleNotesPositions: scaleNotesPositions ?? this.scaleNotesPositions,
+      scaleColorfulMap: scaleColorfulMap ?? this.scaleColorfulMap,
+      scaleDegreesPositionsMap:
+          scaleDegreesPositionsMap ?? this.scaleDegreesPositionsMap,
+      scaleModel: scaleModel ?? this.scaleModel,
+    );
+  }
+
   @override
   String toString() {
     return 'ChordScaleFingeringsModel info:'

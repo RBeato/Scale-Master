@@ -1,117 +1,145 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/chord_scale_model.dart';
-
-class FretboardCustomizablePainter extends StatefulWidget {
+class FretboardCustomPainter extends StatefulWidget {
   final int stringCount;
   final int fretCount;
-  final ChordScaleFingeringsModel fingeringsModel;
-  final Function(List<List<int>>) onDotsUpdated;
+  final double fretboardLengthRatio;
+  final List<Offset> dots;
+  final Function(List<Offset>) onDotsUpdated;
 
-  const FretboardCustomizablePainter({
+  const FretboardCustomPainter({
     required this.stringCount,
     required this.fretCount,
-    required this.fingeringsModel,
+    required this.fretboardLengthRatio,
+    required this.dots,
     required this.onDotsUpdated,
   });
 
   @override
-  _FretboardPainterState createState() => _FretboardPainterState();
+  _FretboardCustomPainterState createState() => _FretboardCustomPainterState();
 }
 
-class _FretboardPainterState extends State<FretboardCustomizablePainter> {
-  List<List<int>> dots = [];
+class _FretboardCustomPainterState extends State<FretboardCustomPainter> {
+  late double fretWidth;
+  late double stringHeight;
+  late double dotRadius;
+
+  @override
+  void initState() {
+    super.initState();
+    final size = context.size!;
+    fretWidth = size.height / (widget.fretCount + 1);
+    stringHeight = size.width / widget.stringCount;
+    dotRadius = fretWidth / 3;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) {
-        final fretWidth = MediaQuery.of(context).size.width / widget.fretCount;
-        final stringHeight =
-            MediaQuery.of(context).size.height / widget.stringCount;
-        final fret = (details.localPosition.dx / fretWidth).floor();
-        final string = (details.localPosition.dy / stringHeight).floor();
-
-        // Check if the dot already exists, if so, remove it
-        final existingDotIndex =
-            dots.indexWhere((dot) => dot[0] == string && dot[1] == fret);
-        if (existingDotIndex != -1) {
-          setState(() {
-            dots.removeAt(existingDotIndex);
-            widget.onDotsUpdated(dots);
-          });
-        } else {
-          // Add a new dot
-          setState(() {
-            dots.add([string, fret]);
-            widget.onDotsUpdated(dots);
-          });
+        if (widget.dots.isNotEmpty) {
+          final dotToRemove = widget.dots
+              .indexWhere((dot) => _isWithinDot(details.localPosition, dot));
+          if (dotToRemove != -1) {
+            setState(() {
+              widget.dots.removeAt(dotToRemove);
+              widget.onDotsUpdated(widget.dots);
+            });
+            return;
+          }
         }
-      },
-      onDoubleTap: () {
-        // Handle double tap to delete the last dot
-        if (dots.isNotEmpty) {
-          setState(() {
-            dots.removeLast();
-            widget.onDotsUpdated(dots);
-          });
-        }
+        final dotToAdd = _calculateNearestDot(details.localPosition);
+        setState(() {
+          widget.dots.add(dotToAdd);
+          widget.onDotsUpdated(widget.dots);
+        });
       },
       child: CustomPaint(
         painter: _FretboardPainter(
           stringCount: widget.stringCount,
           fretCount: widget.fretCount,
-          fingeringsModel: widget.fingeringsModel,
-          dots: dots,
+          fretboardLengthRatio: widget.fretboardLengthRatio,
+          dots: widget.dots,
+          fretWidth: fretWidth,
+          stringHeight: stringHeight,
+          dotRadius: dotRadius,
         ),
       ),
     );
+  }
+
+  Offset _calculateNearestDot(Offset position) {
+    final fret = (position.dy / fretWidth).round();
+    final string = (position.dx / stringHeight).round();
+    final nearestFretX = fretWidth * fret;
+    final nearestStringY = stringHeight * string;
+    return Offset(nearestStringY, nearestFretX);
+  }
+
+  bool _isWithinDot(Offset position, Offset dot) {
+    final distance = (position - dot).distance;
+    return distance <= dotRadius;
   }
 }
 
 class _FretboardPainter extends CustomPainter {
   final int stringCount;
   final int fretCount;
-  final ChordScaleFingeringsModel fingeringsModel;
-  final List<List<int>> dots;
+  final double fretboardLengthRatio;
+  final List<Offset> dots;
+  final double fretWidth;
+  final double stringHeight;
+  final double dotRadius;
 
   _FretboardPainter({
     required this.stringCount,
     required this.fretCount,
-    required this.fingeringsModel,
+    required this.fretboardLengthRatio,
     required this.dots,
+    required this.fretWidth,
+    required this.stringHeight,
+    required this.dotRadius,
   });
 
-  static TextStyle textStyle =
-      const TextStyle(fontSize: 10.0, color: Colors.white);
+  static final Paint neckPaint = Paint()
+    ..color = Colors.grey[700]!
+    ..strokeWidth = 2.0;
+
+  static const TextStyle textStyle =
+      TextStyle(fontSize: 10.0, color: Colors.white);
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Your existing paint logic goes here
-    // I'll skip it for brevity since it's unchanged
+    final fretboardLength = size.height * fretboardLengthRatio;
 
-    // Draw dots based on the positions in the dots list
-    final fretWidth = size.width / fretCount;
-    final stringHeight = size.height / stringCount;
-    final dotRadius = fretWidth / 3;
+    // Draw vertical fret lines
+    for (int i = 0; i < fretCount + 1; i++) {
+      final x = i * fretWidth;
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, fretboardLength),
+        neckPaint,
+      );
+    }
 
-    final dotColor = Paint()..color = Colors.blueGrey;
+    // Draw horizontal string lines
+    for (int i = 0; i < stringCount; i++) {
+      final y = i * stringHeight;
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        neckPaint,
+      );
+    }
 
+    // Draw dots
     for (final dot in dots) {
-      final string = dot[0];
-      final fret = dot[1];
-
-      // Calculate the position of the dot
-      final x = (fret - 1) * fretWidth + fretWidth / 2;
-      final y = (string - 1) * stringHeight;
-
-      // Draw the dot
-      canvas.drawCircle(Offset(x, y), dotRadius, dotColor);
+      canvas.drawCircle(dot, dotRadius, neckPaint);
     }
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return false; // You can optimize this based on your needs
+    return false;
   }
 }
