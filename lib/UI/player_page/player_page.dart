@@ -52,10 +52,6 @@ class PlayerPage extends ConsumerWidget {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          const Expanded(
-                              child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: SaveImageButton())),
                           const SizedBox(height: 30),
                           Fretboard(),
                           const Expanded(

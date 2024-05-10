@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/chord_scale_model.dart';
 
+final fretboardPageDotsProvider = StateProvider<List<List<bool>>>((ref) => []);
+
 final fretboardPageFingeringsProvider = StateNotifierProvider<
     ChordModelFretboardFingeringNotifier,
     ChordScaleFingeringsModel>((ref) => ChordModelFretboardFingeringNotifier());
