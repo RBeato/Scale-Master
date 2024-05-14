@@ -50,11 +50,13 @@ class FretboardFull extends ConsumerStatefulWidget {
 
 class _FretboardFullState extends ConsumerState<FretboardFull> {
   late List<List<bool>> dotPositions;
+  // late List<List<bool>> dotPresence;
 
   @override
   void initState() {
     super.initState();
     dotPositions = createDotPositions(widget.fingeringsModel);
+    // dotPresence = List.generate(6, (index) => List.filled(25, false));
   }
 
   List<List<bool>> createDotPositions(
@@ -117,17 +119,20 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                     print("String: $string, fret: $fret");
 
                     // Create a copy of dotPositions to avoid mutating the original list
-                    List<List<bool>> updatedDotPositions =
-                        List.from(dotPositions);
+                    List<List<bool>> updatedDotPositions = List.generate(
+                      dotPositions.length,
+                      (i) => List.generate(
+                          dotPositions[i].length, (j) => dotPositions[i][j]),
+                    );
 
                     // Toggle the dot presence at the tapped position
                     updatedDotPositions[string][fret] =
                         !updatedDotPositions[string][fret];
 
-                    // Update the state using a provider (assuming you use Riverpod)
-                    ref
-                        .read(fretboardPageDotsProvider.notifier)
-                        .update((state) => updatedDotPositions);
+                    // Update the state directly
+                    setState(() {
+                      dotPositions = updatedDotPositions;
+                    });
                   },
                   child: WidgetToPngExporter(
                     child: CustomPaint(

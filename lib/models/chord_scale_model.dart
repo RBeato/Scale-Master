@@ -16,6 +16,13 @@ class ChordScaleFingeringsModel {
       this.scaleDegreesPositionsMap,
       this.scaleModel});
 
+  ChordScaleFingeringsModel copy() {
+    return ChordScaleFingeringsModel(
+      scaleModel: scaleModel, // Assuming scaleModel is immutable
+      // Copy other fields as needed
+    );
+  }
+
   ChordScaleFingeringsModel copyWith({
     List? chordVoicingNotesPositions,
     List? scaleNotesPositions,

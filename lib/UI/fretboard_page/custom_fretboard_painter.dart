@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../constants/fretboard_notes.dart';
 import '../../../models/chord_scale_model.dart';
+import '../../constants/roman_numeral_converter.dart';
 
 class CustomFretboardPainter extends CustomPainter {
   final int stringCount;
@@ -51,7 +52,8 @@ class CustomFretboardPainter extends CustomPainter {
 
       // Add Roman numerals between specific frets
       if ([3, 5, 7, 9, 12, 15, 17, 19, 21, 24].contains(p)) {
-        final romanNumeral = _getRomanNumeral(p); // Use p instead of i
+        final romanNumeral = RomanNumeralConverter.convertToFretRomanNumeral(
+            p); // Use p instead of i
         TextPainter textPainter = TextPainter(
           text: TextSpan(
             text: romanNumeral,
@@ -165,37 +167,16 @@ class CustomFretboardPainter extends CustomPainter {
     }
   }
 
-  String _getRomanNumeral(int fret) {
-    // Add your logic to convert fret number to Roman numeral here
-    // This is a simplified example, you can use a package like 'roman' for more accurate conversions
-    switch (fret) {
-      case 3:
-        return 'III';
-      case 5:
-        return 'V';
-      case 7:
-        return 'VII';
-      case 9:
-        return 'IX';
-      case 12:
-        return 'XII';
-      case 15:
-        return 'XV';
-      case 17:
-        return 'XVII';
-      case 19:
-        return 'XIX';
-      case 21:
-        return 'XXI';
-      case 24:
-        return 'XXIV';
-      default:
-        return '';
-    }
-  }
-
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false; // You can optimize this based on your needs
+  bool shouldRepaint(CustomFretboardPainter oldDelegate) {
+    // Check if dotPositions have changed
+    for (int i = 0; i < stringCount; i++) {
+      for (int j = 0; j < fretCount + 1; j++) {
+        if (oldDelegate.dotPositions[i][j] != dotPositions[i][j]) {
+          return true; // Repaint if any dot position has changed
+        }
+      }
+    }
+    return false; // No change in dotPositions, no repaint needed
   }
 }
