@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/fretboard_page/custom_fretboard_painter.dart';
 import 'package:scale_master_guitar/UI/fretboard_page/provider/fretboard_page_fingerings_provider.dart';
-import 'package:scale_master_guitar/UI/fretboard_page/save_button.dart';
 import 'package:scale_master_guitar/UI/fretboard_page/widget_to_png.dart';
 import 'package:scale_master_guitar/models/chord_scale_model.dart';
 
@@ -29,8 +28,8 @@ class FretboardPage extends ConsumerWidget {
         ),
         body: Stack(
           children: [
-            const Align(
-                alignment: Alignment.topRight, child: SaveImageButton()),
+            // const Align(
+            //     alignment: Alignment.topRight, child: SaveImageButton()),
             FretboardFull(fingeringsModel: fretboardFingerings),
           ],
         ),
@@ -87,7 +86,6 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
 
   @override
   Widget build(BuildContext context) {
-    //}, WidgetRef ref) {
     int stringCount = 6;
     int fretCount = 24;
 
@@ -108,26 +106,28 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                 ),
                 child: GestureDetector(
                   onTapDown: (details) {
-                    print(details);
                     final tapPosition = details.localPosition;
 
                     final stringHeight =
-                        constraints.maxWidth * 0.38 / stringCount;
+                        constraints.maxWidth * 0.39 / stringCount;
                     final fretWidth = constraints.maxHeight * 3.5 / fretCount;
 
                     final string = (tapPosition.dy / stringHeight).floor();
-                    // const double tolerance = 0.02;
                     final fret = ((tapPosition.dx) / fretWidth).floor();
-                    print("string: ${string + 1}, fret: ${fret + 1}");
+                    print("String: $string, fret: $fret");
 
-                    // Update dotPositions list to mark the tapped position as true (dot present)
-                    dotPositions[string][fret] =
-                        dotPositions[string][fret]; //string 0 == 1th string
+                    // Create a copy of dotPositions to avoid mutating the original list
+                    List<List<bool>> updatedDotPositions =
+                        List.from(dotPositions);
+
+                    // Toggle the dot presence at the tapped position
+                    updatedDotPositions[string][fret] =
+                        !updatedDotPositions[string][fret];
 
                     // Update the state using a provider (assuming you use Riverpod)
                     ref
                         .read(fretboardPageDotsProvider.notifier)
-                        .update((state) => (dotPositions));
+                        .update((state) => updatedDotPositions);
                   },
                   child: WidgetToPngExporter(
                     child: CustomPaint(

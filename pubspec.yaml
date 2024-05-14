@@ -13,16 +13,17 @@ dependencies:
     sdk: flutter
   auto_size_text: ^3.0.0
   async: ^2.8.2
+  cupertino_icons: ^1.0.2
   equatable: ^2.0.2
+  flutter_native_splash: ^2.2.1
+  flutter_virtual_piano: ^0.0.9
   flutter_riverpod: ^2.1.1
   flutter_sequencer: ^0.4.4
   google_fonts: ^4.0.3
+  path_provider: ^2.0.9
+  permission_handler: ^10.4.5
   shared_preferences: ^2.0.5
   tonic: ^0.2.3
-  flutter_virtual_piano: ^0.0.9
-  flutter_native_splash: ^2.2.1
-  permission_handler: ^10.4.5
-  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:

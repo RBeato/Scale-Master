@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 
 import 'package:flutter/rendering.dart';
+import 'package:scale_master_guitar/UI/fretboard_page/save_button.dart';
 
 class WidgetToPngExporter extends StatefulWidget {
   final Widget child;
@@ -46,7 +47,15 @@ class _WidgetToPngExporterState extends State<WidgetToPngExporter> {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       key: _globalKey,
-      child: widget.child,
+      child: Row(
+        children: [
+          const Align(
+            alignment: Alignment.bottomLeft,
+            child: RotatedBox(quarterTurns: 3, child: SaveImageButton()),
+          ),
+          widget.child,
+        ],
+      ),
     );
   }
 }

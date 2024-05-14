@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'dart:io';
 import 'dart:typed_data';
@@ -13,12 +14,9 @@ class SaveImageButton extends StatelessWidget {
     // Request permission
     PermissionStatus status = await Permission.storage.request();
 
-    // Check if permission is granted
     if (status.isGranted) {
-      // Permission is granted, proceed with saving the image
       _saveImage(context);
     } else {
-      // Permission is denied, handle accordingly
       print('Storage permission denied.');
     }
   }
@@ -30,10 +28,18 @@ class SaveImageButton extends StatelessWidget {
       // Call the capturePng method
       Uint8List? pngBytes = await widgetToPngExporterState.capturePng();
       if (pngBytes != null) {
-        String filePath =
-            'c:/Users/rbsou/Desktop/SMG_image.png'; // File path to save the image
-        await File(filePath).writeAsBytes(pngBytes);
-        print('PNG image saved: $filePath');
+        try {
+          // Get the directory for saving files
+          Directory directory = await getApplicationDocumentsDirectory();
+          String filePath = '${directory.path}/SMG_image.png';
+
+          // Write the PNG bytes to the file
+          await File(filePath).writeAsBytes(pngBytes);
+
+          print('PNG image saved: $filePath');
+        } catch (e) {
+          print('Error saving PNG image: $e');
+        }
       } else {
         print('Error capturing PNG image.');
       }
@@ -44,13 +50,13 @@ class SaveImageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => _requestStoragePermission(context),
-      icon: const Icon(
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () => _requestStoragePermission(context),
+      child: const Icon(
         Icons.download,
         color: Colors.orangeAccent,
       ),
-      tooltip: 'Export Widget as PNG',
     );
   }
 }
