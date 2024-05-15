@@ -47,13 +47,22 @@ class _WidgetToPngExporterState extends State<WidgetToPngExporter> {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       key: _globalKey,
-      child: Row(
+      child: Column(
         children: [
-          const Align(
-            alignment: Alignment.bottomLeft,
-            child: RotatedBox(quarterTurns: 3, child: SaveImageButton()),
-          ),
+          Expanded(child: Container()),
           widget.child,
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                  color: Colors.blue,
+                  child: Row(
+                    children: const [
+                      RotatedBox(quarterTurns: 3, child: SaveImageButton()),
+                    ],
+                  )),
+            ),
+          ),
         ],
       ),
     );

@@ -93,58 +93,61 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
 
     return Container(
       alignment: const Alignment(0.5, 0.5),
-      height: MediaQuery.of(context).size.height * 0.9,
-      width: MediaQuery.of(context).size.height * 0.5,
+      // height: MediaQuery.of(context).size.height * 1,
+      // width: MediaQuery.of(context).size.height * 0.5,
       child: RotatedBox(
         quarterTurns: 1,
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 50.0,
-                ),
-                child: GestureDetector(
-                  onTapDown: (details) {
-                    final tapPosition = details.localPosition;
+              child: GestureDetector(
+                onTapDown: (details) {
+                  final tapPosition = details.localPosition;
 
-                    final stringHeight =
-                        constraints.maxWidth * 0.39 / stringCount;
-                    final fretWidth = constraints.maxHeight * 3.5 / fretCount;
+                  final stringHeight =
+                      constraints.maxWidth * 0.28 / stringCount;
+                  final fretWidth = constraints.maxHeight * 3.5 / fretCount;
 
-                    final string = (tapPosition.dy / stringHeight).floor();
-                    final fret = ((tapPosition.dx) / fretWidth).floor();
-                    print("String: $string, fret: $fret");
+                  final string = (tapPosition.dy / stringHeight).floor();
+                  final fret = ((tapPosition.dx) / fretWidth).floor();
 
-                    // Create a copy of dotPositions to avoid mutating the original list
-                    List<List<bool>> updatedDotPositions = List.generate(
-                      dotPositions.length,
-                      (i) => List.generate(
-                          dotPositions[i].length, (j) => dotPositions[i][j]),
-                    );
+                  print("String: $string, fret: $fret");
 
-                    // Toggle the dot presence at the tapped position
-                    updatedDotPositions[string][fret] =
-                        !updatedDotPositions[string][fret];
+                  // Create a copy of dotPositions to avoid mutating the original list
+                  List<List<bool>> updatedDotPositions = List.generate(
+                    dotPositions.length,
+                    (i) => List.generate(
+                        dotPositions[i].length, (j) => dotPositions[i][j]),
+                  );
 
-                    // Update the state directly
-                    setState(() {
-                      dotPositions = updatedDotPositions;
-                    });
-                  },
-                  child: WidgetToPngExporter(
-                    child: CustomPaint(
-                      painter: CustomFretboardPainter(
-                        stringCount: stringCount,
-                        fretCount: fretCount,
-                        fingeringsModel: widget.fingeringsModel,
-                        dotPositions: dotPositions,
-                      ),
-                      child: SizedBox(
-                        width: fretCount.toDouble() * 50,
-                        height: stringCount.toDouble() * 40,
+                  // Toggle the dot presence at the tapped position
+                  updatedDotPositions[string][fret] =
+                      !updatedDotPositions[string][fret];
+
+                  // Update the state directly
+                  setState(() {
+                    dotPositions = updatedDotPositions;
+                  });
+                },
+                child: WidgetToPngExporter(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.height * 1.3,
+                    child: AspectRatio(
+                      aspectRatio: 4 / 1,
+                      child: Container(
+                        color: Colors.green,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 18.0, left: 36),
+                          child: CustomPaint(
+                            painter: CustomFretboardPainter(
+                              stringCount: stringCount,
+                              fretCount: fretCount,
+                              fingeringsModel: widget.fingeringsModel,
+                              dotPositions: dotPositions,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
