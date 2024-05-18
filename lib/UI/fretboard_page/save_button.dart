@@ -50,12 +50,33 @@ class SaveImageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () => _requestStoragePermission(context),
-      child: const Icon(
-        Icons.download,
-        color: Colors.orangeAccent,
+    return Center(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => _requestStoragePermission(context),
+        child: RotatedBox(
+          quarterTurns: 1,
+          child: Container(
+            width: 40,
+            height: 40,
+            margin: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              borderRadius:
+                  BorderRadius.circular(20), // Adjust border radius as needed
+              color: Colors.black38,
+            ),
+            child: const Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Center(
+                child: Icon(
+                  Icons.download,
+                  size: 30,
+                  color: Colors.orangeAccent,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -362,7 +362,7 @@ class MusicUtils {
 
     // Iterate from the selected mode to the end
     for (var mode in scaleModes.keys) {
-      print(mode);
+      // print(mode);
       if (foundSelectedMode) {
         final scaleDegrees =
             (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)
@@ -385,7 +385,7 @@ class MusicUtils {
     // Iterate from the beginning to the selected mode (excluding selected mode)
     for (var mode in scaleModes.keys) {
       if (mode == scaleModel.mode) break;
-      print(mode);
+      // print(mode);
 
       final scaleDegrees =
           (scaleModes[mode]!['scaleDegrees'] as List<Interval?>)

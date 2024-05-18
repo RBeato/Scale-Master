@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-
 import 'dart:typed_data';
-
 import 'package:flutter/rendering.dart';
-import 'package:scale_master_guitar/UI/fretboard_page/save_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'fretboard_options.dart';
 
-class WidgetToPngExporter extends StatefulWidget {
+class WidgetToPngExporter extends ConsumerStatefulWidget {
   final Widget child;
 
   const WidgetToPngExporter({Key? key, required this.child}) : super(key: key);
@@ -14,7 +13,6 @@ class WidgetToPngExporter extends StatefulWidget {
   @override
   _WidgetToPngExporterState createState() => _WidgetToPngExporterState();
 
-  // Add a static method to access the state
   static _WidgetToPngExporterState? of(BuildContext context) {
     final _WidgetToPngExporterState? state =
         context.findAncestorStateOfType<_WidgetToPngExporterState>();
@@ -22,18 +20,15 @@ class WidgetToPngExporter extends StatefulWidget {
   }
 }
 
-class _WidgetToPngExporterState extends State<WidgetToPngExporter> {
+class _WidgetToPngExporterState extends ConsumerState<WidgetToPngExporter> {
   final GlobalKey _globalKey = GlobalKey();
 
   Future<Uint8List?> capturePng() async {
     try {
-      // Render the widget to a raster layer.
       RenderRepaintBoundary boundary = _globalKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage(
-          pixelRatio: 3.0); // Adjust pixelRatio as needed for image quality.
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
 
-      // Convert the image to PNG format.
       ByteData? byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
@@ -47,22 +42,13 @@ class _WidgetToPngExporterState extends State<WidgetToPngExporter> {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       key: _globalKey,
-      child: Column(
+      child: Row(
         children: [
-          Expanded(child: Container()),
-          widget.child,
           Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                  color: Colors.blue,
-                  child: Row(
-                    children: const [
-                      RotatedBox(quarterTurns: 3, child: SaveImageButton()),
-                    ],
-                  )),
-            ),
+            flex: 2,
+            child: FretboardOptionButtons(ref: ref),
           ),
+          Expanded(flex: 9, child: Container(child: widget.child)),
         ],
       ),
     );

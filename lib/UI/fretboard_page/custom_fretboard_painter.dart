@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scale_master_guitar/UI/fretboard_page/provider/sharp_flat_selection_provider.dart';
 
 import '../../../constants/fretboard_notes.dart';
 import '../../../models/chord_scale_model.dart';
@@ -9,12 +10,18 @@ class CustomFretboardPainter extends CustomPainter {
   final int fretCount;
   final ChordScaleFingeringsModel fingeringsModel;
   final List<List<bool>> dotPositions;
+  final List<List<Color?>> dotColors;
+  final FretboardSharpFlat flatSharpSelection;
+  final Size size;
 
   CustomFretboardPainter({
     required this.stringCount,
     required this.fretCount,
     required this.fingeringsModel,
     required this.dotPositions,
+    required this.dotColors,
+    required this.flatSharpSelection,
+    required this.size,
   });
 
   static TextStyle textStyle =
@@ -22,38 +29,35 @@ class CustomFretboardPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // print("FingeringsModel : ${fingeringsModel.chordModel}");
-
     var neckPaint = Paint()
       ..color = Colors.grey[700]!
       ..strokeWidth = 2.0;
 
-    // Calculate the width and height of each fret and string
-    double fretWidth = size.width / fretCount;
-    double stringHeight = size.height / stringCount;
+    print(
+        "inside customPainter width ${this.size.width} height ${this.size.height}");
 
-    // Calculate the radius of the dot (adjust as needed)
-    double dotRadius = fretWidth / 3; // You can adjust this size
+    double fretWidth = this.size.width * 4 / (fretCount);
+    double stringHeight = this.size.width / (stringCount);
+    double dotRadius = fretWidth / 2.5;
 
-    // Draw vertical fret lines and add Roman numerals
     for (int i = 0; i < fretCount + 1; i++) {
       double x1 = i * fretWidth;
       double x2 = (i + 1) * fretWidth;
-      int p = i + 1; // Increment p by 1 to match the fret numbers
+      int p = i + 1;
 
-      // Calculate the midpoint between the current and next vertical lines
       double centerX = (x1 + x2) / 2;
 
-      // Adjust the strokeWidth for the first vertical line
       neckPaint.strokeWidth = (i == 0) ? 8.0 : 2.0;
 
-      // Draw vertical fret lines
-      canvas.drawLine(Offset(x1, 0), Offset(x1, size.height * 0.84), neckPaint);
+//Draw Fret lines
+      canvas.drawLine(
+        Offset(x1, 0),
+        Offset(x1, this.size.width * 0.84),
+        neckPaint,
+      );
 
-      // Add Roman numerals between specific frets
       if ([3, 5, 7, 9, 12, 15, 17, 19, 21, 24].contains(p)) {
-        final romanNumeral = RomanNumeralConverter.convertToFretRomanNumeral(
-            p); // Use p instead of i
+        final romanNumeral = RomanNumeralConverter.convertToFretRomanNumeral(p);
         TextPainter textPainter = TextPainter(
           text: TextSpan(
             text: romanNumeral,
@@ -64,119 +68,75 @@ class CustomFretboardPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(
           canvas,
-          Offset(centerX - textPainter.width / 2, size.height * 0.95),
+          Offset(centerX - textPainter.width / 2, this.size.width * 0.92),
         );
       }
     }
 
-    // Draw horizontal string lines
+    //Draw string lines
     for (int i = 0; i < stringCount; i++) {
       double y = i * stringHeight;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), neckPaint);
+      canvas.drawLine(Offset(0, y), Offset(this.size.width * 4, y), neckPaint);
     }
 
-    // Draw notes names where there are NO DOTS
     for (int string = 0; string < stringCount; string++) {
-      for (int fret = 0; fret < fretCount + 1; fret++) {
-        // Create a TextPainter for drawing text
+      for (int fret = 0; fret < fretCount; fret++) {
+        if (dotPositions[string][fret]) {
+          Color dotColor = dotColors[string][fret] ?? Colors.blueGrey;
+          var dotPaint = Paint()
+            ..color = dotColor
+            ..style = PaintingStyle.fill;
+
+          canvas.drawCircle(
+            Offset(fretWidth * fret + fretWidth / 2, stringHeight * string),
+            dotRadius,
+            dotPaint,
+          );
+        }
+      }
+    }
+
+    for (int string = 0; string < stringCount; string++) {
+      for (int fret = 0; fret < fretCount; fret++) {
         TextPainter textPainter = TextPainter(
           textDirection: TextDirection.ltr,
           textAlign: TextAlign.center,
-          textScaleFactor: 1.5, // Adjust the text size as needed
+          textScaleFactor: 1.5,
         );
 
-        // Check if the position is valid
-        if (!fingeringsModel.scaleNotesPositions!.contains([string, fret])) {
-          // Adjusted the condition for the last fret
-          double x = (fret - 1) * fretWidth;
-          double y = (string) * stringHeight;
+        double x = fret * fretWidth;
+        double y = string * stringHeight;
 
-          // Calculate text position
-          double textX = x + fretWidth / 2;
-          double textY = y;
+        double textX = x + fretWidth / 2;
+        double textY = y;
 
-          String labelText =
-              // fingeringsModel.scaleModel!.settings!.showScaleDegrees == true
-              //     ? ''
-              //     :
-              fretboardNotesNamesSharps[string][fret];
+        String labelText = flatSharpSelection == FretboardSharpFlat.sharps
+            ? fretboardNotesNamesSharps[string][fret]
+            : fretboardNotesNamesFlats[string][fret];
 
-          textPainter.text = TextSpan(text: labelText, style: textStyle);
-          textPainter.layout();
+        textPainter.text = TextSpan(text: labelText, style: textStyle);
+        textPainter.layout();
 
-          // Draw text at the calculated text position
-          textPainter.paint(
-            canvas,
-            Offset(
-                textX - textPainter.width / 2, textY - textPainter.height / 2),
-          );
-        }
-      }
-    }
-
-    // Draw dots based on dotPositions data
-    for (int string = 0; string < stringCount; string++) {
-      for (int fret = 0; fret < fretCount + 1; fret++) {
-        if (dotPositions[string][fret]) {
-          var dotColor = Paint()
-            ..color =
-                fingeringsModel.scaleModel!.settings!.isSingleColor == true
-                    ? Colors.blueGrey
-                    : fingeringsModel.scaleColorfulMap!["$string,$fret"]!
-            ..style = PaintingStyle.fill;
-          canvas.drawCircle(
-              Offset(fretWidth * (fret - 1) + fretWidth / 2,
-                  stringHeight * (string)),
-              dotRadius,
-              dotColor);
-
-          // Create a TextPainter for drawing text
-          TextPainter textPainter = TextPainter(
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.center,
-            textScaleFactor: 1.5, // Adjust the text size as needed
-          );
-
-          // Check if the position is valid
-
-          // Adjusted the condition for the last fret
-          double x = (fret - 1) * fretWidth;
-          double y = (string) * stringHeight;
-
-          // Calculate text position
-          double textX = x + fretWidth / 2;
-          double textY = y;
-
-          String labelText =
-              // fingeringsModel.scaleModel!.settings!.showScaleDegrees == true
-              //     ? ''
-              //     :
-              fretboardNotesNamesSharps[string][fret];
-
-          textPainter.text = TextSpan(text: labelText, style: textStyle);
-          textPainter.layout();
-
-          // Draw text at the calculated text position
-          textPainter.paint(
-            canvas,
-            Offset(
-                textX - textPainter.width / 2, textY - textPainter.height / 2),
-          );
-        }
+        textPainter.paint(
+          canvas,
+          Offset(textX - textPainter.width / 2, textY - textPainter.height / 2),
+        );
       }
     }
   }
 
   @override
   bool shouldRepaint(CustomFretboardPainter oldDelegate) {
-    // Check if dotPositions have changed
     for (int i = 0; i < stringCount; i++) {
       for (int j = 0; j < fretCount + 1; j++) {
         if (oldDelegate.dotPositions[i][j] != dotPositions[i][j]) {
-          return true; // Repaint if any dot position has changed
+          return true;
         }
       }
     }
-    return false; // No change in dotPositions, no repaint needed
+    if (oldDelegate.flatSharpSelection != flatSharpSelection) {
+      return true;
+    }
+    return false;
   }
 }
