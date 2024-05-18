@@ -38,24 +38,25 @@ class CustomFretboardPainter extends CustomPainter {
 
     double fretWidth = this.size.width * 4 / (fretCount);
     double stringHeight = this.size.width / (stringCount);
-    double dotRadius = fretWidth / 2.5;
+    double dotRadius = fretWidth / 2.7;
 
-    for (int i = 0; i < fretCount + 1; i++) {
+    for (int i = 1; i <= fretCount + 1; i++) {
       double x1 = i * fretWidth;
       double x2 = (i + 1) * fretWidth;
       int p = i + 1;
 
       double centerX = (x1 + x2) / 2;
 
-      neckPaint.strokeWidth = (i == 0) ? 8.0 : 2.0;
+      neckPaint.strokeWidth = (i == 1) ? 8.0 : 2.0; //draw nut at 1st
 
-//Draw Fret lines
+      //Draw Fret lines
       canvas.drawLine(
         Offset(x1, 0),
-        Offset(x1, this.size.width * 0.84),
+        Offset(x1, this.size.width * 0.83),
         neckPaint,
       );
 
+      //Draw roman numerals
       if ([3, 5, 7, 9, 12, 15, 17, 19, 21, 24].contains(p)) {
         final romanNumeral = RomanNumeralConverter.convertToFretRomanNumeral(p);
         TextPainter textPainter = TextPainter(
@@ -68,7 +69,8 @@ class CustomFretboardPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(
           canvas,
-          Offset(centerX - textPainter.width / 2, this.size.width * 0.92),
+          Offset(centerX - (textPainter.width / 2) + fretWidth,
+              this.size.width * 0.92),
         );
       }
     }
@@ -76,15 +78,17 @@ class CustomFretboardPainter extends CustomPainter {
     //Draw string lines
     for (int i = 0; i < stringCount; i++) {
       double y = i * stringHeight;
-      canvas.drawLine(Offset(0, y), Offset(this.size.width * 4, y), neckPaint);
+      canvas.drawLine(
+          Offset(fretWidth, y), Offset(this.size.width * 4.17, y), neckPaint);
     }
 
+    //Draw Dots
     for (int string = 0; string < stringCount; string++) {
-      for (int fret = 0; fret < fretCount; fret++) {
+      for (int fret = 0; fret <= fretCount; fret++) {
         if (dotPositions[string][fret]) {
           Color dotColor = dotColors[string][fret] ?? Colors.blueGrey;
           var dotPaint = Paint()
-            ..color = dotColor
+            ..color = fret == 0 ? dotColor.withRed(160) : dotColor
             ..style = PaintingStyle.fill;
 
           canvas.drawCircle(
@@ -96,8 +100,9 @@ class CustomFretboardPainter extends CustomPainter {
       }
     }
 
+    //Draw notes names
     for (int string = 0; string < stringCount; string++) {
-      for (int fret = 0; fret < fretCount; fret++) {
+      for (int fret = 0; fret <= fretCount; fret++) {
         TextPainter textPainter = TextPainter(
           textDirection: TextDirection.ltr,
           textAlign: TextAlign.center,

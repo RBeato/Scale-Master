@@ -61,17 +61,13 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
   Widget build(BuildContext context) {
     selectedColor = ref.watch(paletteColorProvider);
     final flatSharpSelection = ref.watch(sharpFlatSelectionProvider);
-    const widthFactor = 3.25;
+    const widthFactor = 3.37;
     const heightTolerance = 0.8;
-
-    // Calculate the full size of the fretboard
-    // final fullFretboardWidth = MediaQuery.of(context).size.width * 2;
-    // final fullFretboardHeight =
-    //     MediaQuery.of(context).size.height * 3.45; // Adjust as needed
+    const fretTolerance = 3.2;
 
     return WidgetToPngExporter(
       child: Container(
-        color: Colors.yellow,
+        // color: Colors.yellow,
         child: LayoutBuilder(builder: (context, constraints) {
           Size size = constraints.biggest;
           print("Layout builder width ${size.width} height ${size.height}");
@@ -88,7 +84,7 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                 );
 
                 final stringHeight = size.width * heightTolerance / stringCount;
-                final fretWidth = size.width * widthFactor / fretCount;
+                final fretWidth = size.width * fretTolerance / fretCount;
 
                 final string = (rotatedPosition.dy / stringHeight).floor();
                 final fret = (rotatedPosition.dx / fretWidth).floor();
@@ -126,10 +122,10 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                   height: size.width,
                   child: Container(
                     margin: const EdgeInsets.only(top: 50),
-                    color: Colors.pink,
+                    // color: Colors.pink,
                     child: CustomPaint(
                       painter: CustomFretboardPainter(
-                        size: Size(size.width * heightTolerance, size.height),
+                        size: Size(size.width * 0.8, size.height),
                         stringCount: stringCount,
                         fretCount: fretCount,
                         fingeringsModel: widget.fingeringsModel,
