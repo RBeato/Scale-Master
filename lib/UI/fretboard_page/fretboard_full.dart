@@ -5,6 +5,8 @@ import 'package:scale_master_guitar/UI/fretboard_page/widget_to_png.dart';
 
 import '../../models/chord_scale_model.dart';
 import 'custom_fretboard_painter.dart';
+import 'provider/fretboard_color_provider.dart';
+import 'provider/note_names_visibility_provider.dart';
 import 'provider/sharp_flat_selection_provider.dart';
 
 class FretboardFull extends ConsumerStatefulWidget {
@@ -61,8 +63,10 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
   Widget build(BuildContext context) {
     selectedColor = ref.watch(paletteColorProvider);
     final flatSharpSelection = ref.watch(sharpFlatSelectionProvider);
+    final fretboardColor = ref.watch(fretboardColorProvider);
+    final hideNotes = ref.watch(noteNamesVisibilityProvider);
     const widthFactor = 3.37;
-    const heightTolerance = 0.8;
+    const heightTolerance = 0.75;
     const fretTolerance = 3.2;
 
     return WidgetToPngExporter(
@@ -86,8 +90,8 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                 final stringHeight = size.width * heightTolerance / stringCount;
                 final fretWidth = size.width * fretTolerance / fretCount;
 
-                final string = (rotatedPosition.dy / stringHeight).floor();
-                final fret = (rotatedPosition.dx / fretWidth).floor();
+                int string = (rotatedPosition.dy / stringHeight).floor();
+                int fret = (rotatedPosition.dx / fretWidth).floor();
                 print("Fret $fret String $string");
 
                 if (string < 0 ||
@@ -96,6 +100,8 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                     fret >= fretCount) {
                   return;
                 }
+
+                string = string - 1; //TODO: Fix this. 6th string not working
 
                 final updatedDotPositions = List.generate(
                   dotPositions.length,
@@ -132,6 +138,8 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                         dotPositions: dotPositions,
                         dotColors: dotColors,
                         flatSharpSelection: flatSharpSelection,
+                        hideNotes: hideNotes,
+                        fretboardColor: fretboardColor,
                       ),
                     ),
                   ),

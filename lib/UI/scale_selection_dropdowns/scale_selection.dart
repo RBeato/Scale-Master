@@ -27,9 +27,10 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width *
-                    0.2, // Adjust the max width as needed
+                    0.4, // Adjust the max width as needed
               ),
               child: DropdownButtonFormField<String>(
+                isExpanded: true, // Make the dropdown button expanded
                 dropdownColor: Colors.grey[800],
                 value: selectedScale,
                 onChanged: (newValue) {
@@ -59,9 +60,10 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width *
-                    0.2, // Adjust the max width as needed
+                    0.4, // Adjust the max width as needed
               ),
               child: DropdownButtonFormField<String>(
+                isExpanded: true, // Make the dropdown button expanded
                 dropdownColor: Colors.grey[800],
                 value: selectedMode,
                 onChanged: (newValue) {
@@ -76,12 +78,12 @@ class _ScaleSelectorState extends ConsumerState<ScaleSelector> {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(key,
-                        overflow: TextOverflow.fade,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: Colors.white70)),
                   );
                 }).toList(),
                 hint: const Text('Select Mode',
-                    overflow: TextOverflow.fade,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: Colors.white70)),
               ),
             ),

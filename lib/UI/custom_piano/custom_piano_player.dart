@@ -110,6 +110,11 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
   @override
   Widget build(BuildContext context) {
     // print("tracks: ${tracks[0]}");
+    // return CustomPianoTest(
+    //   widget.scaleModel,
+    //   onKeyPressed: (note) =>
+    //       sequencerManager.playPianoNote(note, tracks, sequence),
+    // );
     return CustomPiano(
       widget.scaleModel,
       onKeyPressed: (note) =>

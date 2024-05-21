@@ -25,46 +25,48 @@ class FretboardSharpFlatToggleButton extends ConsumerWidget {
         child: Container(
           width: 50,
           height: 50,
+          margin: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             borderRadius:
-                BorderRadius.circular(30), // Adjust border radius as needed
+                BorderRadius.circular(20), // Adjust border radius as needed
             color: Colors.black38,
           ),
-          child: FittedBox(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '♯',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: sharpFlat == FretboardSharpFlat.sharps
-                          ? null
-                          : FontWeight.bold,
-                      color: sharpFlat == FretboardSharpFlat.sharps
-                          ? Colors.orangeAccent
-                          : Colors.grey),
-                ),
-                const Text(
-                  '/',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey,
+          child: Center(
+            child: FittedBox(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '♯',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: sharpFlat == FretboardSharpFlat.sharps
+                            ? null
+                            : FontWeight.bold,
+                        color: sharpFlat == FretboardSharpFlat.sharps
+                            ? Colors.orangeAccent
+                            : Colors.grey),
                   ),
-                ),
-                Text(
-                  '♭',
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: sharpFlat == FretboardSharpFlat.flats
-                          ? null
-                          : FontWeight.bold,
-                      color: sharpFlat == FretboardSharpFlat.flats
-                          ? Colors.orangeAccent
-                          : Colors.grey),
-                ),
-              ],
+                  const Text(
+                    '/',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    '♭',
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: sharpFlat == FretboardSharpFlat.flats
+                            ? null
+                            : FontWeight.bold,
+                        color: sharpFlat == FretboardSharpFlat.flats
+                            ? Colors.orangeAccent
+                            : Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -21,6 +21,12 @@ class FretboardPage extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: Colors.grey[900],
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           backgroundColor: Colors.grey[800],
           title: const PlayerPageTitle(),
         ),

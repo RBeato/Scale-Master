@@ -87,6 +87,7 @@ class SequencerManager {
         selectedChords: selectedChords,
         stepCount: stepCount,
         nBeats: stepCount,
+        playAllInstruments: playAllInstruments,
       );
 
       // Load project state
@@ -102,8 +103,9 @@ class SequencerManager {
   Future<ProjectState>? _createProject({
     required WidgetRef ref,
     required List<ChordModel> selectedChords,
-    stepCount,
+    required int stepCount,
     required int nBeats,
+    required playAllInstruments,
   }) async {
     ProjectState project = ProjectState.empty(stepCount);
 
@@ -141,7 +143,7 @@ class SequencerManager {
       project.bassState.setVelocity(chord.position, bassMidiValue, 0.79);
     }
 
-    if (isMetronomeSelected) {
+    if (isMetronomeSelected && playAllInstruments) {
       for (int i = 0; i < nBeats; i++) {
         project.drumState.setVelocity(i, 44, 0.19);
       }

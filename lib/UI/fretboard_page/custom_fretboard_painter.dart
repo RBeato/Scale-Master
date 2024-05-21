@@ -13,6 +13,8 @@ class CustomFretboardPainter extends CustomPainter {
   final List<List<Color?>> dotColors;
   final FretboardSharpFlat flatSharpSelection;
   final Size size;
+  final bool hideNotes;
+  final Color fretboardColor;
 
   CustomFretboardPainter({
     required this.stringCount,
@@ -22,6 +24,8 @@ class CustomFretboardPainter extends CustomPainter {
     required this.dotColors,
     required this.flatSharpSelection,
     required this.size,
+    required this.hideNotes,
+    required this.fretboardColor,
   });
 
   static TextStyle textStyle =
@@ -30,7 +34,7 @@ class CustomFretboardPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var neckPaint = Paint()
-      ..color = Colors.grey[700]!
+      ..color = fretboardColor
       ..strokeWidth = 2.0;
 
     print(
@@ -101,31 +105,39 @@ class CustomFretboardPainter extends CustomPainter {
     }
 
     //Draw notes names
-    for (int string = 0; string < stringCount; string++) {
-      for (int fret = 0; fret <= fretCount; fret++) {
-        TextPainter textPainter = TextPainter(
-          textDirection: TextDirection.ltr,
-          textAlign: TextAlign.center,
-          textScaleFactor: 1.5,
-        );
+    if (!hideNotes) {
+      for (int string = 0; string < stringCount; string++) {
+        for (int fret = 0; fret <= fretCount; fret++) {
+          TextPainter textPainter = TextPainter(
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.center,
+            textScaleFactor: 1.5,
+          );
 
-        double x = fret * fretWidth;
-        double y = string * stringHeight;
+          double x = fret * fretWidth;
+          double y = string * stringHeight;
 
-        double textX = x + fretWidth / 2;
-        double textY = y;
+          double textX = x + fretWidth / 2;
+          double textY = y;
 
-        String labelText = flatSharpSelection == FretboardSharpFlat.sharps
-            ? fretboardNotesNamesSharps[string][fret]
-            : fretboardNotesNamesFlats[string][fret];
+          String labelText = flatSharpSelection == FretboardSharpFlat.sharps
+              ? fretboardNotesNamesSharps[string][fret]
+              : fretboardNotesNamesFlats[string][fret];
 
-        textPainter.text = TextSpan(text: labelText, style: textStyle);
-        textPainter.layout();
+          // Calculate the max font size that fits within the dot
+          double maxFontSize = dotRadius; // Adjust as needed
+          TextStyle dynamicTextStyle =
+              textStyle.copyWith(fontSize: maxFontSize - 3);
 
-        textPainter.paint(
-          canvas,
-          Offset(textX - textPainter.width / 2, textY - textPainter.height / 2),
-        );
+          textPainter.text = TextSpan(text: labelText, style: dynamicTextStyle);
+          textPainter.layout();
+
+          textPainter.paint(
+            canvas,
+            Offset(
+                textX - textPainter.width / 2, textY - textPainter.height / 2),
+          );
+        }
       }
     }
   }
@@ -140,6 +152,12 @@ class CustomFretboardPainter extends CustomPainter {
       }
     }
     if (oldDelegate.flatSharpSelection != flatSharpSelection) {
+      return true;
+    }
+    if (oldDelegate.hideNotes != hideNotes) {
+      return true;
+    }
+    if (oldDelegate.fretboardColor != fretboardColor) {
       return true;
     }
     return false;

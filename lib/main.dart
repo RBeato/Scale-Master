@@ -1,16 +1,16 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:device_preview/device_preview.dart';
 import 'UI/fretboard/provider/fingerings_provider.dart';
-import 'home_page.dart';
+import 'UI/home_page/home_page.dart';
 
 //TODO: Fix PERFORMANCE ISSUES
-//TODO: fix dropdown overflow
-//TODO: fix voice leading
+//TODO: fix voice leading. First chord doesn't voice lead to others....
 //TODO: manage excessive clicking on the player page
-//TODO: new fretboard page
+//TODO: Fix 6th fretboard page
+//TODO: Fix Excessive loading on main page
+//TODO: Create Icon and app name
 
 void main() async {
   try {
@@ -18,10 +18,18 @@ void main() async {
     final container = ProviderContainer();
     await container.read(chordModelFretboardFingeringProvider.future);
     FlutterNativeSplash.remove();
-
-    runApp(DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => const ProviderScope(child: MyApp())));
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]).then((_) {
+      runApp(
+          // DevicePreview(
+          //   enabled: !kReleaseMode,
+          //   builder: (context) => const
+          const ProviderScope(child: MyApp())
+          // )
+          );
+    });
   } catch (error) {
     print('Setup has failed');
   }
@@ -36,8 +44,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       // showPerformanceOverlay: true,
       useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      // locale: DevicePreview.locale(context),
+      // builder: DevicePreview.appBuilder,
       title: 'Scale Master Guitar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),

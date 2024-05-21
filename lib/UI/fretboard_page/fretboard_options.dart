@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/fretboard_page/save_button.dart';
 
 import 'color_palette.dart';
+import 'fretboard_color_change_button.dart';
+import 'note_names_button.dart';
 import 'provider/palette_color_provider.dart';
 import 'sharp_flats_selection_button.dart';
 
@@ -24,6 +26,8 @@ class FretboardOptionButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             const SaveImageButton(),
+            const NoteNamesButton(),
+            const FretboardColorChangeButton(),
             const FretboardSharpFlatToggleButton(),
             ColorPalette(
               colors: const [

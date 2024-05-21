@@ -30,6 +30,12 @@ class PlayerPage extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: Colors.grey[800],
           title: const PlayerPageTitle(),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -39,7 +45,8 @@ class PlayerPage extends ConsumerWidget {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const FretboardPage()));
               },
-              icon: const Icon(Icons.arrow_forward),
+              icon: const Icon(Icons.arrow_forward_ios,
+                  color: Colors.orangeAccent),
             ),
           ],
         ),
