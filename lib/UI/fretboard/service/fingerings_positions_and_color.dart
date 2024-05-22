@@ -88,7 +88,9 @@ class FingeringsCreator {
       aux.add(
           '${scaleModel.scaleNotesNames[i]}${scaleModel.chordTypes[i] == 'M' ? '' : scaleModel.chordTypes[i]}');
     }
-    scaleModel.scaleNotesNames = aux;
+    // scaleModel.scaleNotesNames = aux;
+    scaleModel.completeChordNames = aux;
+    //TODO: Check if is correct
   }
 
   setModeDegrees(scaleModel) {

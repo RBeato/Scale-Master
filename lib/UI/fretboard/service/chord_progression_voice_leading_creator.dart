@@ -6,11 +6,6 @@ class VoiceLeadingCreator {
     if (selectedChords.isEmpty) {
       return selectedChords;
     }
-    print(
-        "selectedChord.chordNotesInversionWithIndexes ${selectedChords.first.chordNotesInversionWithIndexes.hashCode}");
-    print(
-        "selectedChord.selectedChordPitches ${selectedChords.first.selectedChordPitches.hashCode}");
-
     // Create random inversion for the first chord
     _createFirstChordRandomInversion(selectedChords.first);
 

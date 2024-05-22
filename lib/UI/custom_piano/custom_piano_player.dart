@@ -14,6 +14,7 @@ import '../player_page/logic/sequencer_manager.dart';
 import '../player_page/provider/is_metronome_selected.dart';
 import '../player_page/provider/is_playing_provider.dart';
 import '../player_page/provider/metronome_tempo_provider.dart';
+import '../utils/debouncing.dart';
 import 'custom_piano.dart';
 
 class CustomPianoSoundController extends ConsumerStatefulWidget {
@@ -117,8 +118,9 @@ class CustomPianoState extends ConsumerState<CustomPianoSoundController>
     // );
     return CustomPiano(
       widget.scaleModel,
-      onKeyPressed: (note) =>
-          sequencerManager.playPianoNote(note, tracks, sequence),
+      onKeyPressed: (note) => Debouncer.handleButtonPress(() {
+        sequencerManager.playPianoNote(note, tracks, sequence);
+      }),
     );
   }
 }

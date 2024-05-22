@@ -95,9 +95,9 @@ class _FretboardFullState extends ConsumerState<FretboardFull> {
                 print("Fret $fret String $string");
 
                 if (string < 0 ||
-                    string >= stringCount ||
+                    string > stringCount ||
                     fret < 0 ||
-                    fret >= fretCount) {
+                    fret > fretCount) {
                   return;
                 }
 

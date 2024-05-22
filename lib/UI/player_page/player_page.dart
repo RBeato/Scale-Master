@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scale_master_guitar/UI/fretboard/provider/fingerings_provider.dart';
+import 'package:scale_master_guitar/UI/fretboard_page/provider/sharp_flat_selection_provider.dart';
 
 import 'package:scale_master_guitar/UI/player_page/player/player_widget.dart';
 import 'package:scale_master_guitar/UI/player_page/provider/player_page_title.dart';
@@ -39,6 +40,13 @@ class PlayerPage extends ConsumerWidget {
           actions: [
             IconButton(
               onPressed: () {
+                if (fingerings.value!.scaleModel!.scaleNotesNames
+                    .take(5)
+                    .any((s) => s.contains('♭'))) {
+                  ref
+                      .read(sharpFlatSelectionProvider.notifier)
+                      .update((state) => FretboardSharpFlat.flats);
+                }
                 if (f != null) {
                   ref.read(fretboardPageFingeringsProvider.notifier).update(f!);
                 }

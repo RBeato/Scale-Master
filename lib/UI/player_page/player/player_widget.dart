@@ -14,6 +14,7 @@ import '../../../models/settings_model.dart';
 import '../../../models/step_sequencer_state.dart';
 import '../../fretboard/provider/beat_counter_provider.dart';
 
+import '../../utils/debouncing.dart';
 import '../provider/is_metronome_selected.dart';
 import '../provider/metronome_tempo_provider.dart';
 import '../provider/is_playing_provider.dart';
@@ -155,9 +156,16 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
       isPlaying: isPlaying,
       tempo: ref.read(metronomeTempoProvider),
       isLooping: isLooping,
-      clearTracks: () => sequencerManager.clearTracks(ref, tracks, sequence),
-      handleTogglePlayStop: () =>
-          sequencerManager.handleTogglePlayStop(ref, sequence),
+      clearTracks: () {
+        Debouncer.handleButtonPress(() {
+          sequencerManager.clearTracks(ref, tracks, sequence);
+        });
+      },
+      handleTogglePlayStop: () {
+        Debouncer.handleButtonPress(() {
+          sequencerManager.handleTogglePlayStop(ref, sequence);
+        });
+      },
     );
   }
 

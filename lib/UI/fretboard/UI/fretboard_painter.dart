@@ -144,10 +144,17 @@ class FretboardPainter extends CustomPainter {
         canvas.drawCircle(Offset(x + fretWidth / 2, y), dotRadius, dotColor);
         // Use x + fretWidth / 2 for centerX
 
+        //Convert notes to flats where where necessary based on the chords names
+        var noteName = fingeringsModel.scaleModel!.scaleNotesNames
+                .contains(fretboardNotesNamesSharps[string - 1][fret])
+            ? fretboardNotesNamesSharps[string - 1][fret]
+            : fretboardNotesNamesFlats[string - 1][fret];
+
+        //Create text label for dots
         String labelText =
             fingeringsModel.scaleModel!.settings!.showScaleDegrees == true
                 ? fingeringsModel.scaleDegreesPositionsMap!["$string,$fret"]!
-                : fretboardNotesNamesSharps[string - 1][fret];
+                : noteName;
 
         textPainter.text = TextSpan(
           text: labelText,

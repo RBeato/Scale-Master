@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../utils/debouncing.dart';
 import '../provider/is_metronome_selected.dart';
 import '../provider/is_playing_provider.dart';
 import 'metrome_custom_painter.dart';
@@ -20,12 +21,14 @@ class MetronomeButton extends ConsumerWidget {
         ),
         color: _isOn ? Colors.greenAccent : Colors.white70,
         onPressed: () {
-          ref
-              .read(isSequencerPlayingProvider.notifier)
-              .update((state) => false);
-          ref
-              .read(isMetronomeSelectedProvider.notifier)
-              .update((state) => !_isOn);
+          Debouncer.handleButtonPress(() {
+            ref
+                .read(isSequencerPlayingProvider.notifier)
+                .update((state) => false);
+            ref
+                .read(isMetronomeSelectedProvider.notifier)
+                .update((state) => !_isOn);
+          });
         });
   }
 }
