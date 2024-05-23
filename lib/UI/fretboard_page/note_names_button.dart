@@ -31,9 +31,9 @@ class NoteNamesButton extends ConsumerWidget {
             child: FittedBox(
               child: Text(
                 textAlign: TextAlign.center,
-                !noteNamesVisible ? 'Hide\nNotes' : 'Show\nNotes',
+                !noteNamesVisible ? 'Hide\nText' : 'Show\nText',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: noteNamesVisible ? Colors.orangeAccent : Colors.grey,
                 ),

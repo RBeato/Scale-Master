@@ -8,16 +8,13 @@ import 'note_names_button.dart';
 import 'provider/palette_color_provider.dart';
 import 'sharp_flats_selection_button.dart';
 
-class FretboardOptionButtons extends StatelessWidget {
-  const FretboardOptionButtons({
-    super.key,
-    required this.ref,
-  });
+class FretboardOptionButtons extends ConsumerWidget {
+  const FretboardOptionButtons(this.isDegreeSelected, {Key? key});
 
-  final WidgetRef ref;
+  final bool isDegreeSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
@@ -28,7 +25,9 @@ class FretboardOptionButtons extends StatelessWidget {
             const SaveImageButton(),
             const NoteNamesButton(),
             const FretboardColorChangeButton(),
-            const FretboardSharpFlatToggleButton(),
+            isDegreeSelected
+                ? Container()
+                : const FretboardSharpFlatToggleButton(),
             ColorPalette(
               colors: const [
                 Colors.blueGrey,

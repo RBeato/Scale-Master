@@ -3,4 +3,4 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum FretboardSharpFlat { flats, sharps }
 
 final sharpFlatSelectionProvider =
-    StateProvider<FretboardSharpFlat>((ref) => FretboardSharpFlat.sharps);
+    StateProvider<FretboardSharpFlat?>((ref) => null);

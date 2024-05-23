@@ -9,9 +9,10 @@ class CustomFretboardPainter extends CustomPainter {
   final int stringCount;
   final int fretCount;
   final ChordScaleFingeringsModel fingeringsModel;
+
   final List<List<bool>> dotPositions;
   final List<List<Color?>> dotColors;
-  final FretboardSharpFlat flatSharpSelection;
+  final FretboardSharpFlat? flatSharpSelection;
   final Size size;
   final bool hideNotes;
   final Color fretboardColor;
@@ -120,9 +121,29 @@ class CustomFretboardPainter extends CustomPainter {
           double textX = x + fretWidth / 2;
           double textY = y;
 
-          String labelText = flatSharpSelection == FretboardSharpFlat.sharps
+          var noteName = fingeringsModel.scaleModel!.scaleNotesNames
+                  .contains(fretboardNotesNamesSharps[string][fret])
               ? fretboardNotesNamesSharps[string][fret]
               : fretboardNotesNamesFlats[string][fret];
+
+          final showDegrees =
+              fingeringsModel.scaleModel!.settings!.showScaleDegrees == true;
+
+          String? degree;
+          if (showDegrees) {
+            degree = fingeringsModel
+                    .scaleDegreesPositionsMap!["${string + 1},$fret"] ??
+                '';
+          }
+
+          //Create text label for dots
+          String labelText = showDegrees
+              ? degree!
+              : flatSharpSelection == null
+                  ? noteName
+                  : flatSharpSelection == FretboardSharpFlat.sharps
+                      ? fretboardNotesNamesSharps[string][fret]
+                      : fretboardNotesNamesFlats[string][fret];
 
           // Calculate the max font size that fits within the dot
           double maxFontSize = dotRadius; // Adjust as needed

@@ -78,7 +78,6 @@ class PlayerPageShowcaseState extends ConsumerState<PlayerWidget>
       trackVolumes: trackVolumes,
       trackStepSequencerStates: trackStepSequencerStates,
       selectedChords: ref.read(selectedChordsProvider),
-      // selectedTrack: selectedTrack,
       isLoading: isLoading,
       isMetronomeSelected: ref.read(isMetronomeSelectedProvider),
       isScaleTonicSelected: widget.settings.isTonicUniversalBassNote,

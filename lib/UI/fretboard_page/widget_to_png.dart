@@ -10,8 +10,11 @@ import 'fretboard_options.dart';
 
 class WidgetToPngExporter extends ConsumerStatefulWidget {
   final Widget child;
+  final bool isDegreeSelected;
 
-  const WidgetToPngExporter({Key? key, required this.child}) : super(key: key);
+  const WidgetToPngExporter(
+      {Key? key, required this.isDegreeSelected, required this.child})
+      : super(key: key);
 
   @override
   _WidgetToPngExporterState createState() => _WidgetToPngExporterState();
@@ -69,7 +72,7 @@ class _WidgetToPngExporterState extends ConsumerState<WidgetToPngExporter> {
       children: [
         Expanded(
           flex: 2,
-          child: FretboardOptionButtons(ref: ref),
+          child: FretboardOptionButtons(widget.isDegreeSelected),
         ),
         Expanded(
           flex: 9,

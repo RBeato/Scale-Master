@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scale_master_guitar/constants/music_constants.dart';
+import '../../constants/accidents_simplifier.dart';
 import '../../models/scale_model.dart';
 import '../../utils/music_utils.dart';
 import 'custom_piano_key.dart';
@@ -19,6 +20,7 @@ class _CustomPianoState extends State<CustomPiano> {
   final int numberOfOctaves = 6;
   final whiteKeyNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final blackKeyNotes = ['C♯/D♭', 'D♯/E♭', 'F♯/G♭', 'G♯/A♭', 'A♯/B♭'];
+  List notesList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,10 @@ class _CustomPianoState extends State<CustomPiano> {
         (whiteKeysWidth - MediaQuery.of(context).size.width) / 2;
     ScrollController scrollController =
         ScrollController(initialScrollOffset: initialScrollOffset);
+
+    notesList = widget.scaleInfo!.scaleNotesNames
+        .map((e) => MusicUtils.extractNoteName(simplifyAccidents(e)))
+        .toList();
 
     return SingleChildScrollView(
       controller: scrollController,
@@ -52,22 +58,16 @@ class _CustomPianoState extends State<CustomPiano> {
     for (int octave = 0; octave < numberOfOctaves; octave++) {
       for (int i = 0; i < 7; i++) {
         String noteName = '${whiteKeyNotes[i]}${octave + 1}';
-        var notesList = widget.scaleInfo!.scaleNotesNames
-            .map((e) => MusicUtils.extractNoteName(e))
-            .toList();
+
         var cleanedNoteName = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
 
         Color? color = Colors.blue;
-        // if (notesList.contains(t)) {
+
         notesList.first == cleanedNoteName
             ? color = Colors.orange
             : color = Colors.blue;
-        // print('Note is in scale');
-        // int index = notesList.indexOf(t);
-        // var degree = widget.scaleInfo!.degreeFunction[index];
-        // color = ConstantColors.scaleColorMap[degree];
-        // }
+
         whiteKeys.add(CustomPianoKey(
           isBlack: false,
           note: noteName,
@@ -76,7 +76,7 @@ class _CustomPianoState extends State<CustomPiano> {
           isInScale: _isInScale(
             cleanedNoteName,
             notesList,
-          ), // Check if note is in scale
+          ),
         ));
       }
     }
@@ -96,23 +96,14 @@ class _CustomPianoState extends State<CustomPiano> {
     for (int octave = 0; octave < numberOfOctaves; octave++) {
       for (int i = 0; i < blackKeyNotes.length; i++) {
         String noteName = blackKeyNotes[i] + (octave + 1).toString();
-        var notesList = widget.scaleInfo!.scaleNotesNames
-            .map((e) => MusicUtils.extractNoteName(e))
-            .toList();
+
         var cleanedNoteName = MusicUtils.extractNoteName(
             MusicUtils.filterNoteNameWithSlash(noteName));
-        String? degree;
 
         Color? color = Colors.blue;
         notesList.first == cleanedNoteName
             ? color = Colors.orange
             : color = Colors.blue;
-        if (notesList.contains(cleanedNoteName)) {
-          // print('Note is in scale');
-          // int index = notesList.indexOf(t);
-          // degree = widget.scaleInfo!.degreeFunction[index];
-          // color = ConstantColors.scaleColorMap[degree];
-        }
 
         double leftOffset = octave * 7 * whiteKeyWidth + blackKeyOffsets[i];
 
