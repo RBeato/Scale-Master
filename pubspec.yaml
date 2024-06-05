@@ -1,9 +1,9 @@
 name: scale_master_guitar
-description: A new Flutter project.
+description: Music Scales App for Guitar.
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=2.19.0-146.2.beta <3.0.0"
@@ -17,6 +17,7 @@ dependencies:
   device_preview: ^1.1.0
   equatable: ^2.0.2
   flutter_colorpicker: ^1.0.3
+  flutter_dotenv: ^5.1.0
   flutter_native_splash: ^2.2.1
   flutter_virtual_piano: ^0.0.9
   flutter_riverpod: ^2.1.1
@@ -24,6 +25,7 @@ dependencies:
   google_fonts: ^4.0.3
   path_provider: ^2.0.9
   permission_handler: ^10.4.5
+  purchases_flutter: ^6.0.0
   shared_preferences: ^2.0.5
   tonic: ^0.2.3
 
@@ -47,6 +49,7 @@ flutter:
   assets:
     - assets/images/
     - assets/sounds/sf2/
+    - .env
 
 flutter_native_splash:
   # This package generates native code to customize Flutter's default white native splash screen

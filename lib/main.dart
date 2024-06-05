@@ -3,13 +3,38 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'UI/fretboard/provider/fingerings_provider.dart';
-import 'UI/home_page/home_page.dart';
+
+import 'UI/home_page/selection_page.dart';
+
+//TODO: https://www.youtube.com/watch?v=nYCE6I6DvSk @ 7:00
 
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     final container = ProviderContainer();
+    // await dotenv.load(fileName: ".env");
+
+    // if (Platform.isIOS || Platform.isMacOS) {
+    //   StoreConfig(
+    //     store: Store.appStore,
+    //     apiKey: dotenv.env['APPLE_API_KEY']!,
+    //   );
+    // } else if (Platform.isAndroid) {
+    //   // Run the app passing --dart-define=AMAZON=true
+    //   const useAmazon = bool.fromEnvironment("amazon");
+    //   StoreConfig(
+    //     store: useAmazon ? Store.amazon : Store.playStore,
+    //     apiKey: useAmazon
+    //         ? dotenv.env['AMAZON_API_KEY']!
+    //         : dotenv.env['GOOGLE_API_KEY']!,
+    //   );
+    // }
+    // // Initialize RevenueCat
+    // await Purchases.setDebugLogsEnabled(true);
+    // // await Purchases.setup(dotenv.env['VAR_NAME']!);
+
     await container.read(chordModelFretboardFingeringProvider.future);
+
     FlutterNativeSplash.remove();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -42,7 +67,8 @@ class MyApp extends StatelessWidget {
       title: 'Scale Master Guitar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      home: const HomePage(title: 'Scale Master Guitar'),
+      home: const SelectionPage(),
+      // HomePage(title: 'Scale Master Guitar'),
     );
   }
 }

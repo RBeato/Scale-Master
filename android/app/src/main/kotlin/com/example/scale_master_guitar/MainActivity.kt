@@ -1,4 +1,4 @@
-package com.example.scale_master_guitar
+package com.romeubato.scale_master_guitar
 
 import io.flutter.embedding.android.FlutterActivity
 
